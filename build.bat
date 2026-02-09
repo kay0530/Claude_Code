@@ -1,30 +1,32 @@
 @echo off
-chcp 65001 >nul
-title Claude Cowork - EXEビルド
+
+REM ============================================
+REM   Claude Cowork - Build EXE
+REM ============================================
 
 echo ============================================
-echo   Claude Cowork を実行ファイル(.exe)にビルド
+echo   Claude Cowork - Build EXE
 echo ============================================
 echo.
 
-REM 仮想環境を有効化
+REM Activate venv
 if exist ".venv\Scripts\activate.bat" (
     call .venv\Scripts\activate.bat
 ) else (
-    echo [エラー] 仮想環境が見つかりません。先に setup.bat を実行してください。
+    echo [ERROR] Virtual environment not found. Run setup.bat first.
     pause
     exit /b 1
 )
 
-REM PyInstallerのインストール確認
+REM Install PyInstaller if needed
 pip show pyinstaller >nul 2>&1
 if errorlevel 1 (
-    echo PyInstallerをインストールしています...
+    echo Installing PyInstaller...
     pip install pyinstaller>=6.0.0
 )
 
 echo.
-echo ビルドを開始します...
+echo Building...
 echo.
 
 pyinstaller ^
@@ -38,18 +40,16 @@ pyinstaller ^
 
 if errorlevel 1 (
     echo.
-    echo [エラー] ビルドに失敗しました。
+    echo [ERROR] Build failed.
     pause
     exit /b 1
 )
 
 echo.
 echo ============================================
-echo   ビルド完了！
+echo   Build Complete!
 echo ============================================
 echo.
-echo 実行ファイル: dist\ClaudeCowork.exe
-echo.
-echo このファイルを配布すれば、Pythonがなくても実行できます。
+echo Output: dist\ClaudeCowork.exe
 echo.
 pause

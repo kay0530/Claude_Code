@@ -1,51 +1,53 @@
 @echo off
-chcp 65001 >nul
-title Claude Cowork - AIコーディングアシスタント
+
+REM ============================================
+REM   Claude Cowork - Launcher
+REM ============================================
 
 echo ============================================
-echo   Claude Cowork を起動しています...
+echo   Claude Cowork - Starting...
 echo ============================================
 echo.
 
-REM Pythonの存在確認
+REM Check Python
 python --version >nul 2>&1
 if errorlevel 1 (
-    echo [エラー] Pythonが見つかりません。
-    echo Python 3.10以上をインストールしてください。
-    echo https://www.python.org/downloads/
+    echo [ERROR] Python not found.
+    echo Please install Python 3.10+ from https://www.python.org/downloads/
+    echo * Check "Add Python to PATH" during install
     echo.
     pause
     exit /b 1
 )
 
-REM 仮想環境の確認・作成
+REM Create venv if needed
 if not exist ".venv" (
-    echo 初回セットアップ中... 仮想環境を作成しています。
+    echo First-time setup: creating virtual environment...
     python -m venv .venv
     if errorlevel 1 (
-        echo [エラー] 仮想環境の作成に失敗しました。
+        echo [ERROR] Failed to create virtual environment.
         pause
         exit /b 1
     )
 )
 
-REM 仮想環境を有効化
+REM Activate venv
 call .venv\Scripts\activate.bat
 
-REM 依存パッケージのインストール確認
+REM Install packages if needed
 pip show anthropic >nul 2>&1
 if errorlevel 1 (
-    echo 必要なパッケージをインストールしています...
+    echo Installing required packages...
     pip install -r requirements.txt
     if errorlevel 1 (
-        echo [エラー] パッケージのインストールに失敗しました。
+        echo [ERROR] Package installation failed.
         pause
         exit /b 1
     )
-    echo インストール完了！
+    echo Done!
     echo.
 )
 
-REM アプリケーション起動
-echo Claude Cowork を起動します！
+REM Launch app
+echo Starting Claude Cowork!
 python -m claude_cowork.main
