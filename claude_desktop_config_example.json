@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "claude-cowork": {
+      "command": "C:\\Users\\あなたのユーザー名\\Claude_Code\\.venv\\Scripts\\python.exe",
+      "args": [
+        "C:\\Users\\あなたのユーザー名\\Claude_Code\\claude_cowork\\mcp_server.py"
+      ]
+    }
+  }
+}

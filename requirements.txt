@@ -2,3 +2,4 @@ anthropic>=0.39.0
 customtkinter>=5.2.0
 Pillow>=10.0.0
 pygments>=2.17.0
+mcp[cli]>=1.0.0
