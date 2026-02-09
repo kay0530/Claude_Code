@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "claude-cowork"
+version = "1.0.0"
+description = "非エンジニア向けAIコーディングアシスタント - Windows対応"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Claude Cowork Team"}
+]
+
+dependencies = [
+    "anthropic>=0.39.0",
+    "customtkinter>=5.2.0",
+    "Pillow>=10.0.0",
+    "pygments>=2.17.0",
+]
+
+[project.optional-dependencies]
+build = [
+    "pyinstaller>=6.0.0",
+]
+
+[project.scripts]
+claude-cowork = "claude_cowork.main:main"
+
+[project.gui-scripts]
+claude-cowork-gui = "claude_cowork.main:main"
+
+[tool.setuptools.packages.find]
+include = ["claude_cowork*"]
