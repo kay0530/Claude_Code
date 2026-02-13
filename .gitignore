@@ -1,0 +1,30 @@
+# Claude Code
+.claude/
+.claude.zip
+
+# Config files with potential secrets
+claude_desktop_config.json
+
+# Node.js debug/test scripts
+check_keytar.js
+compare_env.js
+debug_env.js
+find_npx_cache.js
+find_token.js
+simulate_desktop.js
+test_cmd.js
+verify_env.js
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Temp
+nul
+*.tmp
