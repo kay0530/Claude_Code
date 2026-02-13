@@ -1,0 +1,612 @@
+{
+  "summary": {
+    "total_invoices": 39,
+    "matched_vendors": 0,
+    "mismatched_vendors": 18,
+    "invoice_only_vendors": 9,
+    "purchase_only_vendors": 41
+  },
+  "matched": [],
+  "mismatched": [
+    {
+      "vendor": "A-ｽﾀｲﾙ",
+      "invoice_amount": 4024680,
+      "purchase_amount": 3658800,
+      "diff": 365880,
+      "invoices": [
+        {
+          "vendor": "A-ｽﾀｲﾙ",
+          "amount": 4024680,
+          "filename": "251231_請求書_A-ｽﾀｲﾙ_4024680.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_A-ｽﾀｲﾙ_4024680.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "DMEGC",
+      "invoice_amount": 2602090,
+      "purchase_amount": 2365536,
+      "diff": 236554,
+      "invoices": [
+        {
+          "vendor": "DMEGC",
+          "amount": 2602090,
+          "filename": "251231_請求書_DMEGC_2602090.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_DMEGC_2602090.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "三井金物店",
+      "invoice_amount": 261668,
+      "purchase_amount": 236440,
+      "diff": 25228,
+      "invoices": [
+        {
+          "vendor": "三井金物店",
+          "amount": 261668,
+          "filename": "251231_請求書_三井金物店_261668.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_三井金物店_261668.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "丸紅",
+      "invoice_amount": 28071523,
+      "purchase_amount": 25519566,
+      "diff": 2551957,
+      "invoices": [
+        {
+          "vendor": "丸紅",
+          "amount": -304986,
+          "filename": "251231_請求書_丸紅_-304986.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_丸紅_-304986.pdf"
+        },
+        {
+          "vendor": "丸紅",
+          "amount": 10811,
+          "filename": "251231_請求書_丸紅_10811.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_丸紅_10811.pdf"
+        },
+        {
+          "vendor": "丸紅",
+          "amount": 1169850,
+          "filename": "251231_請求書_丸紅_1169850.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_丸紅_1169850.pdf"
+        },
+        {
+          "vendor": "丸紅",
+          "amount": 1195447,
+          "filename": "251231_請求書_丸紅_1195447.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_丸紅_1195447.pdf"
+        },
+        {
+          "vendor": "丸紅",
+          "amount": 1493800,
+          "filename": "251231_請求書_丸紅_1493800.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_丸紅_1493800.pdf"
+        },
+        {
+          "vendor": "丸紅",
+          "amount": 2383700,
+          "filename": "251231_請求書_丸紅_2383700.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_丸紅_2383700.pdf"
+        },
+        {
+          "vendor": "丸紅",
+          "amount": 2443100,
+          "filename": "251231_請求書_丸紅_2443100.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_丸紅_2443100.pdf"
+        },
+        {
+          "vendor": "丸紅",
+          "amount": 460689,
+          "filename": "251231_請求書_丸紅_460689.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_丸紅_460689.pdf"
+        },
+        {
+          "vendor": "丸紅",
+          "amount": 4864860,
+          "filename": "251231_請求書_丸紅_4864860.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_丸紅_4864860.pdf"
+        },
+        {
+          "vendor": "丸紅",
+          "amount": 5014152,
+          "filename": "251231_請求書_丸紅_5014152.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_丸紅_5014152.pdf"
+        },
+        {
+          "vendor": "丸紅",
+          "amount": 9340100,
+          "filename": "251231_請求書_丸紅_9340100.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_丸紅_9340100.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "伯東",
+      "invoice_amount": 359700,
+      "purchase_amount": 327000,
+      "diff": 32700,
+      "invoices": [
+        {
+          "vendor": "伯東",
+          "amount": 359700,
+          "filename": "251231_請求書_伯東_359700.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_伯東_359700.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "安川ﾒｶﾄﾚｯｸ末松九機",
+      "invoice_amount": 689700,
+      "purchase_amount": 627000,
+      "diff": 62700,
+      "invoices": [
+        {
+          "vendor": "安川ﾒｶﾄﾚｯｸ末松九機",
+          "amount": 689700,
+          "filename": "251231_請求書_安川ﾒｶﾄﾚｯｸ末松九機_689700.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_安川ﾒｶﾄﾚｯｸ末松九機_689700.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "新明電材",
+      "invoice_amount": 12019444,
+      "purchase_amount": 4770027,
+      "diff": 7249417,
+      "invoices": [
+        {
+          "vendor": "新明電材",
+          "amount": 5247030,
+          "filename": "251231_請求書_新明電材_5247030.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_新明電材_5247030.pdf"
+        },
+        {
+          "vendor": "新明電材",
+          "amount": 6772414,
+          "filename": "251231_請求書（予定）_新明電材_6772414.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書（予定）_新明電材_6772414.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "木谷電器",
+      "invoice_amount": 5098139,
+      "purchase_amount": 4634672,
+      "diff": 463467,
+      "invoices": [
+        {
+          "vendor": "木谷電器",
+          "amount": 5098139,
+          "filename": "251231_請求書_木谷電器_5098139.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_木谷電器_5098139.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "東洋ﾍﾞｰｽ",
+      "invoice_amount": 796877,
+      "purchase_amount": 336302,
+      "diff": 460575,
+      "invoices": [
+        {
+          "vendor": "東洋ﾍﾞｰｽ",
+          "amount": 796877,
+          "filename": "251231_請求書_東洋ﾍﾞｰｽ_796877.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_東洋ﾍﾞｰｽ_796877.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "神藤",
+      "invoice_amount": 300520,
+      "purchase_amount": 273200,
+      "diff": 27320,
+      "invoices": [
+        {
+          "vendor": "神藤",
+          "amount": 300520,
+          "filename": "251231_請求書_神藤_300520.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_神藤_300520.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "鶴田電機",
+      "invoice_amount": 10545700,
+      "purchase_amount": 9587000,
+      "diff": 958700,
+      "invoices": [
+        {
+          "vendor": "鶴田電機",
+          "amount": 10545700,
+          "filename": "251231_請求書_鶴田電機_10545700.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_鶴田電機_10545700.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "ｲｸﾞｱｽ",
+      "invoice_amount": 13587750,
+      "purchase_amount": 12352500,
+      "diff": 1235250,
+      "invoices": [
+        {
+          "vendor": "ｲｸﾞｱｽ",
+          "amount": 13587750,
+          "filename": "251231_請求書_ｲｸﾞｱｽ_13587750.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_ｲｸﾞｱｽ_13587750.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "ｶﾅﾒ",
+      "invoice_amount": 2568599,
+      "purchase_amount": 2893290,
+      "diff": -324691,
+      "invoices": [
+        {
+          "vendor": "ｶﾅﾒ",
+          "amount": 2568599,
+          "filename": "251231_請求書_ｶﾅﾒ_2568599.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_ｶﾅﾒ_2568599.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "ｽﾜﾛｰ工業",
+      "invoice_amount": 7348,
+      "purchase_amount": 6680,
+      "diff": 668,
+      "invoices": [
+        {
+          "vendor": "ｽﾜﾛｰ工業",
+          "amount": 7348,
+          "filename": "251231_請求書_ｽﾜﾛｰ工業_7348.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_ｽﾜﾛｰ工業_7348.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "ﾅﾘｷ工業",
+      "invoice_amount": 22000,
+      "purchase_amount": 20000,
+      "diff": 2000,
+      "invoices": [
+        {
+          "vendor": "ﾅﾘｷ工業",
+          "amount": 22000,
+          "filename": "251231_請求書_ﾅﾘｷ工業_22000.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_ﾅﾘｷ工業_22000.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "ﾐｭｰﾃｸﾉ",
+      "invoice_amount": 5510986,
+      "purchase_amount": 5009987,
+      "diff": 500999,
+      "invoices": [
+        {
+          "vendor": "ﾐｭｰﾃｸﾉ",
+          "amount": 5510986,
+          "filename": "251231_請求書_ﾐｭｰﾃｸﾉ_5510986.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_ﾐｭｰﾃｸﾉ_5510986.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "ﾔﾏﾄ電機",
+      "invoice_amount": 6030042,
+      "purchase_amount": 5481857,
+      "diff": 548185,
+      "invoices": [
+        {
+          "vendor": "ﾔﾏﾄ電機",
+          "amount": 6030042,
+          "filename": "251231_請求書_ﾔﾏﾄ電機_6030042.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_ﾔﾏﾄ電機_6030042.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "ﾕｱｻ商事",
+      "invoice_amount": 11612700,
+      "purchase_amount": 10557000,
+      "diff": 1055700,
+      "invoices": [
+        {
+          "vendor": "ﾕｱｻ商事",
+          "amount": 11612700,
+          "filename": "251231_請求書_ﾕｱｻ商事_11612700.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_ﾕｱｻ商事_11612700.pdf"
+        }
+      ]
+    }
+  ],
+  "invoice_only": [
+    {
+      "vendor": "EX4Energy",
+      "invoice_amount": 999867,
+      "invoices": [
+        {
+          "vendor": "EX4Energy",
+          "amount": 322311,
+          "filename": "251231_請求書_EX4Energy_322311.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_EX4Energy_322311.pdf"
+        },
+        {
+          "vendor": "EX4Energy",
+          "amount": 677556,
+          "filename": "251231_請求書_EX4Energy_677556.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_EX4Energy_677556.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "Winｺｰﾎﾟﾚｰｼｮﾝ",
+      "invoice_amount": 3166900,
+      "invoices": [
+        {
+          "vendor": "Winｺｰﾎﾟﾚｰｼｮﾝ",
+          "amount": 3166900,
+          "filename": "251231_請求書_Winｺｰﾎﾟﾚｰｼｮﾝ_3166900.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_Winｺｰﾎﾟﾚｰｼｮﾝ_3166900.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "WITHNetworks",
+      "invoice_amount": 149215,
+      "invoices": [
+        {
+          "vendor": "WITHNetworks",
+          "amount": 149215,
+          "filename": "251231_請求書_WITHNetworks_149215.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_WITHNetworks_149215.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "佐川急便",
+      "invoice_amount": 33858,
+      "invoices": [
+        {
+          "vendor": "佐川急便",
+          "amount": 33858,
+          "filename": "251231_請求書_佐川急便_33858.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_佐川急便_33858.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "小島電気工業",
+      "invoice_amount": 925524,
+      "invoices": [
+        {
+          "vendor": "小島電気工業",
+          "amount": 925524,
+          "filename": "251231_請求書_小島電気工業_925524.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_小島電気工業_925524.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "岩崎倉庫",
+      "invoice_amount": 474650,
+      "invoices": [
+        {
+          "vendor": "岩崎倉庫",
+          "amount": 474650,
+          "filename": "251231_請求書_岩崎倉庫_474650.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_岩崎倉庫_474650.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "高根商事",
+      "invoice_amount": 510045,
+      "invoices": [
+        {
+          "vendor": "高根商事",
+          "amount": 510045,
+          "filename": "251231_請求書_高根商事_510045.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_高根商事_510045.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "ｻｶﾀ製作所",
+      "invoice_amount": 7484400,
+      "invoices": [
+        {
+          "vendor": "ｻｶﾀ製作所",
+          "amount": 7484400,
+          "filename": "251231_請求書_ｻｶﾀ製作所_7484400.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_ｻｶﾀ製作所_7484400.pdf"
+        }
+      ]
+    },
+    {
+      "vendor": "ﾐｰｸ",
+      "invoice_amount": 103466,
+      "invoices": [
+        {
+          "vendor": "ﾐｰｸ",
+          "amount": 103466,
+          "filename": "251231_請求書_ﾐｰｸ_103466.pdf",
+          "filepath": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo\\調達グループ（請求書データ）\\2025.12\\251231_請求書_ﾐｰｸ_103466.pdf"
+        }
+      ]
+    }
+  ],
+  "purchase_only": [
+    {
+      "vendor": "力電",
+      "purchase_amount": 23638000
+    },
+    {
+      "vendor": "ﾄﾗｽﾄ",
+      "purchase_amount": 16625086
+    },
+    {
+      "vendor": "関西電機工業",
+      "purchase_amount": 12080000
+    },
+    {
+      "vendor": "ﾚﾉｴｺﾛｼﾞｰ",
+      "purchase_amount": 9245000
+    },
+    {
+      "vendor": "サカタ製作所",
+      "purchase_amount": 6804000
+    },
+    {
+      "vendor": "川代電気",
+      "purchase_amount": 4964660
+    },
+    {
+      "vendor": "ﾌﾞﾗｽﾄ",
+      "purchase_amount": 3825000
+    },
+    {
+      "vendor": "塗創社",
+      "purchase_amount": 3741000
+    },
+    {
+      "vendor": "ﾄｰｴﾈｯｸ",
+      "purchase_amount": 3400000
+    },
+    {
+      "vendor": "大陽日酸",
+      "purchase_amount": 3235200
+    },
+    {
+      "vendor": "K-NEX",
+      "purchase_amount": 3097000
+    },
+    {
+      "vendor": "WINｺｰﾎﾟﾚｰｼｮﾝ",
+      "purchase_amount": 2879000
+    },
+    {
+      "vendor": "日進",
+      "purchase_amount": 2828361
+    },
+    {
+      "vendor": "日東ﾚﾝﾀﾙ宇都宮営業所",
+      "purchase_amount": 2811825
+    },
+    {
+      "vendor": "秋山仮設工業",
+      "purchase_amount": 2230000
+    },
+    {
+      "vendor": "小野寺重機",
+      "purchase_amount": 2053500
+    },
+    {
+      "vendor": "武蔵ﾛｼﾞｽﾃｨｸｽ",
+      "purchase_amount": 1800000
+    },
+    {
+      "vendor": "朋電舎",
+      "purchase_amount": 1632000
+    },
+    {
+      "vendor": "YSU",
+      "purchase_amount": 1381080
+    },
+    {
+      "vendor": "ｴﾇｽﾀｲﾙ",
+      "purchase_amount": 1200000
+    },
+    {
+      "vendor": "ｻｲﾆﾁ",
+      "purchase_amount": 978530
+    },
+    {
+      "vendor": "三共　仙台センター",
+      "purchase_amount": 900000
+    },
+    {
+      "vendor": "きつた電設",
+      "purchase_amount": 779260
+    },
+    {
+      "vendor": "小島電機工業",
+      "purchase_amount": 746774
+    },
+    {
+      "vendor": "高陽",
+      "purchase_amount": 483899
+    },
+    {
+      "vendor": "小泉多摩",
+      "purchase_amount": 296000
+    },
+    {
+      "vendor": "ｱｲｸﾘｴｲｼｮﾝ",
+      "purchase_amount": 250000
+    },
+    {
+      "vendor": "かんでんｴﾝｼﾞﾆｱﾘﾝｸﾞ",
+      "purchase_amount": 250000
+    },
+    {
+      "vendor": "千葉ｹｲﾃｸﾉ",
+      "purchase_amount": 200000
+    },
+    {
+      "vendor": "ﾀｶﾔ",
+      "purchase_amount": 200000
+    },
+    {
+      "vendor": "ｴｺﾑ ｶﾜﾑﾗ",
+      "purchase_amount": 186560
+    },
+    {
+      "vendor": "ｹﾞｰﾄ",
+      "purchase_amount": 177040
+    },
+    {
+      "vendor": "九州電気保安協会",
+      "purchase_amount": 140000
+    },
+    {
+      "vendor": "友金電気設備管理事務所",
+      "purchase_amount": 88000
+    },
+    {
+      "vendor": "白石電気管理事務所",
+      "purchase_amount": 85000
+    },
+    {
+      "vendor": "ﾌｨｰﾙﾄﾞﾛｼﾞｯｸﾃﾞｰﾀｻｰﾋﾞｽ",
+      "purchase_amount": 70000
+    },
+    {
+      "vendor": "光永",
+      "purchase_amount": 23000
+    },
+    {
+      "vendor": "ﾔﾏﾄ電気管理事務所",
+      "purchase_amount": 20000
+    },
+    {
+      "vendor": "石橋電気管理事務所",
+      "purchase_amount": 18000
+    },
+    {
+      "vendor": "岸電気管理事務所",
+      "purchase_amount": 15000
+    },
+    {
+      "vendor": "川田電気管理事務所",
+      "purchase_amount": 10000
+    }
+  ]
+}
