@@ -43,6 +43,9 @@ export class SlackCollector {
     const oldestTs = sinceTs ?? this.calculateOldestTs();
     let cursor: string | undefined;
 
+    // Ensure bot is a member of the channel
+    await this.joinChannel(channelId);
+
     // Get channel info for naming
     const channelName = await this.getChannelName(channelId);
 
@@ -163,6 +166,21 @@ export class SlackCollector {
       return (result.channel as { name?: string })?.name ?? channelId;
     } catch {
       return channelId;
+    }
+  }
+
+  /**
+   * Join a channel so the bot can read messages
+   */
+  private async joinChannel(channelId: string): Promise<void> {
+    try {
+      await this.client.conversations.join({ channel: channelId });
+    } catch (error: unknown) {
+      // Ignore "already_in_channel" and similar non-fatal errors
+      const errorCode = (error as { data?: { error?: string } })?.data?.error;
+      if (errorCode !== "already_in_channel" && errorCode !== "method_not_supported_for_channel_type") {
+        console.warn(`Warning: Could not join channel ${channelId}: ${errorCode}`);
+      }
     }
   }
 

@@ -2,7 +2,6 @@
  * Initialize/reset the vector database
  * Usage: npm run setup-db
  */
-import "dotenv/config";
 import { VectorSearch } from "@shingo/rag-core";
 
 async function main() {

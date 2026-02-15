@@ -1,6 +1,15 @@
 import OpenAI from "openai";
 import type { ShingoChunk } from "@shingo/shared";
 
+/**
+ * Common interface for all embedding services
+ */
+export interface IEmbeddingService {
+  embed(text: string): number[] | Promise<number[]>;
+  embedBatch(texts: string[]): number[][] | Promise<number[][]>;
+  embedChunks(chunks: ShingoChunk[]): ShingoChunk[] | Promise<ShingoChunk[]>;
+}
+
 export interface EmbeddingServiceOptions {
   provider: "openai" | "voyage";
   apiKey: string;
@@ -10,7 +19,7 @@ export interface EmbeddingServiceOptions {
 /**
  * Generate vector embeddings for text chunks
  */
-export class EmbeddingService {
+export class EmbeddingService implements IEmbeddingService {
   private client: OpenAI;
   private model: string;
 

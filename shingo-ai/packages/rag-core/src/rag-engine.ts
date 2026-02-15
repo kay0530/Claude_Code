@@ -1,5 +1,5 @@
 import type { ChatRequest, ChatResponse, ConfidenceLevel } from "@shingo/shared";
-import { EmbeddingService } from "./embeddings/embedding-service.js";
+import type { IEmbeddingService } from "./embeddings/embedding-service.js";
 import { VectorSearch } from "./search/vector-search.js";
 import { ContextBuilder } from "./context/context-builder.js";
 import { ClaudeClient } from "./llm/claude-client.js";
@@ -7,7 +7,7 @@ import { buildPrompt } from "./prompts/system-prompt.js";
 import { randomUUID } from "crypto";
 
 export interface RagEngineOptions {
-  embeddingService: EmbeddingService;
+  embeddingService: IEmbeddingService;
   vectorSearch: VectorSearch;
   claudeClient: ClaudeClient;
   topK?: number;
@@ -17,7 +17,7 @@ export interface RagEngineOptions {
  * Main RAG orchestrator - ties together search, context, and generation
  */
 export class RagEngine {
-  private embedding: EmbeddingService;
+  private embedding: IEmbeddingService;
   private search: VectorSearch;
   private context: ContextBuilder;
   private claude: ClaudeClient;

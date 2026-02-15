@@ -4,9 +4,9 @@
  *
  * Sends test questions to the RAG engine and displays results.
  */
-import "dotenv/config";
 import { loadConfig } from "@shingo/shared";
-import { EmbeddingService, VectorSearch, ClaudeClient, RagEngine } from "@shingo/rag-core";
+import { EmbeddingService, LocalEmbeddingService, VectorSearch, ClaudeClient, RagEngine } from "@shingo/rag-core";
+import type { IEmbeddingService } from "@shingo/rag-core";
 import * as readline from "readline";
 
 async function main() {
@@ -14,11 +14,16 @@ async function main() {
 
   const config = loadConfig();
 
-  const embeddingService = new EmbeddingService({
-    provider: config.embedding.provider,
-    apiKey: config.embedding.apiKey,
-    model: config.embedding.model,
-  });
+  let embeddingService: IEmbeddingService;
+  if (config.embedding.provider === "local") {
+    embeddingService = new LocalEmbeddingService(512);
+  } else {
+    embeddingService = new EmbeddingService({
+      provider: config.embedding.provider as "openai" | "voyage",
+      apiKey: config.embedding.apiKey,
+      model: config.embedding.model,
+    });
+  }
 
   const vectorSearch = new VectorSearch({
     dbPath: config.vectorDb.dbPath,
