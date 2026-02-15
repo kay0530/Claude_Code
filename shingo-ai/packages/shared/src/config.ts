@@ -109,10 +109,13 @@ function parseEnvFile(content: string): Record<string, string> {
  * Merges with existing process.env
  */
 function loadEnv(): Record<string, string | undefined> {
-  // Try loading from current directory and parent directories
+  // Try loading from current directory and parent/grandparent directories
+  // (npm workspaces may run from packages/*/  so we check up to 3 levels)
   const paths = [
     resolve(process.cwd(), ".env"),
     resolve(process.cwd(), "..", ".env"),
+    resolve(process.cwd(), "..", "..", ".env"),
+    resolve(process.cwd(), "..", "..", "..", ".env"),
   ];
 
   let parsed: Record<string, string> = {};

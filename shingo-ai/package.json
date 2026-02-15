@@ -12,6 +12,7 @@
     "setup-db": "tsx scripts/setup-db.ts",
     "test-rag": "tsx scripts/test-rag.ts",
     "dev:api": "npm run dev --workspace=packages/shingo-api",
+    "dev:slack": "npm run dev --workspace=packages/slack-bot",
     "build:ext": "npm run build --workspace=packages/chrome-extension",
     "clean": "rimraf packages/*/dist"
   },
