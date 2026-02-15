@@ -1,0 +1,25 @@
+{
+  "name": "shingo-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shingo AI Chatbot - CEO Takahashi's philosophy-driven AI assistant",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "collect-data": "tsx scripts/collect-data.ts",
+    "setup-db": "tsx scripts/setup-db.ts",
+    "test-rag": "tsx scripts/test-rag.ts",
+    "dev:api": "npm run dev --workspace=packages/shingo-api",
+    "clean": "rimraf packages/*/dist"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^17.3.1",
+    "rimraf": "^6.1.2",
+    "tsx": "^4.21.0"
+  }
+}
