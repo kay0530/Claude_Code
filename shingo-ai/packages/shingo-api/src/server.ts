@@ -2,9 +2,9 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { loadConfig } from "@shingo/shared";
-import { EmbeddingService, VectorSearch, ClaudeClient, RagEngine } from "@shingo/rag-core";
+import { EmbeddingService, LocalEmbeddingService, VectorSearch, ClaudeClient, RagEngine } from "@shingo/rag-core";
+import type { IEmbeddingService } from "@shingo/rag-core";
 import type { ChatRequest } from "@shingo/shared";
-import "dotenv/config";
 
 const app = new Hono();
 const config = loadConfig();
@@ -13,11 +13,16 @@ const config = loadConfig();
 app.use("/*", cors());
 
 // Initialize RAG engine
-const embeddingService = new EmbeddingService({
-  provider: config.embedding.provider,
-  apiKey: config.embedding.apiKey,
-  model: config.embedding.model,
-});
+let embeddingService: IEmbeddingService;
+if (config.embedding.provider === "local") {
+  embeddingService = new LocalEmbeddingService(512);
+} else {
+  embeddingService = new EmbeddingService({
+    provider: config.embedding.provider as "openai" | "voyage",
+    apiKey: config.embedding.apiKey,
+    model: config.embedding.model,
+  });
+}
 
 const vectorSearch = new VectorSearch({
   dbPath: config.vectorDb.dbPath,
