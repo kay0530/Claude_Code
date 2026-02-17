@@ -1,0 +1,1261 @@
+{
+  "sessionId": "local_a000b6ae-21c4-4be7-8325-a618d9d198f8",
+  "cliSessionId": "26c81717-cc46-49eb-9bf1-20160c8bc951",
+  "cwd": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo",
+  "originCwd": "C:\\Users\\田中　圭亮\\Desktop\\Claude_Code_Demo",
+  "createdAt": 1770164804110,
+  "lastActivityAt": 1770165086532,
+  "model": "claude-opus-4-5-20251101",
+  "isArchived": false,
+  "title": "O&Mメンバースキルマップ作成",
+  "permissionMode": "default",
+  "enabledMcpTools": {
+    "local:microsoft365:login": false,
+    "local:microsoft365:logout": false,
+    "local:Claude in Chrome:find": false,
+    "local:microsoft365:get-chat": false,
+    "local:microsoft365:get-team": false,
+    "local:microsoft365:send-mail": false,
+    "local:microsoft365:list-chats": false,
+    "local:microsoft365:list-users": false,
+    "local:microsoft365:list-drives": false,
+    "local:Claude in Chrome:computer": false,
+    "local:Claude in Chrome:navigate": false,
+    "local:microsoft365:search-query": false,
+    "local:microsoft365:verify-login": false,
+    "local:Claude in Chrome:read_page": false,
+    "local:microsoft365:get-todo-task": false,
+    "local:microsoft365:list-accounts": false,
+    "local:Claude in Chrome:form_input": false,
+    "local:microsoft365:list-calendars": false,
+    "local:microsoft365:remove-account": false,
+    "local:microsoft365:select-account": false,
+    "local:Claude in Chrome:gif_creator": false,
+    "local:Claude in Chrome:update_plan": false,
+    "local:microsoft365:get-excel-range": false,
+    "local:microsoft365:list-plan-tasks": false,
+    "local:microsoft365:list-todo-tasks": false,
+    "local:Claude in Chrome:upload_image": false,
+    "local:microsoft365:create-todo-task": false,
+    "local:microsoft365:delete-todo-task": false,
+    "local:microsoft365:get-chat-message": false,
+    "local:microsoft365:get-current-user": false,
+    "local:microsoft365:get-mail-message": false,
+    "local:microsoft365:get-planner-plan": false,
+    "local:microsoft365:get-planner-task": false,
+    "local:microsoft365:get-team-channel": false,
+    "local:microsoft365:sort-excel-range": false,
+    "local:microsoft365:update-todo-task": false,
+    "local:Claude in Chrome:get_page_text": false,
+    "local:Claude in Chrome:resize_window": false,
+    "local:microsoft365:get-calendar-view": false,
+    "local:microsoft365:list-folder-files": false,
+    "local:microsoft365:list-joined-teams": false,
+    "local:microsoft365:list-mail-folders": false,
+    "local:microsoft365:list-team-members": false,
+    "local:microsoft365:move-mail-message": false,
+    "local:microsoft365:send-chat-message": false,
+    "local:Claude in Chrome:shortcuts_list": false,
+    "local:microsoft365:create-draft-email": false,
+    "local:microsoft365:create-excel-chart": false,
+    "local:microsoft365:find-meeting-times": false,
+    "local:microsoft365:format-excel-range": false,
+    "local:microsoft365:get-calendar-event": false,
+    "local:microsoft365:list-chat-messages": false,
+    "local:microsoft365:list-mail-messages": false,
+    "local:microsoft365:list-planner-tasks": false,
+    "local:microsoft365:list-team-channels": false,
+    "local:Claude in Chrome:javascript_tool": false,
+    "local:Claude in Chrome:tabs_create_mcp": false,
+    "local:microsoft365:add-mail-attachment": false,
+    "local:microsoft365:create-onenote-page": false,
+    "local:microsoft365:create-planner-task": false,
+    "local:microsoft365:delete-mail-message": false,
+    "local:microsoft365:get-channel-message": false,
+    "local:microsoft365:get-drive-root-item": false,
+    "local:microsoft365:get-mail-attachment": false,
+    "local:microsoft365:get-outlook-contact": false,
+    "local:microsoft365:get-sharepoint-site": false,
+    "local:microsoft365:update-planner-task": false,
+    "local:microsoft365:upload-file-content": false,
+    "local:Claude in Chrome:tabs_context_mcp": false,
+    "local:microsoft365:delete-onedrive-file": false,
+    "local:microsoft365:list-calendar-events": false,
+    "local:microsoft365:list-todo-task-lists": false,
+    "local:microsoft365:send-channel-message": false,
+    "local:Claude in Chrome:shortcuts_execute": false,
+    "local:microsoft365:create-calendar-event": false,
+    "local:microsoft365:delete-calendar-event": false,
+    "local:microsoft365:list-channel-messages": false,
+    "local:microsoft365:list-excel-worksheets": false,
+    "local:microsoft365:list-mail-attachments": false,
+    "local:microsoft365:list-outlook-contacts": false,
+    "local:microsoft365:reply-to-chat-message": false,
+    "local:microsoft365:update-calendar-event": false,
+    "local:microsoft365:create-outlook-contact": false,
+    "local:microsoft365:delete-mail-attachment": false,
+    "local:microsoft365:delete-outlook-contact": false,
+    "local:microsoft365:list-onenote-notebooks": false,
+    "local:microsoft365:update-outlook-contact": false,
+    "local:microsoft365:search-sharepoint-sites": false,
+    "local:microsoft365:get-onenote-page-content": false,
+    "local:microsoft365:get-sharepoint-site-item": false,
+    "local:microsoft365:get-sharepoint-site-list": false,
+    "local:microsoft365:send-shared-mailbox-mail": false,
+    "local:Claude in Chrome:read_console_messages": false,
+    "local:Claude in Chrome:read_network_requests": false,
+    "local:microsoft365:list-chat-message-replies": false,
+    "local:microsoft365:list-mail-folder-messages": false,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:who_am_i": true,
+    "local:microsoft365:get-shared-mailbox-message": false,
+    "local:microsoft365:get-sharepoint-sites-delta": false,
+    "local:microsoft365:list-onenote-section-pages": false,
+    "local:microsoft365:list-sharepoint-site-items": false,
+    "local:microsoft365:list-sharepoint-site-lists": false,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:list_hubs": true,
+    "local:microsoft365:get-sharepoint-site-by-path": false,
+    "local:microsoft365:get-specific-calendar-event": false,
+    "local:microsoft365:list-sharepoint-site-drives": false,
+    "local:microsoft365:update-planner-task-details": false,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:create_hub": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:list_tasks": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:update_hub": true,
+    "local:microsoft365:list-shared-mailbox-messages": false,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:upload_file": true,
+    "local:microsoft365:get-sharepoint-site-list-item": false,
+    "local:microsoft365:list-specific-calendar-events": false,
+    "local:microsoft365:create-specific-calendar-event": false,
+    "local:microsoft365:delete-specific-calendar-event": false,
+    "local:microsoft365:download-onedrive-file-content": false,
+    "local:microsoft365:list-onenote-notebook-sections": false,
+    "local:microsoft365:update-specific-calendar-event": false,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:create_folder": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:get_hub_items": true,
+    "local:microsoft365:get-sharepoint-site-drive-by-id": false,
+    "local:microsoft365:list-sharepoint-site-list-items": false,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:get_hub_details": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:add_items_to_hub": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:get_file_content": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:get_file_details": true,
+    "local:microsoft365:list-shared-mailbox-folder-messages": false,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:get_folder_details": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:list_file_comments": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:create_file_comment": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:upload_file_version": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:search_files_keyword": true,
+    "local:microsoft365:login-6d965f8b439e3d5f107aed71fd239a81": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:search_folders_by_name": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:update_file_properties": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:update_folder_properties": true,
+    "local:microsoft365:verify-login-71495c6be5bc24d20d9a333a743082ac": true,
+    "local:microsoft365:list-calendars-fad41a26a7a6e060a9598bf0466c5785": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:list_folder_content_by_folder_id": true,
+    "local:salesforce:salesforce_search_all-9c637e810bbd4c22331834e64c08d3bd": true,
+    "local:salesforce:salesforce_query_records-fc517899e2045bf2fc94221554dad197": true,
+    "local:salesforce:salesforce_search_objects-fc0a1f7e0e340515c811aad05ae00188": true,
+    "local:salesforce:salesforce_aggregate_query-8ae13db7277c908a2dec36cac2dbb04c": true,
+    "local:salesforce:salesforce_describe_object-8b334d4ba5eeb3562407b522580dfea7": true,
+    "local:salesforce:salesforce_execute_anonymous-a91feeb5390909b7d16472cfbf3a9bc8": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:upload_file-6d924c92c693c88d3cfc4037cb33ee1d": true,
+    "c68db0bc-00e1-45ae-ad67-e1829d7faad4:create_folder-1500af080fca646fbb217fef4fdc7899": true
+  },
+  "remoteMcpServersConfig": [
+    {
+      "uuid": "c68db0bc-00e1-45ae-ad67-e1829d7faad4",
+      "name": "Box",
+      "tools": [
+        {
+          "name": "add_items_to_hub",
+          "description": "Adds files, folders, or web links to a specific hub, enabling content organization within collaborative workspaces. Essential for building and curating hub content by adding relevant materials to the collaborative space.\n\nThis tool enables the population of hubs with relevant content, making it easy to organize materials within collaborative workspaces. You can add multiple items at once, supporting efficient hub content management and organization.\n\n**Key Features:**\n- Adds multiple items (files, folders, web links) to hubs in a single operation\n- Supports batch operations for efficient content organization\n- Works with all Box content types: files, folders, and web links\n- Provides confirmation of successful additions with detailed results\n\n**Supported Item Types:**\n- `file`: Box files of any type\n- `folder`: Box folders and their contents\n- `web_link`: External web links and bookmarks\n\n<examples>\nAdd a single file to a hub:\n<input>\n{\n  \"hub_id\": \"12345\",\n  \"items\": [\n    {\"id\": \"98765\", \"type\": \"file\"}\n  ]\n}\n</input>\n\nAdd multiple items to a hub:\n<input>\n{\n  \"hub_id\": \"12345\",\n  \"items\": [\n    {\"id\": \"98765\", \"type\": \"file\"},\n    {\"id\": \"54321\", \"type\": \"folder\"},\n    {\"id\": \"11111\", \"type\": \"web_link\"}\n  ]\n}\n</input>\n\nAdd resources to a team hub:\n<input>\n{\n  \"hub_id\": \"55555\",\n  \"items\": [\n    {\"id\": \"111111\", \"type\": \"folder\"},\n    {\"id\": \"222222\", \"type\": \"web_link\"},\n    {\"id\": \"333333\", \"type\": \"file\"}\n  ]\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "hub_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255,
+                "description": "The ID of the hub to add items to"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 255,
+                      "description": "The unique identifier of the item to add to the hub"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "file",
+                        "folder",
+                        "web_link"
+                      ],
+                      "description": "The type of item being added: file, folder, or web_link"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "type"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 1,
+                "maxItems": 50,
+                "description": "Array of items to add to the hub"
+              }
+            },
+            "required": [
+              "hub_id",
+              "items"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "create_file_comment",
+          "description": "Creates a new comment on a specific file. This tool allows you to add comments to files for collaboration, feedback, or documentation purposes. Comments are visible to all users with access to the file and can be used for team communication and file annotation.\n\nThe message can include special characters, line breaks, and Unicode characters. The tool returns complete comment information including metadata about the comment creation, author, and timestamps.\n\n<examples>\nBasic file comment:\n<input>\n{\n  \"file_id\": \"123456789\",\n  \"message\": \"This document looks good overall. Please review the financial projections in section 3.\"\n}\n</input>\n\nMulti-line structured comment:\n<input>\n{\n  \"file_id\": \"777888999\",\n  \"message\": \"Review Summary:\\n\\nContent: Excellent\\nStructure: Well organized\\nFormatting: Minor issues\\nCitations: Missing sources\\n\\nOverall: Good work, please address the citations before final submission.\"\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "file_id": {
+                "type": "string",
+                "pattern": "^\\d+$",
+                "description": "The ID of the file to add a comment to"
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "description": "The comment message to add to the file"
+              }
+            },
+            "required": [
+              "file_id",
+              "message"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "create_folder",
+          "description": "Creates new folders in Box.\n\n<examples>\nCreate folder in root:\n<input>\n{\n  \"name\": \"Project Documents\"\n}\n</input>\n\nCreate folder in specific parent:\n<input>\n{\n  \"name\": \"Q4 Reports\",\n  \"parent_folder_id\": \"123456789\"\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255,
+                "description": "Folder name (max 255 chars, no slashes, leading/trailing spaces, or dots). Must be unique within parent folder."
+              },
+              "parent_folder_id": {
+                "type": "string",
+                "default": "0",
+                "description": "Parent folder ID where new folder will be created. Defaults to \"0\" (root directory)."
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "create_hub",
+          "description": "Creates new collaborative hubs for organizing content around specific topics, projects, or teams. Enables the establishment of new collaborative workspaces with customizable titles and descriptions.\n\nThis tool is essential for setting up new collaborative spaces where teams can organize, share, and work together on related content. Hubs serve as central gathering points for all materials related to a particular initiative or project.\n\n**Key Features:**\n- Creates new hubs with custom titles and optional descriptions\n- Establishes collaborative workspaces for team projects\n- Returns complete hub information upon successful creation\n- Supports both minimal (title-only) and detailed hub creation\n\n<examples>\nCreate a simple hub with title only:\n<input>\n{\n  \"title\": \"Marketing Team Hub\"\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 50,
+                "description": "The title of the new hub"
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 1000,
+                "description": "Optional description for the new hub providing context about its purpose and contents"
+              }
+            },
+            "required": [
+              "title"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_file_content",
+          "description": "Extracts and returns file content in text format for files under 50MB. This tool processes file content to provide only the readable text, with built-in file size validation and performance optimization. If the file does not have a text representation or the representation is not available then an error will be returned. Using this tool is preferred over the ai_qa_single_file tool since it is faster and more efficient, but it only works for files with text representations such as PDFs, documents, spreadsheets, presentations, code, etc.\n\n**Key Features:**\n- Text representation extraction from various file formats\n- 50MB file size limit enforcement\n- Clear error messages for unsupported operations\n\n<examples>\nExtract text content from a file:\n{\n  \"file_id\": \"123456789\",\n}\n<output>\n{\n  \"content\": [\n    {\n      \"type\": \"text\",\n      \"text\": \"This is the extracted text content from the file...\"\n    }\n  ]\n}\n</output>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "file_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "file_id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_file_details",
+          "description": "Gets comprehensive file information from Box. Returns essential fields by default (id, name, extension, createdBy, modifiedBy, createdAt, modifiedAt). Use 'fields' parameter to request additional properties.\n\n**Common useful fields:** size, description, tags, metadata, permissions, shared_link, parent, path_collection, file_version, sha1, lock, classification, comment_count, has_collaborations, representations, watermark_info, uploader_display_name, content_created_at, content_modified_at, item_status, expires_at, trashed_at.\n\n<examples>\nBasic file info:\n<input>{\"file_id\": \"123456789\"}</input>\n\nFile with metadata and permissions:\n<input>\n{\n  \"file_id\": \"987654321\",\n  \"fields\": [\"id\", \"name\", \"size\", \"permissions\", \"tags\", \"metadata\", \"shared_link\"]\n}\n</input>\n\nDetailed file analysis:\n<input>\n{\n  \"file_id\": \"555666777\",\n  \"fields\": [\"id\", \"name\", \"description\", \"file_version\", \"sha1\", \"path_collection\", \"classification\", \"comment_count\", \"has_collaborations\"]\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "file_id": {
+                "type": "string",
+                "pattern": "^\\d+$",
+                "description": "The unique identifier of the file"
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Specific fields to retrieve. If not specified, returns essential fields. Use to request additional metadata, permissions, etc."
+              }
+            },
+            "required": [
+              "file_id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_file_preview",
+          "description": "Displays an interactive preview widget for a Box file directly in chat. Supports PDFs, Documents, Spreadsheets, Slides, Images, or any text file types. Use when user wants to view file contents without downloading. For file metadata, use get_file_info instead.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "fileId": {
+                "type": "string",
+                "description": "The ID of the file to preview"
+              }
+            },
+            "required": [
+              "fileId"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "_meta": {
+            "ui": {
+              "resourceUri": "ui://widget/preview"
+            },
+            "ui/resourceUri": "ui://widget/preview"
+          }
+        },
+        {
+          "name": "get_folder_details",
+          "description": "Retrieves comprehensive information about a folder in Box. Returns essential fields by default (id, name, createdBy, modifiedBy, createdAt, modifiedAt). Use 'fields' parameter to request additional properties.\n\n**Common useful fields:** size, description, tags, metadata, permissions, shared_link, parent, path_collection, folder_upload_email, has_collaborations, allowed_invitee_roles, can_non_owners_invite, can_non_owners_view_collaborators, is_collaboration_restricted_to_enterprise, classification, allowed_shared_link_access_levels, content_created_at, content_modified_at, item_status, sync_state, watermark_info, trashed_at.\n\n**Note:** Only request 'item_collection' when the user explicitly asks for folder contents. Use 'list_folder_content_by_folder_id' for browsing folder items instead.\n\n<examples>\nBasic folder info:\n<input>{\"folder_id\": \"123456789\"}</input>\n\nFolder with permissions and collaboration settings:\n<input>\n{\n  \"folder_id\": \"987654321\",\n  \"fields\": [\"id\", \"name\", \"size\", \"permissions\", \"can_non_owners_invite\", \"has_collaborations\"]\n}\n</input>\n\nDetailed folder analysis with settings:\n<input>\n{\n  \"folder_id\": \"555666777\",\n  \"fields\": [\"id\", \"name\", \"description\", \"path_collection\", \"folder_upload_email\", \"allowed_invitee_roles\", \"classification\", \"shared_link\", \"tags\"]\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "folder_id": {
+                "type": "string",
+                "pattern": "^\\d+$",
+                "description": "The unique identifier of the folder"
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Specific fields to retrieve. If not specified, returns essential fields. Use to request additional metadata, permissions, etc."
+              }
+            },
+            "required": [
+              "folder_id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_hub_details",
+          "description": "Retrieves comprehensive information about a specific hub including metadata, creation details, and administrative information. Provides complete hub context for understanding ownership, timing, and purpose.\n\nThis tool is essential for understanding hub context, ownership, and management information. It provides the complete picture of a hub's properties, helping users understand when it was created, by whom, and its current status.\n\n**Key Features:**\n- Retrieves detailed hub information including title, description, and metadata\n- Provides creation and modification timestamps\n- Shows hub ownership and creator information  \n- Returns complete hub context for administrative and management purposes\n\n<examples>\nGet detailed information about a specific hub:\n<input>\n{\n  \"hub_id\": \"12345\"\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "hub_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255,
+                "description": "The unique identifier of the hub to retrieve detailed information about"
+              }
+            },
+            "required": [
+              "hub_id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_hub_items",
+          "description": "Retrieves all items within a specific hub including files, folders, and web links. Essential for exploring the contents of collaborative workspaces and understanding what resources are available in a hub.\n\nThis tool provides comprehensive access to hub contents with pagination support, allowing you to browse through all materials that have been added to a collaborative workspace. Perfect for content discovery and hub content management.\n\n**Key Features:**\n- Retrieves all items (files, folders, web links) within a specific hub\n- Supports pagination for hubs with large amounts of content\n- Returns detailed item information including names, types, and IDs\n- Configurable result limits for efficient data retrieval\n\n<examples>\nGet items in a specific hub:\n<input>\n{\n  \"hub_id\": \"12345\"\n}\n</input>\n\nGet hub items with pagination:\n<input>\n{\n  \"hub_id\": \"67890\",\n  \"limit\": 50,\n  \"marker\": \"next_marker_value\"\n}\n</input>\n\nGet first 25 items from a hub:\n<input>\n{\n  \"hub_id\": \"11111\",\n  \"limit\": 25\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "hub_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The ID of the hub to retrieve items from"
+              },
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000,
+                "default": 50,
+                "description": "Maximum number of hub items to return in a single response"
+              },
+              "marker": {
+                "type": "string",
+                "default": "",
+                "description": "Pagination marker to retrieve next set of hub items. Use empty string for first page"
+              }
+            },
+            "required": [
+              "hub_id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "list_file_comments",
+          "description": "Lists all comments on a specific file. Returns a paginated list of comments with configurable fields. Default fields (id, type, message, created_by, created_at) are always returned, but you can specify additional fields as needed.\n\nSupported fields include: id, type, message, created_at, created_by, modified_at, tagged_message, and any other comment-related fields supported by the Box API. Use pagination parameters (limit/offset) to handle files with many comments efficiently.\n\n<examples>\nBasic file comments listing:\n<input>\n{\n  \"file_id\": \"123456789\",\n  \"limit\": 50\n}\n</input>\n\nList with specific fields:\n<input>\n{\n  \"file_id\": \"987654321\",\n  \"fields\": [\"id\", \"message\", \"created_at\", \"created_by\", \"modified_at\"],\n  \"limit\": 100\n}\n</input>\n\nPaginated comments listing:\n<input>\n{\n  \"file_id\": \"555666777\",\n  \"fields\": [\"id\", \"type\", \"message\", \"tagged_message\", \"created_by\"],\n  \"limit\": 25,\n  \"offset\": 50\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "file_id": {
+                "type": "string",
+                "pattern": "^\\d+$"
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "default": [
+                  "id",
+                  "type",
+                  "message",
+                  "created_by",
+                  "created_at"
+                ]
+              },
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000,
+                "default": 100
+              },
+              "offset": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0
+              }
+            },
+            "required": [
+              "file_id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "list_folder_content_by_folder_id",
+          "description": "Lists files, folders, and web links contained in a folder. Returns a paginated list of items with at least fields. Fields (id, type, name, etag) are always returned. Use folder_id \"0\" for the root folder.\n\nSupported fields include: id, type, name, etag, sequence_id, sha1, content_created_at, content_modified_at, created_at, created_by, modified_at, modified_by, owned_by, parent, path_collection, size, trashed_at, item_status, description, shared_link, classification, comment_count, disposition_at, expires_at, extension, has_collaborations, is_accessible_via_shared_link, is_associated_with_app_item, is_externally_owned, is_package, lock, metadata, permissions, representations, shared_link_permission_options, tags, uploader_display_name, version_number, watermark_info, file_version.\n\n<examples>\nBasic folder listing:\n<input>\n{\n  \"folder_id\": \"0\",\n  \"limit\": 50\n}\n</input>\n\nList with specific fields:\n<input>\n{\n  \"folder_id\": \"123456789\",\n  \"fields\": [\"id\", \"name\", \"type\", \"size\", \"modified_at\", \"created_by\"],\n  \"limit\": 100\n}\n</input>\n\nPaginated listing:\n<input>\n{\n  \"folder_id\": \"987654321\", \n  \"fields\": [\"id\", \"name\", \"type\", \"path_collection\"],\n  \"limit\": 30,\n  \"offset\": 60\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "folder_id": {
+                "type": "string",
+                "pattern": "^\\d+$"
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "default": []
+              },
+              "offset": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0
+              },
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000,
+                "default": 30
+              }
+            },
+            "required": [
+              "folder_id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "list_hubs",
+          "description": "Lists all hubs accessible to the current user with pagination support. Provides an overview of available collaborative workspaces and their basic information.\n\nHubs in Box are collaborative workspaces that organize content around specific topics, projects, or teams. This tool helps discover what hubs you have access to, making it easy to find the right collaborative space for your work.\n\n**Key Features:**\n- Lists all accessible hubs for the authenticated user\n- Supports pagination with configurable limits and markers\n- Returns essential hub information including ID, type, and title\n- Efficient retrieval with adjustable result limits (1-1000)\n\n<examples>\nList all accessible hubs with default settings:\n<input>\n{\n  \"limit\": 50\n}\n</input>\n\nList hubs with custom pagination:\n<input>\n{\n  \"limit\": 30,\n  \"marker\": \"next_marker_from_previous_response\"\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000,
+                "default": 50,
+                "description": "Maximum number of hubs to return in a single response"
+              },
+              "marker": {
+                "type": "string",
+                "maxLength": 255,
+                "default": "",
+                "description": "Pagination marker to retrieve next set of results. Use empty string for first page"
+              }
+            },
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "list_tasks",
+          "description": "Lists all tasks associated with a specific file. This tool retrieves task information including task details, message, status, and completion rule, due date from the Box platform.\n\nTasks in Box are used to assign work to users on files, allowing for collaboration and workflow management. This tool provides access to all tasks assigned to a particular file, helping with project management and task tracking.\n\nThe response includes comprehensive task details such as task type, assignee information, due dates, completion status, and any associated comments or messages.\n\n<examples>\nList tasks for a file:\n<input>\n{\n  \"file_id\": \"1234567890\"\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "file_id": {
+                "type": "string",
+                "pattern": "^\\d+$"
+              }
+            },
+            "required": [
+              "file_id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "search_files_keyword",
+          "description": "Searches for files using keywords and supports metadata filters, file extension filtering (without dots), and field selection. Maps to Box's searchForContent API with comprehensive filtering capabilities.\n\nThe response always includes 4 core fields: id, name, description, and type. The 'fields' parameter allows you to request additional fields beyond these core ones. All requested fields (core + additional) will be included in the API request and returned in the response.\n\n**Available Additional Fields:**\nfileVersion, sha1, contentCreatedAt, contentModifiedAt, createdAt, createdBy, modifiedAt, modifiedBy, ownedBy, parent, pathCollection, purgedAt, sharedLink, size, trashedAt, classification, commentCount, dispositionAt, expiresAt, extension, hasCollaborations, isAccessibleViaSharedLink, isAssociatedWithAppItem, isExternallyOwned, isPackage, lock, metadata, permissions, representations, sharedLinkPermissionOptions, tags, uploaderDisplayName, watermarkInfo\n\n**Date Range Filters:**\nDate range filters properties of the input schema: created_at_range, updated_at_range, deleted_at_range. Use comma-separated RFC3339 timestamps.\n\n**Format:** \"start_date,end_date\" where:\n- Omit start date to search all items before end date: \",2023-12-31T23:59:59Z\"\n- Omit end date to search from start date to now: \"2023-01-01T00:00:00Z,\"\n- Both dates for specific range: \"2023-01-01T00:00:00Z,2023-12-31T23:59:59Z\"\n\n**Current Time Reference:** 2026-02-02T12:23:24.233Z\n\n\n<examples>\nBasic keyword search (returns core fields only):\n<input>\n{\n  \"query\": \"contract agreement\",\n  \"limit\": 50\n}\n</input>\n\nAdvanced search with additional fields:\n<input>\n{\n  \"query\": \"quarterly report\",\n  \"file_extensions\": [\"pdf\", \"docx\"],\n  \"ancestor_folder_id\": \"123456789\",\n  \"fields\": [\"createdAt\", \"modifiedAt\", \"size\", \"createdBy\"]\n}\n</input>\n\nSearching by date:\n<input>\n{\n  \"query\": \"quarterly report\",\n  \"file_extensions\": [\"pdf\", \"docx\"],\n  \"ancestor_folder_id\": \"123456789\",\n  \"created_at_range”: \"2023-01-01T00:00:00Z,2023-12-31T23:59:59Z\",\n  \"fields\": [\"createdAt\"]\n}\n</input>\n\nSearch with metadata filters and additional fields:\n<input>\n{\n  \"query\": \"invoice\",\n  \"file_extensions\": [\"pdf\"],\n  \"limit\": 30,\n  \"fields\": [\"contentCreatedAt\", \"pathCollection\", \"metadata\"],\n  \"mdfilters\": [\n    {\n      \"scope\": \"enterprise\",\n      \"templateKey\": \"invoiceTemplate\",\n      \"filters\": {\n        \"amount\": {\n          \"gt\": 1000,\n          \"lt\": 5000\n        },\n        \"status\": \"approved\",\n        \"department\": \"finance\"\n      }\n    }\n  ]\n}\n</input>\n\nMulti-template metadata search with custom fields:\n<input>\n{\n  \"query\": \"project document\",\n  \"fields\": [\"modifiedBy\", \"sharedLink\", \"tags\", \"permissions\"],\n  \"mdfilters\": [\n    {\n      \"scope\": \"enterprise\", \n      \"templateKey\": \"projectTemplate\",\n      \"filters\": {\n        \"priority\": \"high\",\n        \"deadline\": {\n          \"gt\": \"2024-01-01\"\n        }\n      }\n    },\n    {\n      \"scope\": \"global\",\n      \"templateKey\": \"reviewTemplate\", \n      \"filters\": {\n        \"reviewer\": \"john.doe@company.com\"\n      }\n    }\n  ]\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "minLength": 1
+              },
+              "ancestor_folder_id": {
+                "type": "string"
+              },
+              "file_extensions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 200,
+                "default": 30
+              },
+              "mdfilters": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "scope": {
+                      "type": "string"
+                    },
+                    "templateKey": {
+                      "type": "string"
+                    },
+                    "filters": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "minItems": 1
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "gt": {
+                                "type": [
+                                  "string",
+                                  "number"
+                                ]
+                              },
+                              "lt": {
+                                "type": [
+                                  "string",
+                                  "number"
+                                ]
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "scope",
+                    "templateKey"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "created_at_range": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "updated_at_range": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "deleted_at_range": {
+                "type": "string",
+                "maxLength": 100
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "search_folders_by_name",
+          "description": "Searches for folders by name within Box using keyword matching. This tool helps locate specific folders by their names and can be scoped to search within a particular parent folder. Returns basic folder information including ID, type, and name for each matching folder.\n\nThe search performs a keyword-based match against folder names and can be limited to search within a specific ancestor folder. This is particularly useful for navigating complex folder structures, finding project folders, or locating organizational folders by name patterns.\n\nThe tool uses Box's search API with folder type filtering, ensuring only folders (not files) are returned in results. Search results are limited to preserve performance and can be paginated using the limit parameter.\n\n**Date Range Filters:**\nDate range filters properties of the input schema: created_at_range, updated_at_range, deleted_at_range. Use comma-separated RFC3339 timestamps.\n\n**Format:** \"start_date,end_date\" where:\n- Omit start date to search all folders before end date: \",2023-12-31T23:59:59Z\"\n- Omit end date to search from start date to now: \"2023-01-01T00:00:00Z,\"\n- Both dates for specific range: \"2023-01-01T00:00:00Z,2023-12-31T23:59:59Z\"\n\n**Current Time Reference:** 2026-02-02T12:23:24.236Z\n\n<examples>\nBasic folder search:\n<input>\n{\n  \"folder_name\": \"Project Documents\",\n  \"limit\": 30\n}\n</input>\n\nSearch within specific parent folder:\n<input>\n{\n  \"folder_name\": \"2024 Reports\", \n  \"ancestor_folder_id\": \"123456789\",\n  \"limit\": 50\n}\n</input>\n\nSearch for folders with partial name match:\n<input>\n{\n  \"folder_name\": \"Finance\",\n  \"limit\": 20\n}\n</input>\n\nLimited results search:\n<input>\n{\n  \"folder_name\": \"Marketing Campaign\",\n  \"ancestor_folder_id\": \"987654321\",\n  \"limit\": 10\n}\n</input>\n\nSearch in root directory and limit results by date:\n<input>\n{\n  \"folder_name\": \"Shared Resources\",\n  \"created_at_range\": \"2023-01-01T00:00:00Z,2023-12-31T23:59:59Z\"\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "folder_name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "ancestor_folder_id": {
+                "type": "string"
+              },
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 200,
+                "default": 30
+              },
+              "created_at_range": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "updated_at_range": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "deleted_at_range": {
+                "type": "string",
+                "maxLength": 100
+              }
+            },
+            "required": [
+              "folder_name"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "update_file_properties",
+          "description": "Updates file metadata: name, description, tags, and collections.\n\n**Updatable fields:**\n- `name` - File name with extension (max 255 chars). **IMPORTANT: Always preserve the original file extension unless explicitly instructed to change it.**\n- `description` - File description (max 256 chars)\n- `tags` - Tags array (max 100)\n- `collections` - Collections array with format [{\"id\": \"collection_id\"}]\n\n<examples>\nRename file:\n<input>{\"file_id\": \"123456789\", \"name\": \"Q1-Report-2024.pdf\"}</input>\n\nUpdate description and tags:\n<input>\n{\n  \"file_id\": \"987654321\",\n  \"description\": \"Q1 2024 financial report\",\n  \"tags\": [\"finance\", \"2024\"]\n}\n</input>\n\nMultiple updates:\n<input>\n{\n  \"file_id\": \"444555666\",\n  \"name\": \"Updated-Doc.docx\",\n  \"tags\": [\"project\"],\n  \"collections\": [{\"id\": \"98765\"}]\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "file_id": {
+                "type": "string",
+                "maxLength": 255,
+                "pattern": "^\\d+$",
+                "description": "The unique identifier of the file to update"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255,
+                "description": "New name for the file (including extension)"
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 256,
+                "description": "New description for the file"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 100,
+                "description": "Array of tags to apply to the file"
+              },
+              "collections": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Array of collection objects with IDs to add the file to"
+              }
+            },
+            "required": [
+              "file_id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "update_folder_properties",
+          "description": "Updates folder metadata: name, description, tags, and collections.\n\n**Updatable fields:**\n- `name` - Folder name (max 255 chars, no / \\ . .. or leading/trailing spaces)\n- `description` - Folder description (max 256 chars)\n- `tags` - Tags array (max 100)\n- `collections` - Collections array with format [{\"id\": \"collection_id\"}]\n\n<examples>\nRename folder:\n<input>{\"folder_id\": \"123456789\", \"name\": \"Q1 2024 Reports\"}</input>\n\nUpdate description and tags:\n<input>\n{\n  \"folder_id\": \"987654321\",\n  \"description\": \"Q1 2024 financial reports\",\n  \"tags\": [\"finance\", \"2024\"]\n}\n</input>\n\nMultiple updates:\n<input>\n{\n  \"folder_id\": \"444555666\",\n  \"name\": \"Project Folder\",\n  \"tags\": [\"project\"],\n  \"collections\": [{\"id\": \"98765\"}]\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "folder_id": {
+                "type": "string",
+                "maxLength": 255,
+                "pattern": "^\\d+$",
+                "description": "The unique identifier of the folder to update"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255,
+                "description": "New name for the folder"
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 256,
+                "description": "New description for the folder"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 100,
+                "description": "Array of tags to apply to the folder"
+              },
+              "collections": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Array of collection objects with IDs to add the folder to"
+              }
+            },
+            "required": [
+              "folder_id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "update_hub",
+          "description": "Updates the title or description of a specific hub. This tool allows you to modify hub settings including title and description to keep hub information current and relevant.\n\nYou can update one or more properties of a hub by providing the hub ID and the fields you want to change. Only the fields you specify will be updated; others remain unchanged.\n\n<examples>\nUpdate hub title:\n<input>\n{\n  \"hub_id\": \"12345\",\n  \"title\": \"Updated Marketing Team Hub\"\n}\n</input>\n\nUpdate both title and description:\n<input>\n{\n  \"hub_id\": \"12345\",\n  \"title\": \"Q4 Planning Hub\",\n  \"description\": \"Collaborative workspace for Q4 strategic planning and resource coordination\"\n}\n</input>\n\nUpdate only description:\n<input>\n{\n  \"hub_id\": \"67890\",\n  \"description\": \"Updated project description with new requirements and objectives\"\n}\n</input>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "hub_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256,
+                "pattern": "^\\d+$",
+                "description": "The unique numeric identifier of the hub to update"
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 50,
+                "description": "New title for the hub"
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 1000,
+                "description": "New description for the hub"
+              }
+            },
+            "required": [
+              "hub_id"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "upload_file",
+          "description": "Uploads a new file to Box. This tool creates a new file in Box using the provided text content. The file name including the extension must be provided and the extension must match the file content. A parent folder ID can optionally be provided to determine where the new file should be created. The metadata details of the newly uploaded file are returned in response. If a file already exists with the same name, the tool will return an error.\n\n**Key Features:**\n- File creation with text content\n- Supported file extensions: txt, md, html, svg, xml, csv, json, js, ts, py, sh\n- If the file extension is invalid, a .txt file will be created\n\n<examples>\nUpload a file to Box:\n{\n  \"file_name\": \"example.md\",\n  \"file_content\": \"#This is my example markdown file\",\n  \"parent_folder_id\": \"0\",\n}\n<output>\n{\n  \"content\": [\n    {\n      \"type\": \"text\",\n      \"text\": \"{\"file_link\": \"https://example.app.box.com/file/123456789\", \"file_id\": \"123456789\", \"file_name\": \"example.md\", \"size\": 100, \"created_at\": \"2025-01-01T00:00:00Z\"}\"\n    }\n  ]\n}\n</output>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "file_name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "file_content": {
+                "type": "string",
+                "minLength": 1
+              },
+              "parent_folder_id": {
+                "type": "string",
+                "default": "0"
+              }
+            },
+            "required": [
+              "file_name",
+              "file_content"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "upload_file_version",
+          "description": "Upload new file version by providing the entire file contents to Box. This tool updates an existing file's version in Box using the given file ID and content. The file ID must correspond to an existing file; otherwise, an error will be returned. Upon success, the metadata details of the updated file version are returned in the response.\n\n**Key Feature:**\n- Update file version with text content\n\n<examples>\nupload a new file version in Box:\n{\n  \"file_id\": \"123\",\n  \"file_content\": \"#This is my example markdown file\",\n}\n<output>\n{\n  \"content\": [\n    {\n      \"type\": \"text\",\n      \"text\": \"{\"file_id\": \"123\", \"file_name\": \"example.md\", \"size\": 100, \"created_at\": \"2025-01-01T00:00:00Z\"}\"\n    }\n  ]\n}\n</output>\n</examples>",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "file_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "file_content": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "file_id",
+              "file_content"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "who_am_i",
+          "description": "Returns detailed information about the currently authenticated Box user. This tool provides comprehensive user profile data including basic identification, contact information, role details, and account settings. No input parameters are required as it retrieves information for the authenticated user making the request.\n\nThis tool is essential for understanding the current user context, verifying authentication status, and obtaining user-specific information for personalization or access control purposes. It's particularly useful when building user-aware applications or when you need to identify the current user's permissions and organizational role.\n\nThe response includes core user attributes such as ID, name, email, login, role, job title, and additional account details like space usage, language preferences, and timezone settings.\n\n<examples>\nGet current user information:\n<input>\n{}\n</input>\n</examples>",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {}
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "c482df70-eab1-4eec-88a5-9e81651a9c5f",
+      "name": "Slack",
+      "tools": [
+        {
+          "name": "slack_create_canvas",
+          "description": "Creates a Canvas, which is a Slack-native document. Format all content as Markdown. You can add sections, include links, references, and any other information you deem relevant. Please return canvas link to the user along with a friendly message.\n\n## Canvas Formatting Guidelines:\n\n### Content Structure:\n- Use Markdown formatting for all content\n- Create clear sections with headers (# ## ###)\n- Use bullet points (- or *) for lists\n- Use numbered lists (1. 2. 3.) for sequential items\n- Include links using [text](url) format\n- Use **bold** and *italic* for emphasis\n\n### Supported Elements:\n- Headers (H1, H2, H3)\n- Text formatting (bold, italic, strikethrough)\n- Lists (bulleted and numbered)\n- Links and references\n- Tables (basic markdown table syntax)\n- Code blocks with syntax highlighting\n- User mentions (@username)\n- Channel mentions (#channel-name)\n\n### Best Practices:\n- Start with a clear title that describes the document purpose\n- Use descriptive section headers to organize content\n- Keep paragraphs concise and scannable\n- Include relevant links and references\n- Use consistent formatting throughout the document\n- Add context and explanations for complex topics\n\n## Parameters:\n- `title` (required): The title of the Canvas document\n- `content` (required): The Markdown-formatted content for the Canvas\n\n## Error Codes:\n- `not_supported_free_team`: Canvas creation not supported on free teams\n- `user_not_found`: The specified user ID is invalid or not found\n- `canvas_disabled_user_team`: Canvas feature is not enabled for this team\n- `invalid_rich_text_content`: Content format is invalid\n- `permission_denied`: User lacks permission to create Canvas documents\n\n## When to Use\n- User requests creating a document, report, or structured content\n- User wants to document meeting notes, project specs, or knowledge articles\n- User asks to create a collaborative document that others can edit\n- User needs to organize and format substantial content with headers, lists, and links\n- User wants to create a persistent document for team reference\n\n## When NOT to Use\n- User only wants to send a simple message (use `slack_send_message` instead)\n- User wants to read or view an existing Canvas (use `slack_read_canvas` instead)\n- User is asking questions about Canvas features without wanting to create one\n- User wants to share brief information that doesn't need document structure\n- User just wants to search for existing documents\n\n\n\n## Examples:\n✅ Use:\n- Create meeting notes with agenda and action items\n- Document project specifications and requirements\n- Create knowledge base articles with structured content\n- Generate reports with data and analysis\n\nWhat NOT to Expect:\n❌ Does NOT: edit existing canvases, set user-specific permissions\n\n",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Concise but descriptive name for the canvas"
+              },
+              "content": {
+                "type": "string",
+                "description": "The content of the canvas. Please carefully consider the following instructions:\n\n1. Formatting:\n   - Format all content as Markdown.\n   - Do not duplicate the title of the canvas in this content section.\n   - When creating a table make sure to escape \"|\" in the content by using \"\\|\"\n   - Headers: MUST never exceed a depth of 3 (e.g., ###). Truncate any headers deeper than 3 (e.g., #### becomes ###).\n   - Hyperlinks: MUST use only full, valid HTTP links. Do not use relative links.\n\n\n2. Writing Style:\n   - Write ALL content in full, proper paragraphs, similar to an essay or article.\n   - Use natural transitions and connecting phrases (e.g., \"First,\" \"Additionally,\" \"Furthermore,\" \"Moreover,\" \"Finally\") when presenting multiple items or examples within a paragraph.\n   - Break up the content into logical sections, where each section is preceded by a Markdown-formatted header.\n   - Only use bullet points or numbered lists if explicitly requested by a human.\n\n3. Citations:\n   - Cite all claims using numbered references formatted as footnotes.\n   - Use [1] for the first source, [2] for the second, etc.\n   - Format citations in text as: \"quote/claim [1]\"\n   - List all sources at the end of the document, formatted as Markdown links.\n   - Separate each source with two newlines.\n   - Format source links as Markdown: [link text](url). Example: [Slack Canvas Features](https://slack.com/features/canvas)\n\nHere's an example of proper formatting:\n\n<example>\n# Slack canvas user research\nSlack Canvases have revolutionized team collaboration [1]. Studies show that teams using Canvases experience a 25% increase in productivity [2]. Moreover, 80% of users report improved information sharing within their organizations [2].\n\nSources:\n\n[1] [Slack Canvas Features](https://slack.com/features/canvas)\n\n[2] [Team Collaboration Study](https://example.com/collaboration-study)\n\n</example>\n"
+              }
+            }
+          }
+        },
+        {
+          "name": "slack_read_canvas",
+          "description": "Retrieves the markdown content of a Slack Canvas document along with its section ID mapping. This tool is read-only and does NOT modify or update the Canvas.\n\n## When to Use\n- User wants to read or review the content of an existing Canvas\n- User asks to see what's in a specific Canvas document\n- User needs to reference or quote content from a Canvas\n- User wants to summarize or analyze Canvas content\n- You need to understand Canvas content before making updates\n\n## When NOT to Use\n- User wants to create a new Canvas (use `slack_create_canvas` instead)\n- User is searching for Canvases by name or content (use `slack_search_public` with appropriate filters)\n- User wants to share or send Canvas content to someone (read first, then use `slack_send_message`)\n- User doesn't have the Canvas ID (search for it first using search tools)\n\n\n\n## Parameters\n- `canvas_id` (required): The Canvas document ID (e.g., F08Q5D7RNUA)\n\n## Error Handling\n- Returns error if Canvas ID is invalid or not found\n- Returns error if user doesn't have permission to view the Canvas\n- Returns error if Canvas is deleted or inaccessible\n\nWhat NOT to Expect:\n❌ Does not return Edit history or version timeline, comments and annotations, viewer/editor lists, permission settings\n\n",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "canvas_id": {
+                "type": "string",
+                "description": "The id of the canvas"
+              }
+            }
+          }
+        },
+        {
+          "name": "slack_read_channel",
+          "description": "Reads messages from a Slack channel in reverse chronological order (newest to oldest).\n\nThis tool retrieves message history from any Slack channel the user has access to. It does NOT send messages, search across channels, or modify any data - it only reads existing messages from a single specified channel.\nTo read replies of a message use slack_read_thread by passing message_ts.\n\nArgs:\n    channel_id (str): The ID of the Slack channel to read messages from (e.g., 'C1234567890', 'D1234567890' for DMs, 'G1234567890' for groups)\n    cursor (Optional[str]): Pagination cursor for fetching the next page of results. Use the 'next_cursor' value returned in previous responses\n    limit (Optional[int]): Number of messages to return per page. Default: 100, min: 1, max: 100\n    oldest (Optional[str]): Only messages after this Unix timestamp (inclusive) (e.g., '1234567890.123456')\n    latest (Optional[str]): Only messages before this Unix timestamp (inclusive) (e.g., '1234567890.123456')\n    response_format (Optional['detailed' | 'concise']): Level of detail in response. Default: 'detailed'\n\nReturns:\n    str: Messages formatted based on response_format parameter\n\n    For 'detailed' format, returns comprehensive message information:\n\n    === Message from Jane Doe (U123456789) at 2024-01-15 10:30:45 UTC ===\n    Message TS: 1705316445.123456\n    Hey team, how's the project going?\n\n    🧵 Thread: 3 replies (latest: 2024-01-15 11:45:22 UTC)\n    ⚛️ Reactions: thumbsup (2), eyes (1)\n    📎 Files: design-mockup.png\n\n    === Message from John Smith (U987654321) at 2024-01-15 10:32:10 UTC ===\n    Message TS: 1705316530.789012\n    Looking good! Just pushed the latest updates.\n\n    --- PAGINATION INFO ---\n    There are more messages available. To view the next page, use cursor: \\\"dGVhbTpDMDYxRkE1UEI=\\\"\n\n    Use of 'concise' response_format, returns simplified message list:\n\n    Jane Doe: Hey team, how's the project going? [10:30 AM]\n    John Smith: Looking good! Just pushed the latest updates. [10:32 AM]\n\nExamples:\n    - Use when: \\\"Get messages from yesterday in CABC456789\\\" -> slack_read_channel(channel_id=\\\"CABC456789\\\", oldest=\\\"1234567890\\\", latest=\\\"1234654290\\\")\n    - Use when: \\\"Get the latest messages in #general\\\" (get channel ID first using slack_search_channels, then use this tool)\n    - Use when: \\\"Summarize the last 15 messages from G123456ABC\\\" -> slack_read_channel(channel_id=\\\"G123456ABC\\\", limit=15)\n    - Don't use when: Searching for specific content across channels (use slack_search instead)\n    - Don't use when: You only have a channel name but no ID (use slack_search with \\\"in:#channel-name\\\" first, then use this tool)\n    - Don't use when: Reading a specific thread (use slack_read_thread with channel_id and thread_ts instead)\n\nError Handling:\n    - Returns Slack API error messages if the request fails (e.g., 'channel_not_found', 'not_in_channel', 'invalid_cursor', 'invalid_ts_latest', 'invalid_ts_oldest')\n\t- If 'channel_not_found' error is returned, try to use slack_search_channels to get the channel ID first, then use this tool\n    - Returns empty result with message if no messages found in the specified time range\n    - Returns generic error message for unexpected failures\",\n\nWhat NOT to Expect:\n❌ Does NOT return: edit history of messages, deleted messages\n❌ Does NOT include: full thread contents (only parent message - use slack_read_thread)\n",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "channel_id": {
+                "type": "string",
+                "description": "ID of the Channel, private group, or IM channel to fetch history for"
+              },
+              "limit": {
+                "type": "integer",
+                "description": "Number of messages to return, between 1 and 1000. Default value is 100."
+              },
+              "cursor": {
+                "type": "string",
+                "description": "Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request"
+              },
+              "latest": {
+                "type": "string",
+                "description": "End of time range of messages to include in results (timestamp)"
+              },
+              "oldest": {
+                "type": "string",
+                "description": "Start of time range of messages to include in results (timestamp)"
+              },
+              "response_format": {
+                "type": "string",
+                "description": "Level of detail (default: 'detailed'). Options: 'detailed', 'concise'"
+              }
+            }
+          }
+        },
+        {
+          "name": "slack_read_thread",
+          "description": "Fetches messages from a specific Slack thread conversation.\n\nThis tool retrieves the complete conversation from a thread, including the parent message and all replies. It does NOT create new threads, send replies, or search for threads - it only reads existing thread messages.\n\nArgs:\n    channel_id (str): The ID of the Slack channel containing the thread (e.g., 'C1234567890')\n    message_ts (str): The timestamp ID of the thread parent message (e.g., '1234567890.123456')\n    cursor (Optional[str]): Pagination cursor for fetching the next page of results\n    limit (Optional[int]): Number of messages to return. Default: 100, min: 1, max: 100\n    oldest (Optional[str]): Only messages after this Unix timestamp (inclusive)\n    latest (Optional[str]): Only messages before this Unix timestamp (inclusive)\n    response_format (Optional['detailed' | 'concise']): Level of detail in response. Default: 'detailed'\n\nReturns:\n    str: Thread messages\n\n    === THREAD PARENT MESSAGE ===\n    From: Jane Doe (U123456789)\n    Time: 2024-01-15 10:30:45 UTC\n    Message TS: 1705316445.123456\n    Text: Has anyone seen the bug in the login flow?\n    Reactions: eyes (3), bug (2)\n\n    === THREAD REPLIES (5 total) ===\n\n    --- Reply 1 of 5 ---\n    From: John Smith (U987654321)\n    Time: 2024-01-15 10:35:22 UTC\n    Message TS: 1705316722.234567\n    Text: Yes, I'm investigating it now. Looks like it's related to the OAuth callback.\n\n    --- Reply 2 of 5 ---\n    From: Alice Wong (U456789123)\n    Time: 2024-01-15 10:42:18 UTC\n    Message TS: 1705317138.345678\n    Text: I think I found the issue - PR coming soon\n    Files: fix-oauth-bug.patch\n\n    --- PAGINATION INFO ---\n    There are more messages in this thread. To view the next page, use cursor: \\\"dGVhbTpDMDYxRkE1UEI=\\\"\n\n    Use of 'concise' response_format, returns simplified thread list:\n\n    THREAD: Has anyone seen the bug in the login flow? [Jane Doe]\n\n    > John Smith: Yes, I'm investigating it now. Looks like it's related to the OAuth callback.\n    > Alice Wong: I think I found the issue - PR coming soon\n    > Jane Doe: Thanks! Let me know when the PR is ready for review\n\nExamples:\n    - Dont use when: Summarizing threaded discussion about a specific issue -> use slack_search, find a channel_id and message_ts then, use this tool as slack_read_thread(channel_id=\\\"C123\\\", message_ts=\\\"1234567890.123456\\\")\n    - Don't use when: Searching for threads by content (use slack_search with \\\"is:thread\\\" instead, then use this tool)\n    - Don't use when: You don't have the message_ts (use slack_search or slack_read_channel first, then use this tool)\n    - Don't use when: Sending a reply to the thread (use slack_send_message with message_ts)\n\n\nError Handling:\n    - Returns Slack API error messages if the request fails (e.g., 'thread_not_found', 'channel_not_found', 'not_in_channel', 'invalid_cursor', 'message_not_found')\n    - If 'thread_not_found' error is returned, try to use slack_search to get the channel_id and message_ts first, then use this tool\n\t- Returns generic error message for unexpected failures\",\n\nWhat NOT to Expect:\n❌ Does NOT return: edit history of messages, deleted messages\n❌ Does NOT include: all channel messages (use slack_read_channel instead)\n",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "channel_id": {
+                "type": "string",
+                "description": "Channel, private group, or IM channel to fetch thread replies for"
+              },
+              "message_ts": {
+                "type": "string",
+                "description": "Timestamp of the parent message to fetch replies for"
+              },
+              "limit": {
+                "type": "integer",
+                "description": "Number of messages to return, between 1 and 1000. Default value is 100."
+              },
+              "cursor": {
+                "type": "string",
+                "description": "Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request"
+              },
+              "latest": {
+                "type": "string",
+                "description": "End of time range of messages to include in results (timestamp)"
+              },
+              "oldest": {
+                "type": "string",
+                "description": "Start of time range of messages to include in results (timestamp)"
+              },
+              "response_format": {
+                "type": "string",
+                "description": "Level of detail (default: 'detailed'). Options: 'detailed', 'concise'"
+              }
+            }
+          }
+        },
+        {
+          "name": "slack_read_user_profile",
+          "description": "Retrieves detailed profile information for a Slack user.\n\nThis tool fetches comprehensive user profile data including contact information, status, timezone, organization name, and role information. It does NOT modify user profiles or send messages - it only reads existing user information.\n\nArgs:\n\tuser_id (Optional[str]): Slack user ID to look up (e.g., 'U0ABC12345'). Defaults to current user if not provided\n\tinclude_locale (Optional[bool]): Include user's locale information. Default: false\n\tresponse_format (Optional['detailed' | 'concise']): Level of detail in response. Default: 'detailed'\n\nReturns:\n\tstr: User profile information formatted based on response_format parameter\n\n\tFor 'detailed' format, returns comprehensive profile:\n\n\tUser ID: U123456789\n\tUsername: @jane.doe\n\tDisplay Name: Jane Doe\n\tReal Name: Jane Elizabeth Doe\n\tTitle: Senior Software Engineer\n\tEmail: jane.doe@company.com\n\tOrganization Name: Acme Corp Inc.\n\tPhone: +1-555-123-4567\n\tStatus: 🏠 Working from home\n\tTime Zone: America/New_York\n\tAdmin: No\n\tOwner: No\n\tBot: No\n\tRestricted: No\n\n\tFor 'concise' format, returns essential info only:\n\n\t@jane.doe (Jane Doe)\n\tAcme Corp Inc.\n\tSenior Software Engineer\n\tjane.doe@company.com\n\tStatus: 🏠 Working from home\n\nExamples:\n\t- Use when: \\\"Get my own profile info\\\" -> slack_user_profile()\n\t- Use when: \\\"Look up Jane's email and timezone\\\" -> slack_user_profile(userId='U123456789')\n\t- Use when: \\\"Check if user is an admin\\\" -> slack_user_profile(userId='U123456789', response_format='detailed')\n\t- Use when: \\\"Quick check of user's basic info\\\" -> slack_user_profile(userId='U123', response_format='concise')\n\t- Don't use when: Finding a user by name (use slack_search_users first)\n\t- Don't use when: Searching for multiple users (use slack_search)\n\nError Handling:\n\t- Returns Slack API error messages if the request fails (e.g., 'user_not_found', 'user_not_visible', 'missing_scope')\n\t- Returns \\\"Couldn't get the current user ID.\\\" if auth fails when no userId provided\n\t- Returns generic error message for unexpected failures\n\nWhat NOT to Expect:\n❌ Does NOT return: user's direct message history, calendar integration data\n❌ Cannot retrieve: custom emoji created by user, detailed activity logs\n\n",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "Slack user ID to look up (e.g., 'U0ABC12345'). Defaults to current user if not provided"
+              },
+              "include_locale": {
+                "type": "boolean",
+                "description": "Include user's locale information. Default: false"
+              },
+              "response_format": {
+                "type": "string",
+                "description": "Level of detail in response. 'detailed' includes all fields, 'concise' shows essential info. Default: detailed'"
+              }
+            }
+          }
+        },
+        {
+          "name": "slack_search_channels",
+          "description": "Use this tool to find Slack channels by name or description when you need to identify specific channels before performing other operations.\n\n## When to Use\n- User asks to find channels with specific names or topics\n- User wants to see what channels exist matching certain criteria\n- You need a channel ID for another operation but only have partial name information\n- User asks \"what channels do we have for [topic]?\"\n- Before using other channel-specific tools when you don't have the exact channel ID\n\n## When NOT to Use\n- User already provided a specific channel ID (use the target tool directly)\n- Searching for message content within channels (use slack_search_public instead)\n- User wants to read messages from a known channel ID (use slack_read_channel)\n\n## Key Parameters\n\n### query (required)\n- Use simple, descriptive terms that would appear in channel names or descriptions\n- Channel names are typically lowercase with hyphens (e.g., \"project-alpha\", \"team-engineering\")\n- Search terms are matched against both channel names and descriptions\n- Examples: \"engineering\", \"project alpha\", \"marketing\", \"dev\"\n\n### channel_types (optional)\n- Default: \"public_channel\" (searches public channels only)\n- Use \"public_channel,private_channel\" to search both public and private channels\n- Only use private channel search when user explicitly requests it or context requires it\n\n### limit (optional)\n- Default: 20 channels\n- Keep default for comprehensive searches\n\n### include_archived (optional)\n- Default: false\n- Set to true to include archived channels in the search results\n\n## Response Handling\n- Present results in a user-friendly format, not raw API output\n- Include channel names, purposes/topics, and member counts when available\n- If no results found, suggest alternative search terms or broader queries\n- For large result sets, mention that there are more channels and offer to refine the search\n\n## Example Usage Patterns\n\n### Finding project channels\n```\nQuery: \"project\"\nUse when: User asks \"what project channels do we have?\"\n```\n\n### Finding team channels\n```\nQuery: \"team engineering\" or just \"engineering\"\nUse when: User wants to find engineering-related channels\n```\n\n### Finding channels for specific topics\n```\nQuery: \"marketing campaign\"\nUse when: User asks about marketing or campaign-related channels\n```\n\n## Common Mistakes to Avoid\n- Don't use this tool to search for messages or content within channels\n- Don't assume exact channel names - users often use partial or descriptive terms\n- Don't search private channels unless explicitly requested or necessary\n- Don't use overly specific queries that might miss relevant channels\n\n## Integration with Other Tools\nAfter finding channels with this tool, commonly follow up with:\n- `slack_read_channel` to read recent messages\n- `slack_send_message` to send messages to identified channels\n\n## Error Handling\n- If search returns no results, try broader terms\n- If user provides a specific channel name that doesn't match, suggest they might be thinking of a similar channel from the results\n- Handle API errors gracefully and suggest alternative approaches\n\n==Example output==\n\n# Search Results for: incident\n## Channels (2 results)\n### Result 1 of 2\nName: #ce-incidents\nCreator: Saurabh Sahni (<@U061H1BMX)\nCreated: 2023-11-07 12:32:04 UTC\nPermalink: [link](https://test.slack.com/archives/C015BDPTE66)\nIs Archived: false\n\n---\n\n### Result 2 of 2\nName: #tickets\nCreator: Saurabh Sahni (<@U061H1BMX)\nCreated: 2015-12-09 16:46:59 UTC\nTopic: For new tickets and incident reports\nPurpose: Reports for new tickets\nPermalink: [link](https://test.slack.com/archives/C061GA5JL)\nIs Archived: false\n\nWhat NOT to Expect:\n❌ Does NOT return: member lists, recent messages, message counts, channel activity metrics\n❌ Cannot filter by: member count, creation date range, last activity date\n❌ Does NOT show: private channels unless explicitly searched with channel_types parameter\n\n",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "Search query for finding channels"
+              },
+              "channel_types": {
+                "type": "string",
+                "description": "Comma-separated list of channel types to include in the search. Defaults to public_channel. Mix and match channel types by providing a comma-separated list of any combination of public_channel, private_channel. Example: public_channel,private_channel; Second Example: public_channel"
+              },
+              "cursor": {
+                "type": "string",
+                "description": "The cursor returned by the API. Leave this blank for the first request, and use this to get the next page of results"
+              },
+              "limit": {
+                "type": "integer",
+                "description": "Number of results to return, up to a max of 20. Defaults to 20."
+              },
+              "response_format": {
+                "type": "string",
+                "description": "Level of detail (default: 'detailed'). Options: 'detailed', 'concise'"
+              },
+              "include_archived": {
+                "type": "boolean",
+                "description": "Include archived channels in the search results"
+              }
+            }
+          }
+        },
+        {
+          "name": "slack_search_public",
+          "description": "Searches for messages, files in public Slack channels ONLY. Current logged in user's user_id is U084ZF194MQ.\n\n`slack_search_public` does NOT generally require user consent for use, whereas you should request and wait for user consent to use `slack_search_public_and_private`.\n\n---\n`query` parameter should include a keyword search or a natural language question and any search modifiers.\n\nSearch modifiers:\n\nLocation filters:\n  in:channel-name     Search in specific channel (no # prefix)\n  in:<#C123456>       Search in channel by ID\n  -in:channel         Exclude channel\n  in:<@U123456>       In DMs with a user by ID\n  in:@<username>      In DMs with a user by username (as found in slack_user_profile tool)\n  with:<@U123456>     Search threads/DMs with user\n\nUser filters:\n  from:<@U123456>   Messages from user with ID U123456 - angle brackets are literal (e.g., from:<@U123456>)\n  from:username     Messages from user with Slack username (e.g., from:janedoe) (as found in slack_user_profile tool)\n  to:<@U123456>     Messages to user with ID U123456 - angle brackets are literal (e.g., to:<@U123456>)\n  to:me             Messages sent directly to you\n  creator:@user     Canvases created by user\n\nContent filters:\n  is:thread         Only threaded messages\n  is:saved          Your saved items\n  has:pin           Pinned messages\n  has:star          Your starred items\n  has:link          Messages with links\n  has:file          Messages with attachments\n  has::emoji:       Messages with specific reaction\n  hasmy::emoji:     Messages you reacted to\n\nDate filters:\n  before:YYYY-MM-DD   Before date\n  after:YYYY-MM-DD    After date\n  on:YYYY-MM-DD       On specific date\n  during:month        During month\n  during:year         During year\n\nFile Search Capabilities\n\nWhen searching for files, use the `content_types=\"files\"` parameter with these specialized filters:\n\nFile Type Filters\nNarrow results by file category using `type:` modifiers: images, documents, pdfs, spreadsheets, presentations, canvases, lists, emails, audio, videos\n\nExample: `content_types=\"files\" type:spreadsheets budget after:2025-01-01`\n\n### File Search Modifiers\nAll standard search modifiers work with file searches:\n- `from:<@User Name>` or from:<@User ID> - Files uploaded by specific user\n- `in:channel-name` - Files shared in specific channel\n- `before:YYYY-MM-DD` / `after:YYYY-MM-DD` - Date range filtering\n- `with:<@User Name>` - Files in DMs/threads with user\n\n### File Search Examples\n`content_types=\"files\" type:spreadsheets budget after:2025-01-01`\n`content_types=\"files\" type:documents from:<@Jane Doe> after:2025-01-01`\n`content_types=\"files\" type:canvases in:devel-engineering`\n\n\nOptions for querying:\n\n1. Natural Language Question\n   Triggered when the query is written in natural language (e.g., starts with \"what\", \"how\", \"why\", ends with a question mark).\n- Finds topically related content that would help to answer the question even without exact keywords\n- Great for fuzzy, conceptual knowledge retrieval\nExamples:\n\"Where is the team lunch this Friday?\"\n\"When is the deadline for project atlas?\"\n\"What is the status of project koho?\"\n⚠️ Semantic search may return broadly related results.\nCombine with filters for precision (e.g., `from:<@Jane Doe> What are our usage stats?`)\n   ✅ Searching using natural language questions is available for this user.\n\n2. Keyword Search\n   Finds exact keyword matches, great for specific, targeted information.\n   Rules:\n   - Space-separated terms = implicit AND\n   - Boolean operators (AND, OR, NOT) are NOT supported\n   - Parentheses grouping does NOT work\n\n   Text matching:\n   \"exact phrase\"      Search for exact phrases in quotes\n   -word               Exclude results containing word\n   *                   Wildcard (min 3 chars, e.g., rep* finds reply, report)\n\n   Examples:\n     \"project koho status\"\n     \"from:<@Jane Doe> in:dev bug report\"\n\n# Digging deeper into the results\n- Use the `slack_read_thread` tool to read messages from a thread\n- Use the `slack_read_canvas` tool to read canvas file content if file type is canvas\n- Use the `slack_read_channel` tool to surrounding messages in the channel using a range of dates around the ts of a specific message that is relevant\n\nRecommended Search Strategy:\n- Break down the question into multiple small searches\n- Build context with a few searches, then refine with more targeted ones\n- Choose the right algorithm: semantic for fuzzy, keyword for exact\n- Use modifiers for channels, users, content types, and dates\n- If one algorithm fails, switch and adjust query\n- Multiple simpler keyword searches are often better than one complex one\n- If 0 results, remove filters and broaden terms\n\n---\n\nArgs:\n  query (str)                   Search query (e.g., 'bug report', 'from:<@Jane Doe> in:dev')\n  after (Optional[str])         Only messages after this Unix timestamp (inclusive)\n  before (Optional[str])        Only messages before this Unix timestamp (inclusive)\n  cursor (Optional[str])        Pagination cursor (from previous response)\n  include_bots (Optional[bool])  Include bot messages (default: false)\n  limit (Optional[int])         Number of results (default: 20, min: 1, max: 20)\n  sort (Optional['score'|'timestamp'])  Sort by relevance or date (default: 'score')\n  sort_dir (Optional['asc'|'desc'])      Sort direction (default: 'desc')\n  response_format (Optional['detailed' | 'concise']) → Level of detail. Default: 'detailed'\n\n---\n\nReturns:\n  results: Search results formatted based on response_format parameter\n    For 'detailed' format, returns comprehensive result information:\n\n    Search results for: \"bug report\"\n\n    ## Messages (2 results) ===\n    ### Result 1 of 2\n    Channel: #incd-1196 (C013DSP9CRZ)\n    From: Saurabh (U028H1BMX)\n    Time: 2025-08-22 13:34:19 UTC\n    Message_ts: 1755894859.713009\n    Text: Search API performance issue resolved.\n\n    Context before:\n    - From: Sam (U061H1BEW)\n      Message_ts: 1755894797.217019\n      The elevated performance issue with the Search API has been resolved. All services stable.\n\n    Context after:\n    - From: John (U065H1BNS)\n      TS: 1755894871.084009\n      Text: Incident summary - Root cause: high CPU on query service. Actions: scaled instances, optimized queries.\n\n    ### Result 2 of 2\n    Channel: #ce-incidents (C015BDPTE66)\n    From: Saurabh (U028H1BMX)\n    Time: 2025-08-12 14:26:21 UTC\n    TS: 1755033981.976069\n    Text: Recent Incidents Summary - August 2025: 5 incidents resolved.\n\n\tFor 'concise' format, returns simplified results:\n  Search results for: \"bug report\"\n\t## Messages (2 results)\n\t1. #dev - Jane Doe: Found a critical bug in the login flow... [Jan 15]\n\t2. #dev - The bug report for issue #123 is ready... [Jan 14]\n\n    --- Message 1 of 2 ---\n    Channel: #incd-1196 (C013DSP9CRZ)\n    From: Saurabh (U028H1BMX)\n    Time: 2025-08-22 13:34:19 UTC\n    Message_ts: 1755894859.713009\n    Text: Search API performance issue resolved.\n\n  pagination_info:\n    For the next page of results use cursor `dGVhbTpDMDYxRkE1UEI=`\n\n# Search Results Formatting:\n- User Mentions:\n    - Strings like <@U123456789> or <@W123456789> represent a Slack user.\n    - <@U077KSEPJ|Sam> represents a Slack user with the name \"Sam\".\n    - When rendering outside of Slack client, use names like \"Sam\" instead of <@U077KSEPJ> or U077KSEPJ. Use slack_user_profile tool to get the name of a user.\n    - If rendering in Slack client, you can format bare ID (e.g. U123456789) as <@U123456789>.\n\n- Channel Mentions:\n    - Strings like <#C123456789> or <#D123456789> represent Slack channels.\n    - If a bare ID appears (e.g. C123456789), format it as <#C123456789>.\n\n---\n\nExamples:\n  ✅ Use\n    slack_search_public_and_private(query=\"What's our holiday schedule? in:#general\")\n    slack_search_public_and_private(query=\"bug report after:2024-01-08\", sort=\"timestamp\")\n    slack_search_public_and_private(query=\"security has:pin\")\n    slack_search_public_and_private(query=\"OAuth in:dev\")\n\n---\n\nError Handling:\n  - \"No messages found matching query\" → empty results\n  - \"Please provide a search query\" → no query given\n  - Slack API error messages → request failure\n  - Generic error message → unexpected failure\n\nWhat NOT to Expect:\n❌ Does NOT return: message edit history, reaction user lists, full file contents\n❌ Does NOT include: ephemeral messages, deleted content\n",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "Search query (e.g., 'bug report', 'from:<@Jane> in:dev')"
+              },
+              "content_types": {
+                "type": "string",
+                "description": "Content types to include, a comma-separated list of any combination of messages, files. Here's more info about the content types: messages: Slack messages from public channels accessible to the acting user\nfiles: Files of all types accessible to the acting user\n"
+              },
+              "context_channel_id": {
+                "type": "string",
+                "description": "Context channel ID to support boosting the search results for a channel when applicable"
+              },
+              "cursor": {
+                "type": "string",
+                "description": "The cursor returned by the API. Leave this blank for the first request, and use this to get the next page of results"
+              },
+              "limit": {
+                "type": "integer",
+                "description": "Number of results to return, up to a max of 20. Defaults to 20."
+              },
+              "after": {
+                "type": "string",
+                "description": "Only messages after this Unix timestamp (inclusive)"
+              },
+              "before": {
+                "type": "string",
+                "description": "Only messages before this Unix timestamp (inclusive)"
+              },
+              "include_bots": {
+                "type": "boolean",
+                "description": "Include bot messages (default: false)"
+              },
+              "sort": {
+                "type": "string",
+                "description": "Sort by relevance or date (default: 'score'). Options: 'score', 'timestamp'"
+              },
+              "sort_dir": {
+                "type": "string",
+                "description": "Sort direction (default: 'desc'). Options: 'asc', 'desc'"
+              },
+              "response_format": {
+                "type": "string",
+                "description": "Level of detail (default: 'detailed'). Options: 'detailed', 'concise'"
+              }
+            }
+          }
+        },
+        {
+          "name": "slack_search_public_and_private",
+          "description": "Searches for messages, files in ALL Slack channels, including public channels, private channels, DMs, and group DMs. Current logged in user's user_id is U084ZF194MQ.\n\n---\n`query` parameter should include a keyword search or a natural language question and any search modifiers.\n\nSearch modifiers:\n\nLocation filters:\n  in:channel-name     Search in specific channel (no # prefix)\n  in:<#C123456>       Search in channel by ID\n  -in:channel         Exclude channel\n  in:<@U123456>       In DMs with a user by ID\n  in:@<username>      In DMs with a user by username (as found in slack_user_profile tool)\n  with:<@U123456>     Search threads/DMs with user\n\nUser filters:\n  from:<@U123456>   Messages from user with ID U123456 - angle brackets are literal (e.g., from:<@U123456>)\n  from:username     Messages from user with Slack username (e.g., from:janedoe) (as found in slack_user_profile tool)\n  to:<@U123456>     Messages to user with ID U123456 - angle brackets are literal (e.g., to:<@U123456>)\n  to:me             Messages sent directly to you\n  creator:@user     Canvases created by user\n\nContent filters:\n  is:thread         Only threaded messages\n  is:saved          Your saved items\n  has:pin           Pinned messages\n  has:star          Your starred items\n  has:link          Messages with links\n  has:file          Messages with attachments\n  has::emoji:       Messages with specific reaction\n  hasmy::emoji:     Messages you reacted to\n\nDate filters:\n  before:YYYY-MM-DD   Before date\n  after:YYYY-MM-DD    After date\n  on:YYYY-MM-DD       On specific date\n  during:month        During month\n  during:year         During year\n\nFile Search Capabilities\n\nWhen searching for files, use the `content_types=\"files\"` parameter with these specialized filters:\n\nFile Type Filters\nNarrow results by file category using `type:` modifiers: images, documents, pdfs, spreadsheets, presentations, canvases, lists, emails, audio, videos\n\nExample: `content_types=\"files\" type:spreadsheets budget after:2025-01-01`\n\n### File Search Modifiers\nAll standard search modifiers work with file searches:\n- `from:<@User Name>` or from:<@User ID> - Files uploaded by specific user\n- `in:channel-name` - Files shared in specific channel\n- `before:YYYY-MM-DD` / `after:YYYY-MM-DD` - Date range filtering\n- `with:<@User Name>` - Files in DMs/threads with user\n\n### File Search Examples\n`content_types=\"files\" type:spreadsheets budget after:2025-01-01`\n`content_types=\"files\" type:documents from:<@Jane Doe> after:2025-01-01`\n`content_types=\"files\" type:canvases in:devel-engineering`\n\n\nOptions for querying:\n\n1. Natural Language Question\n   Triggered when the query is written in natural language (e.g., starts with \"what\", \"how\", \"why\", ends with a question mark).\n- Finds topically related content that would help to answer the question even without exact keywords\n- Great for fuzzy, conceptual knowledge retrieval\nExamples:\n\"Where is the team lunch this Friday?\"\n\"When is the deadline for project atlas?\"\n\"What is the status of project koho?\"\n⚠️ Semantic search may return broadly related results.\nCombine with filters for precision (e.g., `from:<@Jane Doe> What are our usage stats?`)\n   ✅ Searching using natural language questions is available for this user.\n\n2. Keyword Search\n   Finds exact keyword matches, great for specific, targeted information.\n   Rules:\n   - Space-separated terms = implicit AND\n   - Boolean operators (AND, OR, NOT) are NOT supported\n   - Parentheses grouping does NOT work\n\n   Text matching:\n   \"exact phrase\"      Search for exact phrases in quotes\n   -word               Exclude results containing word\n   *                   Wildcard (min 3 chars, e.g., rep* finds reply, report)\n\n   Examples:\n     \"project koho status\"\n     \"from:<@Jane Doe> in:dev bug report\"\n\n# Digging deeper into the results\n- Use the `slack_read_thread` tool to read messages from a thread\n- Use the `slack_read_canvas` tool to read canvas file content if file type is canvas\n- Use the `slack_read_channel` tool to surrounding messages in the channel using a range of dates around the ts of a specific message that is relevant\n\nRecommended Search Strategy:\n- Break down the question into multiple small searches\n- Build context with a few searches, then refine with more targeted ones\n- Choose the right algorithm: semantic for fuzzy, keyword for exact\n- Use modifiers for channels, users, content types, and dates\n- If one algorithm fails, switch and adjust query\n- Multiple simpler keyword searches are often better than one complex one\n- If 0 results, remove filters and broaden terms\n\n---\n\nArgs:\n  query (str)                   Search query (e.g., 'bug report', 'from:<@Jane Doe> in:dev')\n  after (Optional[str])         Only messages after this Unix timestamp (inclusive)\n  before (Optional[str])        Only messages before this Unix timestamp (inclusive)\n  cursor (Optional[str])        Pagination cursor (from previous response)\n  include_bots (Optional[bool])  Include bot messages (default: false)\n  limit (Optional[int])         Number of results (default: 20, min: 1, max: 20)\n  sort (Optional['score'|'timestamp'])  Sort by relevance or date (default: 'score')\n  sort_dir (Optional['asc'|'desc'])      Sort direction (default: 'desc')\n  response_format (Optional['detailed' | 'concise']) → Level of detail. Default: 'detailed'\n\n---\n\nReturns:\n  results: Search results formatted based on response_format parameter\n    For 'detailed' format, returns comprehensive result information:\n\n    Search results for: \"bug report\"\n\n    ## Messages (2 results) ===\n    ### Result 1 of 2\n    Channel: #incd-1196 (C013DSP9CRZ)\n    From: Saurabh (U028H1BMX)\n    Time: 2025-08-22 13:34:19 UTC\n    Message_ts: 1755894859.713009\n    Text: Search API performance issue resolved.\n\n    Context before:\n    - From: Sam (U061H1BEW)\n      Message_ts: 1755894797.217019\n      The elevated performance issue with the Search API has been resolved. All services stable.\n\n    Context after:\n    - From: John (U065H1BNS)\n      TS: 1755894871.084009\n      Text: Incident summary - Root cause: high CPU on query service. Actions: scaled instances, optimized queries.\n\n    ### Result 2 of 2\n    Channel: #ce-incidents (C015BDPTE66)\n    From: Saurabh (U028H1BMX)\n    Time: 2025-08-12 14:26:21 UTC\n    TS: 1755033981.976069\n    Text: Recent Incidents Summary - August 2025: 5 incidents resolved.\n\n\tFor 'concise' format, returns simplified results:\n  Search results for: \"bug report\"\n\t## Messages (2 results)\n\t1. #dev - Jane Doe: Found a critical bug in the login flow... [Jan 15]\n\t2. #dev - The bug report for issue #123 is ready... [Jan 14]\n\n    --- Message 1 of 2 ---\n    Channel: #incd-1196 (C013DSP9CRZ)\n    From: Saurabh (U028H1BMX)\n    Time: 2025-08-22 13:34:19 UTC\n    Message_ts: 1755894859.713009\n    Text: Search API performance issue resolved.\n\n  pagination_info:\n    For the next page of results use cursor `dGVhbTpDMDYxRkE1UEI=`\n\n# Search Results Formatting:\n- User Mentions:\n    - Strings like <@U123456789> or <@W123456789> represent a Slack user.\n    - <@U077KSEPJ|Sam> represents a Slack user with the name \"Sam\".\n    - When rendering outside of Slack client, use names like \"Sam\" instead of <@U077KSEPJ> or U077KSEPJ. Use slack_user_profile tool to get the name of a user.\n    - If rendering in Slack client, you can format bare ID (e.g. U123456789) as <@U123456789>.\n\n- Channel Mentions:\n    - Strings like <#C123456789> or <#D123456789> represent Slack channels.\n    - If a bare ID appears (e.g. C123456789), format it as <#C123456789>.\n\n---\n\nExamples:\n  ✅ Use (with user consent)\n    slack_search_public_and_private(query=\"What's our holiday schedule? in:#general\")\n    slack_search_public_and_private(query=\"bug report after:2024-01-08\", sort=\"timestamp\")\n    slack_search_public_and_private(query=\"security has:pin\")\n    slack_search_public_and_private(query=\"OAuth in:dev\")\n\n---\n\nError Handling:\n  - \"No messages found matching query\" → empty results\n  - \"Please provide a search query\" → no query given\n  - Slack API error messages → request failure\n  - Generic error message → unexpected failure\n\nWhat NOT to Expect:\n❌ Does NOT return: message edit history, reaction user lists, full file contents\n❌ Does NOT include: ephemeral messages, deleted content\n",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "Search query using Slack's search syntax (e.g., 'in:#general from:@user important')"
+              },
+              "channel_types": {
+                "type": "string",
+                "description": "Comma-separated list of channel types to include in the search. Defaults to 'public_channel,private_channel,mpim,im' (all channel types including private channels, group DMs, and DMs). Mix and match channel types by providing a comma-separated list of any combination of `public_channel`, `private_channel`, `mpim`, `im`"
+              },
+              "content_types": {
+                "type": "string",
+                "description": "Content types to include, a comma-separated list of any combination of messages, files. Here's more info about the content types: messages: Slack messages from channels accessible to the acting user\nfiles: Files of all types accessible to the acting user\n"
+              },
+              "context_channel_id": {
+                "type": "string",
+                "description": "Context channel ID to support boosting the search results for a channel when applicable"
+              },
+              "cursor": {
+                "type": "string",
+                "description": "The cursor returned by the API. Leave this blank for the first request, and use this to get the next page of results"
+              },
+              "limit": {
+                "type": "integer",
+                "description": "Number of results to return, up to a max of 20. Defaults to 20."
+              },
+              "after": {
+                "type": "string",
+                "description": "Only messages after this Unix timestamp (inclusive)"
+              },
+              "before": {
+                "type": "string",
+                "description": "Only messages before this Unix timestamp (inclusive)"
+              },
+              "include_bots": {
+                "type": "boolean",
+                "description": "Include bot messages (default: false)"
+              },
+              "sort": {
+                "type": "string",
+                "description": "Sort by relevance or date (default: 'score'). Options: 'score', 'timestamp'"
+              },
+              "sort_dir": {
+                "type": "string",
+                "description": "Sort direction (default: 'desc'). Options: 'asc', 'desc'"
+              },
+              "response_format": {
+                "type": "string",
+                "description": "Level of detail (default: 'detailed'). Options: 'detailed', 'concise'"
+              }
+            }
+          }
+        },
+        {
+          "name": "slack_search_users",
+          "description": "\nUse this tool to find Slack users by name, email, or profile attributes when you need to identify specific people or get their user IDs for other operations.\nCurrent logged in user's Slack user_id is U084ZF194MQ.\n## When to Use\n- User asks to find someone by name (e.g., \"find John Smith\")\n- User wants to see who works in a specific department or role\n- You need a user ID for another operation but only have name/email information\n- User asks \"who are the engineers?\" or \"find people in marketing\"\n- Before mentioning users in messages when you need proper user IDs\n\n## When NOT to Use\n- When you already have a specific user ID (use slack_user_profile or target tool directly)\n- Searching for messages from users (use slack_search_public with from: filter)\n- User wants detailed profile information for a known user (use slack_user_profile)\n\n## Key Parameters\n\n### query (required)\n- **Names**: Use full names (\"John Smith\") or partial names (\"John\", \"Smith\")\n- **Email addresses**: Search by email when known (\"john@company.com\")\n- **Departments/roles**: Search profile fields like \"engineering\", \"marketing\", \"designer\"\n- **Combinations**: Use space-separated terms for AND logic (\"John engineering\")\n- **Exclusions**: Use minus sign to exclude terms (\"engineering -intern\")\n\n### limit (optional)\n- Default: 20 users\n- Keep default for department or role-based searches\n\n### response_format (optional)\n- Use \"detailed\" (default) for comprehensive user information\n- Use \"concise\" for simple listings when user just needs names/basic info\n\n## Privacy and Ethics Considerations\n- Be respectful when searching for users - don't encourage stalking or inappropriate contact\n- If user asks to find someone for concerning reasons, decline and suggest appropriate channels\n- Respect that some users may have limited visibility in search results\n- Don't search for users to circumvent normal communication channels\n\n## Response Handling\n- Present results clearly with names, titles, and relevant contact information\n- If searching by role/department, group results logically\n- For ambiguous names, show multiple matches and ask user to clarify\n- If no results found, suggest alternative search terms or broader queries\n- Mention if results are truncated and offer to refine search\n\n## Example Usage Patterns\n\n### Finding a specific person\n```\nQuery: \"Sarah Johnson\"\nUse when: User asks \"find Sarah Johnson\" or \"who is Sarah Johnson?\"\n```\n\n### Finding people by department\n```\nQuery: \"marketing\"\nUse when: User asks \"who works in marketing?\" or \"find marketing team members\"\n```\n\n### Finding people by role\n```\nQuery: \"software engineer\"\nUse when: User wants to find developers or engineering staff\n```\n\n### Finding people with exclusions\n```\nQuery: \"engineering -intern\"\nUse when: User wants engineers but not interns\n```\n\n### Email-based search\n```\nQuery: \"sarah@company.com\"\nUse when: User provides an email address to identify someone\n```\n\n## Mistakes to Avoid\n- Don't use this tool to search for message content from users\n- Don't make assumptions about user roles or departments without confirmation\n- Don't search with overly broad terms that return too many irrelevant results\n- Don't use this tool if the user already provided specific user IDs\n- Avoid searching for users in ways that could facilitate harassment\n\n## Integration with Other Tools\nAfter finding users with this tool, commonly follow up with:\n- `slack_user_profile` to get detailed profile information\n- `slack_send_message` with user ID to send direct messages\n- `slack_search_public` with `from:<@User's Name>` to find their messages\n- Other tools that require user IDs as parameters\n\n## Error Handling\n- If search returns no results, suggest checking spelling or trying partial names\n- If user provides incomplete information, ask for clarification\n- Handle API errors gracefully and suggest alternative approaches\n- If search returns too many results, suggest more specific search terms\n\n==Example output==\n# Search Results for: saurabh\n\n## Users (4 results)\n### Result 1 of 4\nName: Saurabh Sahni\nUser ID: U061NFTT2\nEmail: saurabh@example.com\nTimezone: Australia/Canberra\nProfile Pic: [Photo](https://secure.gravatar.com/avatar/be27926c3241bfbc2527)\nPermalink: [link](https://test.slack.com/team/U061NFTT2)\n\n---\n\n### Result 2 of 4\nName: Saurabh\nUser ID: U061H1BMX\nEmail: saurabh+1@example.com\nTimezone: Pacific/Honolulu\nProfile Pic: [Photo](https://s3-us-west-2.amazonaws.com/slack-files/13b8cefa792640f9ff73_original.jpg)\nPermalink: [link](https://test.slack.com/team/U061H1BMX)\n\nWhat NOT to Expect:\n❌ Does NOT return: user activity metrics, message history\n\n",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "Search query for finding users. Accepts names, email address, and other attributes in profile\n\nExamples:\n  - \"John Smith\" - exact name match\n  - john@company - find users with john@company in email\n  - engineering -intern - users with \"engineering\" but not \"intern\" in profile"
+              },
+              "cursor": {
+                "type": "string",
+                "description": "The cursor returned by the API. Leave this blank for the first request, and use this to get the next page of results"
+              },
+              "limit": {
+                "type": "integer",
+                "description": "Number of results to return, up to a max of 20. Defaults to 20."
+              },
+              "response_format": {
+                "type": "string",
+                "description": "Level of detail (default: 'detailed'). Options: 'detailed', 'concise'"
+              }
+            }
+          }
+        },
+        {
+          "name": "slack_send_message",
+          "description": "Sends a message to a Slack channel identified by a channel_id.\nTo send a message to a user, you can use their user_id as the channel_id. If the user wants to send a message to themselves, the current logged in user's user_id is U084ZF194MQ. Please return message link to the user along with a friendly message.\n\n## When to Use\n- User asks to send a message to a specific channel or person\n- User wants to post an announcement or update\n- User requests to share information or content with others\n- User wants to send a direct message to someone\n- User wants to reply to a specific message in a thread\n- User wants to immediately post a finalized message to Slack. \n\n## When NOT to Use\n- User only wants to read messages from a channel (use `slack_read_channel` instead)\n- User wants to search for messages or content (use `slack_search_public` or related search tools)\n- User is asking questions about channel information without wanting to post (use `slack_search_channels` to find channels)\n- User wants to get user information without messaging them (use `slack_user_profile` instead)\n- Message content is empty or purely informational requests\n- User is just exploring or browsing Slack data\n\\n- User has not reviewed the message, use slack_send_message_draft instead.\n\n\n## Thread Replies (Optional):\n- To reply to a message in a thread, provide the `thread_ts` parameter with the timestamp of the parent message\n- `thread_ts`: (optional) Timestamp of the message to reply to (e.g., \"1234567890.123456\")\n- `reply_broadcast`: (optional) Boolean, default false. If true, the reply will also be posted to the channel. Only works when `thread_ts` is provided.\n\n## `message` input guidelines:\n- Message input should be markdown formatted\n- Do not send sensitive information in any links (specifically query params)\n- Markdown text elements are limited to 5,000 characters\n- Table content is limited to 10,000 characters total\n- Messages cannot be empty (must contain content)\n\n## Finding value for `channel_id` input:\n- Use `slack_search_channels` tool to find channel ID if user provides a channel name\n- Use `slack_search_users` tool to find user ID if user provides a user's name, then use their user_id as the channel_id\n\n## Error Codes:\n- `msg_too_long`: `message` content exceeds length limits\n- `no_text`: `message` is missing content\n- `invalid_blocks`: `message` format is invalid or contains unsupported elements\n- `channel_not_found`: Invalid channel_id provided or user does not have access to the channel\n- `permission_denied`: Insufficient permissions to post to the channel\n- `thread_reply_not_available`: Thread reply feature is not enabled for this app\n\n## What NOT to Expect:\n❌ Does NOT support: scheduling messages for later, message templates\n❌ Cannot: edit previously sent messages, delete messages\n\n",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "channel_id": {
+                "type": "string",
+                "description": "すべてのチャンネルを検索する"
+              },
+              "message": {
+                "type": "string",
+                "description": "メッセージを追加する"
+              },
+              "thread_ts": {
+                "type": "string",
+                "description": "別のメッセージのタイムスタンプ値を指定して、このメッセージを返信にする"
+              },
+              "reply_broadcast": {
+                "type": "boolean",
+                "description": "会話にも送信する"
+              },
+              "draft_id": {
+                "type": "string",
+                "description": "送信後に削除する下書きの ID"
+              }
+            }
+          }
+        },
+        {
+          "name": "slack_send_message_draft",
+          "description": "Creates a draft message in a Slack channel.\n\n## When to Use\n- User wants to prepare a message without sending it immediately\n- User needs to compose a message for later review or sending\n- User wants to draft a message to a specific channel\n\n## When NOT to Use\n- User wants to send a message immediately (use `slack_send_message` instead)\n- User wants to schedule a message (use `slack_send_message` with scheduling)\n- User wants to create drafts in multiple channels (call this tool multiple times)\n\n## Input Parameters:\n- `channel_id`: Single channel ID where the draft should be created\n- `message`: The draft message content using Slack's markdown format (mrkdwn). Use *bold* (single asterisks), _italic_ (underscores), `code` (backticks), >quote (angle bracket), and bullet points. Do NOT use ## headers or **double asterisks** - these are not supported.\n- `thread_ts` (optional): Timestamp of the parent message to create a draft reply in a thread (e.g., \"1234567890.123456\")\n\n## Output:\nReturns `channel_link` - a Slack web client URL (e.g., https://app.slack.com/client/T123/C456) that opens the channel in the web app where the draft was created.\n\n## Finding value for `channel_id` input:\n- Use `slack_search_users` tool to find user ID for DMs, then use their user_id as the channel_id\n\n## Error Codes:\n- `channel_not_found`: Invalid channel ID or user does not have access to the channel\n- `draft_already_exists`: A draft already exists for this channel (user should edit or delete the existing draft first)\n- `failed_to_create_draft`: Draft creation failed for an unknown reason\n\n## Notes:\n- Drafts are created as attached drafts (linked to the specific channel)\n- User must have write access to the channel\n- Only one attached draft is allowed per channel - if a draft already exists, you'll get an error\n",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "channel_id": {
+                "type": "string",
+                "description": "Channel to create draft in"
+              },
+              "message": {
+                "type": "string",
+                "description": "The message content using standard markdown format"
+              },
+              "thread_ts": {
+                "type": "string",
+                "description": "Timestamp of the parent message to create a draft reply in a thread"
+              }
+            }
+          },
+          "_meta": {
+            "ui/resourceUri": "ui://send-message-input.html",
+            "ui": {
+              "resourceUri": "ui://send-message-input.html"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
