@@ -28,3 +28,8 @@ __pycache__/
 # Temp
 nul
 *.tmp
+
+# Bot output, logs, and local config (contains secrets)
+supply-demand-market-bot/output.txt
+supply-demand-market-bot/config.local.json
+supply-demand-market-bot/run.log
