@@ -27,7 +27,7 @@
 6. **NewsPicks /ニューズピックス** - ビジネス・テック系ニュース（AI関連のみ抽出）
    - RSSフィード: https://www.youtube.com/feeds/videos.xml?channel_id=UCfTnJmRQP79C4y_BMF_XrlA
 
-※ RSSフィードはXML形式です。WebFetchで取得し、<entry>タグ内の<title>（タイトル）、<published>（投稿日）、<link href="...">（URL）、<media:description>（説明文）を解析してください。
+※ RSSフィードのデータはスクリプトが事前にcurlで取得し、本プロンプトの末尾に「事前取得済みYouTube RSSデータ」として追加されます。そのデータが存在する場合、WebFetchでの再取得は不要です。データがない場合のみWebFetchでの取得を試みてください。
 ※ NewsPicksはAI関連の動画のみを対象としてください。
 
 ### 補助情報源: Webサイト
