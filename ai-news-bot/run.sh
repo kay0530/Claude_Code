@@ -27,9 +27,9 @@ PROMPT=$(cat "$PROMPT_FILE")
 
 # Run Claude Code in non-interactive mode with web search
 echo "Running Claude Code analysis..."
-npx -y @anthropic-ai/claude-code -p \
-  --allowedTools "WebSearch,WebFetch" \
-  "$PROMPT" > "$OUTPUT_FILE" 2>&1 || {
+echo "$PROMPT" | npx -y @anthropic-ai/claude-code -p \
+    --allowedTools "WebSearch,WebFetch" \
+        > "$OUTPUT_FILE" 2>&1 || {
     echo "Claude Code execution failed. Output:"
     cat "$OUTPUT_FILE"
     # Post error notification to Slack
