@@ -47,6 +47,63 @@ if (-not (Test-Path $PromptFile)) {
 }
 $prompt = Get-Content $PromptFile -Raw -Encoding UTF8
 
+# --- Fetch YouTube RSS feeds ---
+Write-Log "Fetching YouTube RSS feeds..."
+$youtubeChannels = @(
+    @{ Name = "いけともch"; Id = "UCpUQnk6MaY4o3NdgJmv10cw" }
+    @{ Name = "AIでサボろうチャンネル"; Id = "UC9AuyS7U4PxeDSNMJ2srarA" }
+    @{ Name = "ウェブ職TV"; Id = "UClNZUVnSFRKKUfJYarEUqdA" }
+    @{ Name = "チャエン【AI研究所】"; Id = "UC9buL3Iph_f7AZxdzmiBL8Q" }
+    @{ Name = "KEITO【AI&WEB ch】"; Id = "UCfapRkagDtoQEkGeyD3uERQ" }
+    @{ Name = "NewsPicks"; Id = "UCfTnJmRQP79C4y_BMF_XrlA" }
+)
+
+$rssData = ""
+foreach ($ch in $youtubeChannels) {
+    $rssUrl = "https://www.youtube.com/feeds/videos.xml?channel_id=$($ch.Id)"
+    Write-Log "  Fetching: $($ch.Name) ..."
+    try {
+        $response = Invoke-WebRequest -Uri $rssUrl -TimeoutSec 10 -UseBasicParsing
+        [xml]$xml = $response.Content
+
+        $entries = $xml.feed.entry | Select-Object -First 5
+        if ($entries) {
+            $rssData += "`n[$($ch.Name)]`n"
+            foreach ($entry in $entries) {
+                $title = $entry.title
+                $published = $entry.published.Substring(0, 10)
+                $videoUrl = ($entry.link | Where-Object { $_.rel -eq "alternate" }).href
+                if (-not $videoUrl) { $videoUrl = $entry.link.href }
+                $description = ""
+                if ($entry.group -and $entry.group.description) {
+                    $description = [string]$entry.group.description
+                    if ($description.Length -gt 200) { $description = $description.Substring(0, 200) }
+                }
+                $rssData += "・${published}「${title}」`n"
+                $rssData += "  ${videoUrl}`n"
+                if ($description) {
+                    $rssData += "  説明: ${description}`n"
+                }
+                $rssData += "`n"
+            }
+        }
+    }
+    catch {
+        Write-Log "  WARNING: Failed to fetch RSS for $($ch.Name): $_"
+    }
+}
+
+Write-Log "RSS feed fetching complete."
+
+# Append YouTube RSS data to prompt if available
+if ($rssData) {
+    $prompt += "`n`n## 事前取得済みYouTube RSSデータ（以下はcurlで取得済みのデータです。WebFetchでの再取得は不要です）`n${rssData}"
+    Write-Log "YouTube RSS data appended to prompt ($($rssData.Length) chars)"
+}
+else {
+    Write-Log "WARNING: No YouTube RSS data was fetched"
+}
+
 # --- Run Claude Code ---
 Write-Log "Running Claude Code analysis..."
 try {
