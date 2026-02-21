@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#0a0a1a">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <title>AI News Hub</title>
+  <title>AI ニュース Hub</title>
   <style>
     :root {
       --bg: #0a0a1a;
@@ -180,6 +180,18 @@
       border: 1px solid var(--border);
     }
 
+    .translate-status {
+      font-size: 11px;
+      color: var(--accent);
+      padding: 6px 12px;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      text-align: center;
+      display: none;
+    }
+
     /* Article Cards */
     .card-list {
       display: flex;
@@ -235,10 +247,21 @@
     .card-title {
       font-size: 15px;
       font-weight: 600;
-      line-height: 1.5;
-      margin-bottom: 8px;
+      line-height: 1.6;
+      margin-bottom: 4px;
       display: -webkit-box;
       -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-title-en {
+      font-size: 11px;
+      color: var(--text-dim);
+      line-height: 1.4;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
@@ -320,15 +343,6 @@
       display: none;
     }
 
-    /* Pull to Refresh indicator */
-    .pull-indicator {
-      text-align: center;
-      padding: 12px;
-      font-size: 13px;
-      color: var(--text-dim);
-      display: none;
-    }
-
     /* Fade-in animation */
     .fade-in {
       animation: fadeIn 0.3s ease-out forwards;
@@ -341,14 +355,9 @@
 
     .card:nth-child(1) { animation-delay: 0s; }
     .card:nth-child(2) { animation-delay: 0.05s; }
-    .card:nth-child(3) { animation-delay: 0.1s; }
-    .card:nth-child(4) { animation-delay: 0.15s; }
-    .card:nth-child(5) { animation-delay: 0.2s; }
-    .card:nth-child(6) { animation-delay: 0.25s; }
-    .card:nth-child(7) { animation-delay: 0.3s; }
-    .card:nth-child(8) { animation-delay: 0.35s; }
-    .card:nth-child(9) { animation-delay: 0.4s; }
-    .card:nth-child(10) { animation-delay: 0.45s; }
+    .card:nth-child(3) { animation-delay: 0.05s; }
+    .card:nth-child(4) { animation-delay: 0.05s; }
+    .card:nth-child(5) { animation-delay: 0.05s; }
 
     /* Skeleton loading */
     .skeleton {
@@ -381,9 +390,9 @@
     <div class="header-top">
       <div class="logo">
         <div class="logo-icon">&#x26A1;</div>
-        <span class="logo-text">AI News Hub</span>
+        <span class="logo-text">AI ニュース</span>
       </div>
-      <button class="refresh-btn" id="refreshBtn" aria-label="Refresh">
+      <button class="refresh-btn" id="refreshBtn" aria-label="更新">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21.5 2v6h-6M2.5 22v-6h6"/>
           <path d="M2.5 11.5a10 10 0 0 1 16.5-5.5L21.5 8M21.5 12.5a10 10 0 0 1-16.5 5.5L2.5 16"/>
@@ -391,22 +400,25 @@
       </button>
     </div>
     <div class="tabs" id="tabs">
-      <button class="tab active" data-cat="all">&#x1F30D; All</button>
+      <button class="tab active" data-cat="all">&#x1F30D; すべて</button>
       <button class="tab" data-cat="llm">&#x1F4AC; LLM</button>
-      <button class="tab" data-cat="image">&#x1F3A8; Image/Video</button>
-      <button class="tab" data-cat="research">&#x1F4D1; Research</button>
-      <button class="tab" data-cat="business">&#x1F4BC; Business</button>
-      <button class="tab" data-cat="regulation">&#x2696;&#xFE0F; Ethics</button>
-      <button class="tab" data-cat="coding">&#x1F4BB; Coding</button>
+      <button class="tab" data-cat="image">&#x1F3A8; 画像・動画</button>
+      <button class="tab" data-cat="research">&#x1F4D1; 研究・論文</button>
+      <button class="tab" data-cat="business">&#x1F4BC; ビジネス</button>
+      <button class="tab" data-cat="regulation">&#x2696;&#xFE0F; 倫理・規制</button>
+      <button class="tab" data-cat="coding">&#x1F4BB; コーディング</button>
     </div>
   </div>
 
   <div class="content">
     <div class="error-banner" id="errorBanner"></div>
     <div class="status-bar" id="statusBar">
-      <span id="lastUpdated">Loading...</span>
-      <span style="font-size:11px;color:var(--text-dim)">Past 7 days</span>
+      <span id="lastUpdated">読み込み中...</span>
+      <span style="font-size:11px;color:var(--text-dim)">過去7日間</span>
       <span class="count" id="articleCount">-</span>
+    </div>
+    <div class="translate-status" id="translateStatus">
+      &#x1F1EF;&#x1F1F5; 日本語に翻訳中... <span id="translateProgress"></span>
     </div>
     <div class="card-list" id="cardList"></div>
   </div>
@@ -420,27 +432,27 @@
         badgeClass: 'llm'
       },
       image: {
-        label: 'Image/Video',
+        label: '画像・動画',
         keywords: ['Stable Diffusion', 'Midjourney', 'DALL-E', 'Sora', 'image generation', 'video generation', 'text-to-image', 'Flux', 'Runway', 'generative art'],
         badgeClass: 'image'
       },
       research: {
-        label: 'Research',
+        label: '研究',
         keywords: ['AI research', 'machine learning paper', 'neural network', 'transformer', 'deep learning', 'arxiv', 'AI breakthrough', 'benchmark', 'reasoning'],
         badgeClass: 'research'
       },
       business: {
-        label: 'Business',
+        label: 'ビジネス',
         keywords: ['OpenAI', 'Anthropic', 'Google AI', 'Microsoft AI', 'AI startup', 'AI funding', 'AI acquisition', 'AI company', 'Meta AI', 'xAI'],
         badgeClass: 'business'
       },
       regulation: {
-        label: 'Ethics',
+        label: '倫理・規制',
         keywords: ['AI regulation', 'AI safety', 'AI ethics', 'AI alignment', 'AI policy', 'AI governance', 'AI bias', 'AI risk', 'EU AI Act'],
         badgeClass: 'regulation'
       },
       coding: {
-        label: 'Coding',
+        label: 'コーディング',
         keywords: ['GitHub Copilot', 'Cursor', 'AI coding', 'code generation', 'Devin', 'AI developer', 'AI programming', 'Claude Code', 'Windsurf', 'Codex'],
         badgeClass: 'coding'
       }
@@ -448,6 +460,100 @@
 
     let allArticles = [];
     let currentCategory = 'all';
+
+    // ========== Translation System ==========
+
+    // Load translation cache from localStorage
+    function loadTranslationCache() {
+      try {
+        return JSON.parse(localStorage.getItem('ai_news_translations') || '{}');
+      } catch { return {}; }
+    }
+
+    // Save translation cache to localStorage
+    function saveTranslationCache(cache) {
+      try {
+        localStorage.setItem('ai_news_translations', JSON.stringify(cache));
+      } catch { /* ignore */ }
+    }
+
+    // Translate a single text using MyMemory API (free, no key required)
+    async function translateText(text) {
+      try {
+        const res = await fetch(
+          `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|ja`
+        );
+        const data = await res.json();
+        if (data.responseStatus === 200 && data.responseData.translatedText) {
+          const translated = data.responseData.translatedText;
+          // MyMemory returns the original text if it cannot translate
+          if (translated.toLowerCase() === text.toLowerCase()) return null;
+          return translated;
+        }
+        return null;
+      } catch {
+        return null;
+      }
+    }
+
+    // Translate all articles with progress updates
+    async function translateArticles() {
+      const cache = loadTranslationCache();
+      const statusEl = document.getElementById('translateStatus');
+      const progressEl = document.getElementById('translateProgress');
+
+      // Count how many need translation
+      const needTranslation = allArticles.filter(a => !cache[a.id]);
+      if (needTranslation.length === 0) {
+        // All cached, apply translations immediately
+        applyTranslations(cache);
+        return;
+      }
+
+      statusEl.style.display = 'block';
+      let translated = 0;
+
+      // Translate in batches with delays to respect rate limits
+      for (const article of needTranslation) {
+        if (cache[article.id]) continue;
+
+        progressEl.textContent = `(${translated + 1}/${needTranslation.length})`;
+
+        const result = await translateText(article.title);
+        if (result) {
+          cache[article.id] = result;
+        } else {
+          cache[article.id] = ''; // mark as attempted to avoid retrying
+        }
+
+        translated++;
+
+        // Apply partial translations every 5 articles for progressive UX
+        if (translated % 5 === 0) {
+          saveTranslationCache(cache);
+          applyTranslations(cache);
+        }
+
+        // Small delay between requests (rate limit: ~10 req/sec for free tier)
+        await new Promise(r => setTimeout(r, 300));
+      }
+
+      saveTranslationCache(cache);
+      applyTranslations(cache);
+      statusEl.style.display = 'none';
+    }
+
+    // Apply translations to the article data and re-render
+    function applyTranslations(cache) {
+      for (const article of allArticles) {
+        if (cache[article.id] && cache[article.id] !== '') {
+          article.titleJa = cache[article.id];
+        }
+      }
+      renderArticles();
+    }
+
+    // ========== Core App Logic ==========
 
     // Classify an article into a category based on title
     function classifyArticle(title) {
@@ -458,7 +564,7 @@
       for (const [cat, config] of Object.entries(CATEGORIES)) {
         for (const kw of config.keywords) {
           if (lowerTitle.includes(kw.toLowerCase())) {
-            const score = kw.length; // longer keyword = more specific match
+            const score = kw.length;
             if (score > bestScore) {
               bestScore = score;
               bestMatch = cat;
@@ -466,20 +572,20 @@
           }
         }
       }
-      return bestMatch || 'business'; // default to business
+      return bestMatch || 'business';
     }
 
-    // Time ago formatting
+    // Time ago formatting (Japanese)
     function timeAgo(dateStr) {
       const now = Date.now();
       const then = new Date(dateStr).getTime();
       const diff = Math.floor((now - then) / 1000);
 
-      if (diff < 60) return 'just now';
-      if (diff < 3600) return `${Math.floor(diff / 60)}m`;
-      if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
-      if (diff < 604800) return `${Math.floor(diff / 86400)}d`;
-      return `${Math.floor(diff / 604800)}w`;
+      if (diff < 60) return 'たった今';
+      if (diff < 3600) return `${Math.floor(diff / 60)}分前`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}時間前`;
+      if (diff < 604800) return `${Math.floor(diff / 86400)}日前`;
+      return `${Math.floor(diff / 604800)}週間前`;
     }
 
     // Show skeleton loading
@@ -503,12 +609,11 @@
       btn.classList.add('spinning');
       showSkeleton();
       document.getElementById('errorBanner').style.display = 'none';
+      document.getElementById('translateStatus').style.display = 'none';
 
       try {
-        // Calculate timestamp for 7 days ago
         const oneWeekAgo = Math.floor((Date.now() - 7 * 24 * 60 * 60 * 1000) / 1000);
 
-        // Search for AI-related stories from the past week
         const queries = [
           'AI artificial intelligence',
           'ChatGPT Claude Gemini LLM',
@@ -539,6 +644,7 @@
             allArticles.push({
               id: hit.objectID,
               title: hit.title,
+              titleJa: null, // will be populated by translation
               url: hit.url || `https://news.ycombinator.com/item?id=${hit.objectID}`,
               hnUrl: `https://news.ycombinator.com/item?id=${hit.objectID}`,
               points: hit.points || 0,
@@ -551,8 +657,12 @@
           }
         }
 
-        // Sort by points (popularity) then by date
+        // Sort by points (popularity)
         allArticles.sort((a, b) => b.points - a.points);
+
+        // Apply any cached translations immediately
+        const cache = loadTranslationCache();
+        applyTranslations(cache);
 
         // Cache the results
         try {
@@ -560,17 +670,17 @@
             articles: allArticles,
             timestamp: Date.now()
           }));
-        } catch (e) { /* ignore storage errors */ }
+        } catch (e) { /* ignore */ }
 
-        renderArticles();
         updateStatus();
+
+        // Start translating in background
+        translateArticles();
 
       } catch (err) {
         console.error('Fetch error:', err);
-        document.getElementById('errorBanner').textContent = 'Failed to fetch data. Please check your connection and try again.';
+        document.getElementById('errorBanner').textContent = 'データの取得に失敗しました。通信状況を確認してもう一度お試しください。';
         document.getElementById('errorBanner').style.display = 'block';
-
-        // Try loading from cache
         loadFromCache();
       } finally {
         btn.classList.remove('spinning');
@@ -581,8 +691,7 @@
     function extractDomain(url) {
       if (!url) return 'news.ycombinator.com';
       try {
-        const domain = new URL(url).hostname.replace('www.', '');
-        return domain;
+        return new URL(url).hostname.replace('www.', '');
       } catch {
         return 'news.ycombinator.com';
       }
@@ -594,7 +703,8 @@
         const cached = JSON.parse(localStorage.getItem('ai_news_cache'));
         if (cached && cached.articles) {
           allArticles = cached.articles;
-          renderArticles();
+          const transCache = loadTranslationCache();
+          applyTranslations(transCache);
           updateStatus(cached.timestamp);
         }
       } catch (e) { /* no cache */ }
@@ -607,13 +717,13 @@
         ? allArticles
         : allArticles.filter(a => a.category === currentCategory);
 
-      document.getElementById('articleCount').textContent = `${filtered.length} articles`;
+      document.getElementById('articleCount').textContent = `${filtered.length} 件`;
 
       if (filtered.length === 0) {
         list.innerHTML = `
           <div class="empty">
             <div class="empty-icon">&#x1F50D;</div>
-            <div class="empty-text">No articles found for this category</div>
+            <div class="empty-text">このカテゴリの記事は見つかりませんでした</div>
           </div>
         `;
         return;
@@ -621,13 +731,16 @@
 
       list.innerHTML = filtered.map((article, i) => {
         const cat = CATEGORIES[article.category];
+        const displayTitle = article.titleJa || article.title;
+        const showOriginal = article.titleJa ? article.title : '';
         return `
-          <a href="${escapeHtml(article.url)}" target="_blank" rel="noopener" class="card fade-in" style="animation-delay:${i * 0.05}s">
+          <a href="${escapeHtml(article.url)}" target="_blank" rel="noopener" class="card fade-in" style="animation-delay:${Math.min(i, 10) * 0.05}s">
             <div class="card-header">
               <span class="card-badge ${cat.badgeClass}">${cat.label}</span>
               <span class="card-time">${timeAgo(article.date)}</span>
             </div>
-            <div class="card-title">${escapeHtml(article.title)}</div>
+            <div class="card-title">${escapeHtml(displayTitle)}</div>
+            ${showOriginal ? `<div class="card-title-en">${escapeHtml(showOriginal)}</div>` : ''}
             <div class="card-meta">
               <span class="card-points">&#x25B2; ${article.points}</span>
               <span class="card-source">&#x1F517; ${escapeHtml(article.source)}</span>
@@ -651,7 +764,7 @@
       const date = new Date(ts);
       const hh = String(date.getHours()).padStart(2, '0');
       const mm = String(date.getMinutes()).padStart(2, '0');
-      document.getElementById('lastUpdated').textContent = `Last updated: ${hh}:${mm}`;
+      document.getElementById('lastUpdated').textContent = `最終更新: ${hh}:${mm}`;
     }
 
     // Tab switching
