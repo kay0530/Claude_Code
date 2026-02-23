@@ -1,9 +1,10 @@
 name: Supply-Demand Market Weekly Check
 
 on:
-  # Every Monday at 00:00 UTC = 09:00 JST
-  schedule:
-    - cron: '0 0 * * 1'
+  # NOTE: Cron schedule disabled - using local Task Scheduler (run-local.ps1) instead
+  # To re-enable for GitHub Actions (Option B), uncomment the schedule below:
+  # schedule:
+  #   - cron: '0 0 * * 1'  # Every Monday at 00:00 UTC = 09:00 JST
 
   # Allow manual trigger for testing
   workflow_dispatch:

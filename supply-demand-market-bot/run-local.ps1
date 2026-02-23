@@ -6,6 +6,9 @@ param(
     [switch]$DryRun  # -DryRun to test without posting to Slack
 )
 
+# Force UTF-8 for console and pipe output
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ConfigFile = Join-Path $ScriptDir "config.local.json"
@@ -47,7 +50,8 @@ $prompt = Get-Content $PromptFile -Raw -Encoding UTF8
 # --- Run Claude Code ---
 Write-Log "Running Claude Code analysis..."
 try {
-    $result = & claude -p --allowedTools "WebSearch,WebFetch" $prompt 2>&1
+    # Pipe prompt via stdin (avoids command-line length limits and encoding issues)
+    $result = $prompt | & claude -p --allowedTools "WebSearch,WebFetch" 2>&1
     $exitCode = $LASTEXITCODE
 
     # Save output
@@ -78,9 +82,8 @@ if ($resultText.Length -gt $maxLen) {
     Write-Log "Output truncated to $maxLen chars"
 }
 
-# --- Build Slack message ---
-$today = Get-Date -Format "yyyy/MM/dd"
-$slackText = ":zap: *需給調整市場 週次レポート*`n${today} (月曜定期配信)`n`n${resultText}"
+# --- Build Slack message (no Japanese header - Claude output already includes it) ---
+$slackText = $resultText
 
 # --- Post to Slack ---
 if ($DryRun) {
