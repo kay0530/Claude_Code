@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="議事録">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+  <title>議事録作成</title>
+</head>
+<body>
+  <header class="header">
+    <h1 class="header-title">議事録作成</h1>
+    <button type="button" id="settings-btn" class="header-btn" title="設定">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+  </header>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <h2>設定</h2>
+      <div class="form-group">
+        <label for="api-key-input">Anthropic API Key</label>
+        <input type="password" id="api-key-input" placeholder="sk-ant-api03-...">
+        <p class="hint">localStorageに保存されます。<a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">APIキーを取得</a></p>
+      </div>
+      <div class="form-group">
+        <label for="model-select">モデル</label>
+        <div class="model-options">
+          <label class="model-option">
+            <input type="radio" name="model" value="claude-haiku-4-5-20251001" id="model-haiku">
+            <span class="model-label">Haiku 4.5<span class="model-desc">高速・低コスト（~¥1/回）</span></span>
+          </label>
+          <label class="model-option">
+            <input type="radio" name="model" value="claude-sonnet-4-6-20250514" id="model-sonnet">
+            <span class="model-label">Sonnet 4.6<span class="model-desc">高品質（~¥4/回）</span></span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="save-settings-btn" class="btn btn-primary">保存</button>
+        <button type="button" id="close-settings-btn" class="btn btn-secondary">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="main">
+    <!-- API Key Banner -->
+    <div id="api-banner" class="banner hidden">
+      <span>APIキー未設定</span>
+      <button type="button" id="banner-setup-btn" class="banner-btn">設定する</button>
+    </div>
+
+    <!-- Title -->
+    <div class="form-group">
+      <label for="meeting-title">タイトル</label>
+      <input type="text" id="meeting-title" placeholder="例: 週次定例会議">
+    </div>
+
+    <!-- Date -->
+    <div class="form-group">
+      <label for="meeting-date">日付</label>
+      <input type="date" id="meeting-date">
+    </div>
+
+    <!-- Participants -->
+    <div class="form-group">
+      <label>参加者</label>
+      <div id="participant-chips" class="chips"></div>
+      <div class="participant-input-wrap">
+        <input type="text" id="participant-search" placeholder="名前で検索 / 手動入力" autocomplete="off">
+        <button type="button" id="add-custom-btn" class="btn-icon" title="手動追加">+</button>
+      </div>
+      <ul id="participant-dropdown" class="dropdown hidden"></ul>
+    </div>
+
+    <!-- Transcription -->
+    <div class="form-group">
+      <label for="transcription">文字起こしテキスト</label>
+      <textarea id="transcription" rows="8" placeholder="ボイスメモの文字起こしを貼り付け"></textarea>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button type="button" id="generate-btn" class="btn btn-primary">議事録を生成</button>
+      <button type="button" id="copy-prompt-btn" class="btn btn-outline">プロンプトだけコピー</button>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>議事録を生成中...</p>
+    </div>
+
+    <!-- Result -->
+    <div id="result-section" class="result-section hidden">
+      <h2 class="result-heading">生成された議事録</h2>
+      <div id="result-content" class="result-content"></div>
+      <div class="actions">
+        <button type="button" id="copy-result-btn" class="btn btn-primary">テキストをコピー</button>
+        <button type="button" id="share-btn" class="btn btn-secondary">共有</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="participants.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
