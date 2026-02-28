@@ -3,6 +3,7 @@ const STORAGE_KEY = 'om-dispatch-claude-api-key';
 
 // Model selection based on complexity
 function selectModel(aiComplexity) {
+  if (aiComplexity === 'opus') return 'claude-opus-4-6';
   return aiComplexity === 'sonnet'
     ? 'claude-sonnet-4-5-20250514'
     : 'claude-haiku-4-5-20251001';
@@ -223,6 +224,130 @@ ${memberInfo}
 ${constraintStr}`;
 
   return callClaudeAPI(model, systemPrompt, userMessage, 2048);
+}
+
+// AI-powered dispatch: use Opus to select optimal teams
+export async function aiDispatchTeams(members, job, jobType, conditions, settings) {
+  const model = selectModel('opus');
+
+  const systemPrompt = `あなたは太陽光発電所のO&M（運用保守）ディスパッチシステムのAI差配エンジンです。
+案件情報とメンバー情報を分析し、最適なチーム編成を提案してください。
+
+以下の観点を総合的に判断してください:
+- メンバーのスキルと案件要件のマッチング（主要スキルの重み付け）
+- チームのリーダーシップ適性（最低1名はリーダーシップスキル4以上が望ましい）
+- 指導が必要なメンバー（needsGuidance: true）がいる場合、経験豊富なメンターとのペアリング
+- 車両制約（ハイエース最大${settings.hiaceCapacity || 4}名、淀川は自車で単独移動）
+- フリーランスメンバーの適切な配置
+- チーム内のスキルバランスと相互補完性
+- 過去の案件経験や得意分野の考慮
+
+必ず以下のJSON形式で回答してください（JSON以外のテキストは含めないでください）:
+{
+  "recommendations": [
+    {
+      "rank": 1,
+      "memberIds": ["member_id_1", "member_id_2"],
+      "leadMemberId": "leader_member_id",
+      "score": 8.5,
+      "aiReasoning": "この編成を推薦する理由を2〜3文で説明",
+      "breakdown": {
+        "skill": 8.5,
+        "availability": 8.0,
+        "travel": 7.0,
+        "leadership": 8.0,
+        "guidance": 5.0
+      },
+      "isStretch": false,
+      "vehicleArrangement": "hiace",
+      "vehicleDetails": "ハイエース（2名）",
+      "mentoringPairs": []
+    }
+  ]
+}
+
+スコアは各カテゴリ0〜10のスケールで評価してください。
+vehicleArrangement は "hiace", "both", "multiple_hiace", "yodogawa_vehicle" のいずれかです。
+mentoringPairs は指導ペアがある場合 [{"juniorId": "id", "mentorId": "id"}] の形式です。
+推薦チームは最大5件まで、スコア順で返してください。`;
+
+  const memberInfo = members
+    .map((m) => {
+      const skillEntries = Object.entries(m.skills)
+        .map(([k, v]) => `${k}:${v}`)
+        .join(', ');
+      const flags = [];
+      if (m.needsGuidance) flags.push('要指導');
+      if (m.employmentType === 'freelancer') flags.push('フリーランス');
+      if (m.hasVehicle) flags.push('自車あり');
+      const flagStr = flags.length > 0 ? ` [${flags.join(', ')}]` : '';
+      return `- ${m.nameJa}（ID: ${m.id}, 平均スキル: ${m.avgSkill}${flagStr}）: ${skillEntries}`;
+    })
+    .join('\n');
+
+  const conditionInfo = conditions && conditions.length > 0
+    ? conditions.map((c) => `- ${c.nameJa}（時間倍率: ${c.timeMultiplier}x）`).join('\n')
+    : 'なし';
+
+  const stretchInfo = settings.stretchMode?.enabled
+    ? `有効（倍率: ${settings.stretchMode.defaultMultiplier || 1.2}x - スキル要件を${Math.round((1 - 1 / (settings.stretchMode.defaultMultiplier || 1.2)) * 100)}%緩和）`
+    : '無効';
+
+  const locationInfo = job.locationName || job.locationAddress || '未指定';
+
+  const userMessage = `以下の案件に最適なチーム編成を提案してください。
+
+【案件情報】
+- 案件名: ${job.title}
+- 作業種別: ${jobType.nameJa}
+- 必要スキル合計: ${jobType.requiredSkillTotal}
+- 主要スキル: ${jobType.primarySkills.join(', ')}
+- 必要人数: ${jobType.minPersonnel}〜${jobType.maxPersonnel}名
+- 基準作業時間: ${jobType.baseTimeHours}時間
+- 見積作業時間: ${job.estimatedTimeHours || jobType.baseTimeHours}時間
+- 場所: ${locationInfo}
+
+【条件】
+${conditionInfo}
+
+【ストレッチモード】
+${stretchInfo}
+
+【利用可能メンバー（${members.length}名）】
+${memberInfo}
+
+上記を踏まえ、最適なチーム編成を最大5件提案してください。`;
+
+  const result = await callClaudeAPI(model, systemPrompt, userMessage, 4096);
+
+  if (result.error) {
+    return { recommendations: [], content: result.content, error: result.content, usage: result.usage, model: result.model };
+  }
+
+  try {
+    // Extract JSON from response (handle potential markdown code blocks)
+    let jsonStr = result.content.trim();
+    if (jsonStr.startsWith('```')) {
+      jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+    }
+    const parsed = JSON.parse(jsonStr);
+    return {
+      recommendations: parsed.recommendations || [],
+      content: result.content,
+      error: null,
+      usage: result.usage,
+      model: result.model,
+    };
+  } catch (parseErr) {
+    const errMsg = `AI応答の解析に失敗しました: ${parseErr.message}`;
+    return {
+      recommendations: [],
+      content: errMsg,
+      error: errMsg,
+      usage: result.usage,
+      model: result.model,
+    };
+  }
 }
 
 export { callClaudeAPI, selectModel, STORAGE_KEY };

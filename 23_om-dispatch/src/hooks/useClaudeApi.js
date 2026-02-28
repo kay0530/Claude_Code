@@ -79,6 +79,15 @@ export function useClaudeApi() {
     [executeApiCall]
   );
 
+  // AI dispatch teams
+  const aiDispatch = useCallback(
+    (members, job, jobType, conditions, settings) =>
+      executeApiCall(() =>
+        claudeService.aiDispatchTeams(members, job, jobType, conditions, settings)
+      ),
+    [executeApiCall]
+  );
+
   return {
     loading,
     error,
@@ -86,6 +95,7 @@ export function useClaudeApi() {
     generateReason,
     evaluateStretch,
     optimizeSchedule,
+    aiDispatch,
     setApiKey,
     hasApiKey,
   };

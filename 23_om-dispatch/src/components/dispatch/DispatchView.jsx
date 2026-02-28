@@ -16,7 +16,8 @@ import Badge from '../shared/Badge';
  */
 export default function DispatchView({ onNavigate }) {
   const { state, dispatch } = useApp();
-  const { recommendations, loading, error, runDispatch, clearRecommendations } = useDispatchEngine();
+  const { recommendations, loading, error, runDispatch, clearRecommendations, dispatchMode, aiUsage, aiModel } = useDispatchEngine();
+  const hasApiKey = Boolean(localStorage.getItem('om-dispatch-claude-api-key'));
   const [selectedJobId, setSelectedJobId] = useState('');
   const [selectedRecommendationIndex, setSelectedRecommendationIndex] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -250,14 +251,14 @@ export default function DispatchView({ onNavigate }) {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  <span>差配計算中...</span>
+                  <span>{hasApiKey ? 'AI差配計算中...' : '差配計算中...'}</span>
                 </>
               ) : (
                 <>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                  <span>差配を実行</span>
+                  <span>{hasApiKey ? 'AI差配を実行' : '差配を実行'}</span>
                 </>
               )}
             </button>
@@ -292,6 +293,39 @@ export default function DispatchView({ onNavigate }) {
       {/* Recommendations */}
       {recommendations.length > 0 && (
         <div className="space-y-4">
+          {/* Dispatch mode indicator */}
+          {dispatchMode && (
+            <div className={`flex items-center justify-between px-4 py-2 rounded-lg text-xs ${
+              dispatchMode === 'ai'
+                ? 'bg-indigo-50 border border-indigo-200 text-indigo-700'
+                : 'bg-gray-50 border border-gray-200 text-gray-600'
+            }`}>
+              <div className="flex items-center gap-2">
+                {dispatchMode === 'ai' ? (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    <span className="font-bold">AI差配（Opus）</span>
+                    <span>で最適化しました</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    <span className="font-bold">ルールベース差配</span>
+                    <span>（APIキー未設定）</span>
+                  </>
+                )}
+              </div>
+              {dispatchMode === 'ai' && aiUsage && (
+                <span className="text-indigo-500">
+                  {aiUsage.input_tokens + aiUsage.output_tokens} tokens
+                </span>
+              )}
+            </div>
+          )}
           <RecommendationPanel
             recommendations={recommendations}
             selectedIndex={selectedRecommendationIndex}
