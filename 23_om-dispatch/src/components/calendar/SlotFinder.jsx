@@ -58,7 +58,7 @@ export default function SlotFinder({ members, date, onSlotSelect }) {
     // Build a bitmap of common free minutes
     const freeMinutes = new Array(workEnd - workStart).fill(true);
 
-    for (const { member, freeSlots } of memberSlots) {
+    for (const { freeSlots } of memberSlots) {
       // Build member's free bitmap
       const memberFree = new Array(workEnd - workStart).fill(false);
       for (const slot of freeSlots) {
@@ -101,12 +101,6 @@ export default function SlotFinder({ members, date, onSlotSelect }) {
 
     return slots;
   }, [memberSlots]);
-
-  // Convert a time to percentage position on the grid
-  function timeToPercent(timeStr) {
-    const min = timeStringToMinutes(timeStr);
-    return ((min - GRID_START) / GRID_TOTAL) * 100;
-  }
 
   // Convert a time to clamped percentage
   function timeToPercentClamped(timeStr) {

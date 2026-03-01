@@ -3,6 +3,28 @@ import { useApp } from '../../context/AppContext';
 import { APP_DEFAULTS } from '../../data/defaults';
 
 /**
+ * Reusable time input component.
+ */
+function TimeInput({ label, value, onChange, description }) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+      <input
+        type="time"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      />
+      {description && (
+        <p className="text-xs text-gray-500 mt-1">{description}</p>
+      )}
+    </div>
+  );
+}
+
+/**
  * Working hours configuration panel.
  * Manages regular hours, extended hours, and departure/arrival limits.
  */
@@ -48,25 +70,6 @@ export default function WorkingHoursSettings() {
       earliestDeparture: defaults.earliestDeparture,
       latestWorkStart: defaults.latestWorkStart,
     });
-  }
-
-  function TimeInput({ label, value, onChange, description }) {
-    return (
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          {label}
-        </label>
-        <input
-          type="time"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        />
-        {description && (
-          <p className="text-xs text-gray-500 mt-1">{description}</p>
-        )}
-      </div>
-    );
   }
 
   return (

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { REAL_CALENDAR_EVENTS } from '../data/realCalendarData';
 

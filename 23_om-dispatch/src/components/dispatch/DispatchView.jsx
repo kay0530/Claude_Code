@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 import { useDispatchEngine } from '../../hooks/useDispatchEngine';
 import { calculateTravelInfo } from '../../services/travelService';
+import { createDispatchCalendarEvents } from '../../services/graphCalendarService';
 import { generateId } from '../../utils/idGenerator';
 import { STATUS_LABELS } from '../../utils/constants';
 import RecommendationPanel from './RecommendationPanel';
@@ -16,12 +18,24 @@ import Badge from '../shared/Badge';
  */
 export default function DispatchView({ onNavigate }) {
   const { state, dispatch } = useApp();
-  const { recommendations, loading, error, runDispatch, clearRecommendations, dispatchMode, aiUsage, aiModel } = useDispatchEngine();
+  const { isAuthenticated, getToken } = useAuth();
+  const { recommendations, loading, error, runDispatch, clearRecommendations, dispatchMode, aiUsage } = useDispatchEngine();
   const hasApiKey = Boolean(localStorage.getItem('om-dispatch-claude-api-key'));
   const [selectedJobId, setSelectedJobId] = useState('');
   const [selectedRecommendationIndex, setSelectedRecommendationIndex] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmSuccess, setConfirmSuccess] = useState(false);
+
+  // Outlook calendar write-back state
+  const [outlookWriting, setOutlookWriting] = useState(false);
+  const [outlookWritten, setOutlookWritten] = useState(false);
+  const [outlookWriteResult, setOutlookWriteResult] = useState(null); // { type: 'success'|'error', message }
+
+  // Reset Outlook write state when job or recommendation changes
+  useEffect(() => {
+    setOutlookWritten(false);
+    setOutlookWriteResult(null);
+  }, [selectedJobId, selectedRecommendationIndex]);
 
   // Filter jobs with status 'estimated' (ready for dispatch)
   const estimatedJobs = state.jobs.filter(j => j.status === 'estimated');
@@ -90,6 +104,68 @@ export default function DispatchView({ onNavigate }) {
 
     setShowConfirmModal(false);
     setConfirmSuccess(true);
+  }
+
+  // Write dispatch assignment to Outlook calendars
+  async function handleOutlookWrite() {
+    if (outlookWriting || outlookWritten) return;
+    if (!confirmSuccess || !selectedRecommendation || !selectedJob) return;
+
+    setOutlookWriting(true);
+    setOutlookWriteResult(null);
+
+    try {
+      const token = await getToken();
+
+      // Build assignment data compatible with createDispatchCalendarEvents
+      const assignmentData = {
+        memberIds: selectedRecommendation.team.map((m) => m.id),
+        leadMemberId: selectedRecommendation.leadCandidate?.id || null,
+        vehicleArrangement: selectedRecommendation.vehicleArrangement || '',
+        scheduledArrival: selectedJob.scheduledStart,
+        scheduledEnd: selectedJob.scheduledEnd,
+      };
+
+      // Build job data with jobTypeName for the calendar subject
+      const jobData = {
+        ...selectedJob,
+        jobTypeName: selectedJobType?.nameJa || '',
+      };
+
+      const result = await createDispatchCalendarEvents(
+        token,
+        assignmentData,
+        jobData,
+        state.members
+      );
+
+      if (result.success) {
+        setOutlookWritten(true);
+        setOutlookWriteResult({
+          type: 'success',
+          message: `${result.data.length}名のカレンダーに登録しました`,
+        });
+      } else if (result.data.length > 0) {
+        // Partial success
+        setOutlookWritten(true);
+        setOutlookWriteResult({
+          type: 'success',
+          message: `${result.data.length}名に登録（${result.errors.length}名はエラー）`,
+        });
+      } else {
+        setOutlookWriteResult({
+          type: 'error',
+          message: result.errors?.[0]?.error || 'Outlook登録に失敗しました',
+        });
+      }
+    } catch (err) {
+      setOutlookWriteResult({
+        type: 'error',
+        message: err.message || 'Outlook登録に失敗しました',
+      });
+    } finally {
+      setOutlookWriting(false);
+    }
   }
 
   return (
@@ -287,6 +363,56 @@ export default function DispatchView({ onNavigate }) {
             </svg>
             <p className="text-sm font-medium">差配が確定されました</p>
           </div>
+
+          {/* Outlook calendar write-back button */}
+          {isAuthenticated && (
+            <div className="mt-3 pt-3 border-t border-green-200">
+              {outlookWritten ? (
+                <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Outlook登録済み
+                </div>
+              ) : (
+                <button
+                  onClick={handleOutlookWrite}
+                  disabled={outlookWriting}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    outlookWriting
+                      ? 'bg-green-400 text-white cursor-not-allowed'
+                      : 'bg-green-600 text-white hover:bg-green-700'
+                  }`}
+                >
+                  {outlookWriting ? (
+                    <>
+                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      登録中...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      Outlookに登録
+                    </>
+                  )}
+                </button>
+              )}
+
+              {/* Write result message */}
+              {outlookWriteResult && (
+                <div className={`mt-2 text-xs font-medium ${
+                  outlookWriteResult.type === 'success' ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {outlookWriteResult.message}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 

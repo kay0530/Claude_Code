@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AppProvider } from './context/AppContext';
 import { CalendarProvider } from './context/CalendarContext';
+import { AuthProvider } from './context/AuthContext';
 import MainLayout from './components/layout/MainLayout';
 import DashboardView from './components/dashboard/DashboardView';
 import MemberListView from './components/members/MemberListView';
@@ -30,7 +31,7 @@ function PlaceholderView({ title }) {
 
 export default function App() {
   const [activeView, setActiveView] = useState('dashboard');
-  const [viewParams, setViewParams] = useState({});
+  const [, setViewParams] = useState({});
 
   function navigate(view, params = {}) {
     setActiveView(view);
@@ -62,11 +63,13 @@ export default function App() {
 
   return (
     <AppProvider>
-      <CalendarProvider>
-        <MainLayout activeView={activeView} onNavigate={navigate}>
-          {renderView()}
-        </MainLayout>
-      </CalendarProvider>
+      <AuthProvider>
+        <CalendarProvider>
+          <MainLayout activeView={activeView} onNavigate={navigate}>
+            {renderView()}
+          </MainLayout>
+        </CalendarProvider>
+      </AuthProvider>
     </AppProvider>
   );
 }

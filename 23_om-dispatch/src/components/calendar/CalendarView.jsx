@@ -3,12 +3,12 @@ import { DEFAULT_MEMBERS } from '../../data/members';
 import {
   getWeekDatesSundayStart,
   getDayNameJa,
-  formatDateJa,
   formatDateShort,
   toISODate,
 } from '../../utils/dateUtils';
 import { useCalendar } from '../../context/CalendarContext';
 import { useCalendarSync } from '../../hooks/useCalendarSync';
+import { useAuth } from '../../context/AuthContext';
 import EventBlock from './EventBlock';
 import EventDetailModal from './EventDetailModal';
 
@@ -28,12 +28,17 @@ const MEMBER_ORDER = [
   'wano_t',
 ];
 
-export default function CalendarView({ onNavigate }) {
+export default function CalendarView() {
   const { events, loading, lastSynced } = useCalendar();
-  const { syncing, syncStatus, syncWeek, loadRealCalendarData } = useCalendarSync();
+  const { syncing, syncStatus, syncWeek, syncFromOutlook } = useCalendarSync();
+  const { isAuthenticated, getToken } = useAuth();
 
   // Selected event for detail modal
   const [selectedEvent, setSelectedEvent] = useState(null);
+
+  // Outlook live sync state
+  const [outlookSyncing, setOutlookSyncing] = useState(false);
+  const [toast, setToast] = useState(null); // { type: 'success'|'error', message: string }
 
   // Week navigation state
   const [baseDate, setBaseDate] = useState(new Date());
@@ -68,15 +73,6 @@ export default function CalendarView({ onNavigate }) {
     if (showWeekend) return weekDates;
     return weekDates.filter((d) => d.getDay() !== 0 && d.getDay() !== 6);
   }, [weekDates, showWeekend]);
-
-  // Build a lookup: email -> member
-  const memberByEmail = useMemo(() => {
-    const map = {};
-    DEFAULT_MEMBERS.forEach((m) => {
-      map[m.outlookEmail.toLowerCase()] = m;
-    });
-    return map;
-  }, []);
 
   // Auto-scroll to 8:00 on mount
   useEffect(() => {
@@ -155,10 +151,43 @@ export default function CalendarView({ onNavigate }) {
     }
   }
 
-  // Sync button handler
+  // Sync button handler (offline / static data fallback)
   function handleSync() {
     syncWeek(DEFAULT_MEMBERS, weekDates);
   }
+
+  // Live Outlook sync handler
+  async function handleOutlookSync() {
+    if (outlookSyncing) return;
+    setOutlookSyncing(true);
+    setToast(null);
+
+    try {
+      const token = await getToken();
+      const startDate = weekDates[0];
+      const endDate = weekDates[weekDates.length - 1];
+      const result = await syncFromOutlook(token, DEFAULT_MEMBERS, startDate, endDate);
+
+      if (result.success) {
+        setToast({ type: 'success', message: `Outlook同期完了: ${result.count}件のイベントを取得` });
+      } else if (result.count > 0) {
+        setToast({ type: 'success', message: `${result.count}件取得（一部エラー: ${result.error}）` });
+      } else {
+        setToast({ type: 'error', message: result.error || 'Outlook同期に失敗しました' });
+      }
+    } catch (err) {
+      setToast({ type: 'error', message: err.message || 'Outlook同期に失敗しました' });
+    } finally {
+      setOutlookSyncing(false);
+    }
+  }
+
+  // Auto-dismiss toast after 4 seconds
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   // Get timed (non-all-day) events for a specific member + date
   const getEventsForMemberDate = useCallback(
@@ -209,8 +238,6 @@ export default function CalendarView({ onNavigate }) {
     const end = formatDateShort(displayDates[displayDates.length - 1]);
     return `${start}～${end}`;
   }, [weekDates, displayDates, showWeekend]);
-
-  const dayColCount = displayDates.length;
 
   return (
     <div className="flex flex-col h-full">
@@ -281,33 +308,97 @@ export default function CalendarView({ onNavigate }) {
             </button>
           </div>
 
-          {/* Sync button */}
-          <button
-            onClick={handleSync}
-            disabled={syncing || loading}
-            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors text-sm font-medium ${
-              syncing || loading
-                ? 'bg-blue-500 text-white cursor-not-allowed'
-                : 'bg-blue-600 text-white hover:bg-blue-700'
-            }`}
-          >
-            <svg
-              className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          {/* Outlook live sync button (only when authenticated) */}
+          {isAuthenticated && (
+            <button
+              onClick={handleOutlookSync}
+              disabled={outlookSyncing || syncing || loading}
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors text-sm font-medium ${
+                outlookSyncing
+                  ? 'bg-blue-500 text-white cursor-not-allowed'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+              }`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-            {syncing ? '同期中...' : 'Outlook同期'}
-          </button>
+              <svg
+                className={`w-4 h-4 ${outlookSyncing ? 'animate-spin' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              {outlookSyncing ? '同期中...' : 'Outlook同期'}
+            </button>
+          )}
+
+          {/* Offline sync button (fallback) */}
+          {!isAuthenticated && (
+            <button
+              onClick={handleSync}
+              disabled={syncing || loading}
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors text-sm font-medium ${
+                syncing || loading
+                  ? 'bg-gray-400 text-white cursor-not-allowed'
+                  : 'bg-gray-600 text-white hover:bg-gray-700'
+              }`}
+            >
+              <svg
+                className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              {syncing ? '同期中...' : 'データ同期'}
+            </button>
+          )}
+
+          {/* Hint for unauthenticated users */}
+          {!isAuthenticated && (
+            <span className="text-xs text-gray-400 hidden lg:inline">
+              MS365連携で自動同期が可能
+            </span>
+          )}
         </div>
       </div>
+
+      {/* Toast notification */}
+      {toast && (
+        <div
+          className={`mb-3 px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-opacity ${
+            toast.type === 'success'
+              ? 'bg-green-50 border border-green-200 text-green-700'
+              : 'bg-red-50 border border-red-200 text-red-700'
+          }`}
+        >
+          {toast.type === 'success' ? (
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          ) : (
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          )}
+          {toast.message}
+          <button onClick={() => setToast(null)} className="ml-auto text-current opacity-50 hover:opacity-100">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {/* Member filter chips */}
       <div className="flex items-center gap-1.5 mb-3 flex-wrap">

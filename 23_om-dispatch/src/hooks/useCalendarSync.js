@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { useCalendar } from '../context/CalendarContext';
 import { parseCalendarEvents } from '../services/calendarService';
+import { fetchAllMembersCalendarEvents } from '../services/graphCalendarService';
 import { toISODate } from '../utils/dateUtils';
 import { REAL_CALENDAR_EVENTS } from '../data/realCalendarData';
 
@@ -15,7 +16,7 @@ import { REAL_CALENDAR_EVENTS } from '../data/realCalendarData';
  * - syncStatus: Object tracking sync progress
  */
 export function useCalendarSync() {
-  const { setEvents, addEvents, setLoading, setSyncError, events } =
+  const { setEvents, addEvents, setLoading, setSyncError } =
     useCalendar();
   const [syncing, setSyncing] = useState(false);
   const [lastSync, setLastSync] = useState(null);
@@ -251,6 +252,120 @@ export function useCalendarSync() {
     });
   }, [setEvents, setLoading]);
 
+  /**
+   * Sync calendar events from Outlook via Graph API (live data).
+   * Calls fetchAllMembersCalendarEvents and replaces current events on success.
+   *
+   * @param {string} accessToken - MS365 access token from AuthContext.getToken()
+   * @param {Array<{outlookEmail: string}>} members - Member objects with outlookEmail
+   * @param {string|Date} startDate - Start of date range
+   * @param {string|Date} endDate - End of date range
+   * @returns {Promise<{success: boolean, count: number, error: string|null}>}
+   */
+  const syncFromOutlook = useCallback(
+    async (accessToken, members, startDate, endDate) => {
+      if (syncInProgressRef.current) {
+        console.warn('[CalendarSync] Sync already in progress, skipping.');
+        return { success: false, count: 0, error: 'Sync already in progress' };
+      }
+
+      syncInProgressRef.current = true;
+      setSyncing(true);
+      setLoading(true);
+      setError(null);
+      setSyncError(null);
+
+      const totalMembers = members ? members.length : 0;
+
+      setSyncStatus({
+        syncing: true,
+        lastSync: null,
+        error: null,
+        syncedMembers: 0,
+        totalMembers,
+      });
+
+      try {
+        const startStr = toISODate(new Date(startDate));
+        const endStr = toISODate(new Date(endDate));
+
+        console.log(
+          '[CalendarSync] Live Outlook sync for',
+          totalMembers,
+          'members from',
+          startStr,
+          'to',
+          endStr
+        );
+
+        const result = await fetchAllMembersCalendarEvents(
+          accessToken,
+          members,
+          startStr,
+          endStr
+        );
+
+        if (result.data.length > 0) {
+          setEvents(result.data);
+        }
+
+        const now = new Date().toISOString();
+        setLastSync(now);
+
+        // Count unique members that returned events
+        const syncedEmailSet = new Set(
+          result.data.map((e) => e.memberEmail.toLowerCase())
+        );
+
+        setSyncStatus({
+          syncing: false,
+          lastSync: now,
+          error: result.errors.length > 0
+            ? `${result.errors.length} member(s) failed`
+            : null,
+          syncedMembers: syncedEmailSet.size,
+          totalMembers,
+        });
+
+        if (result.errors.length > 0) {
+          console.warn('[CalendarSync] Partial sync errors:', result.errors);
+        }
+
+        console.log(
+          '[CalendarSync] Live sync complete.',
+          result.data.length,
+          'events fetched.'
+        );
+
+        return {
+          success: result.errors.length === 0,
+          count: result.data.length,
+          error: result.errors.length > 0
+            ? `${result.errors.length}名の同期に失敗しました`
+            : null,
+        };
+      } catch (err) {
+        const message = err.message || 'Outlook sync failed';
+        setError(message);
+        setSyncError(message);
+
+        setSyncStatus((prev) => ({
+          ...prev,
+          syncing: false,
+          error: message,
+        }));
+
+        console.error('[CalendarSync] Live sync error:', message);
+        return { success: false, count: 0, error: message };
+      } finally {
+        setSyncing(false);
+        setLoading(false);
+        syncInProgressRef.current = false;
+      }
+    },
+    [setEvents, setLoading, setSyncError]
+  );
+
   return {
     syncing,
     lastSync,
@@ -260,5 +375,6 @@ export function useCalendarSync() {
     syncWeek,
     importCalendarData,
     loadRealCalendarData,
+    syncFromOutlook,
   };
 }

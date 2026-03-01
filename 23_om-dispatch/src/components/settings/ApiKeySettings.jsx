@@ -1,34 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { STORAGE_KEY, callClaudeAPI, selectModel } from '../../services/claudeService';
 
+function loadStoredApiKey() {
+  try {
+    return localStorage.getItem(STORAGE_KEY) || '';
+  } catch {
+    return '';
+  }
+}
+
 export default function ApiKeySettings() {
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey, setApiKey] = useState(loadStoredApiKey);
   const [isRevealed, setIsRevealed] = useState(false);
-  const [isConfigured, setIsConfigured] = useState(false);
+  const [isConfigured, setIsConfigured] = useState(() => Boolean(loadStoredApiKey()));
   const [testStatus, setTestStatus] = useState(null); // null | 'testing' | 'success' | 'error'
   const [testMessage, setTestMessage] = useState('');
   const [saveMessage, setSaveMessage] = useState('');
-
-  // Load existing key on mount
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      setApiKey(stored);
-      setIsConfigured(true);
-    }
-  }, []);
-
-  // Mask the API key for display
-  function getMaskedKey() {
-    if (!apiKey) return '';
-    if (isRevealed) return apiKey;
-    if (apiKey.length <= 8) return '\u2022'.repeat(apiKey.length);
-    return (
-      apiKey.substring(0, 4) +
-      '\u2022'.repeat(Math.min(apiKey.length - 8, 32)) +
-      apiKey.substring(apiKey.length - 4)
-    );
-  }
 
   // Save API key
   function handleSave() {

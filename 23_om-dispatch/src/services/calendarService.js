@@ -38,7 +38,7 @@ export function parseCalendarEvents(outlookEvents) {
  * @param {string} tz - timeZone name
  * @returns {string} ISO datetime string
  */
-function normalizeDateTime(dt, tz) {
+function normalizeDateTime(dt) {
   // MS365 often returns datetime without offset; keep as-is for local usage
   if (dt && !dt.endsWith('Z') && !dt.includes('+') && !dt.includes('-', 10)) {
     return dt;
@@ -267,10 +267,6 @@ export function findBestDates(
  * @returns {Object} MS365-compatible event body
  */
 export function formatEventForOutlook(assignment, job, members) {
-  const memberNames = members.map((m) => m.nameJa).join('、');
-  const leadMember = members.find((m) => m.id === assignment.leadMemberId);
-  const leadName = leadMember ? leadMember.nameJa : '';
-
   const bodyContent = [
     `案件: ${job.title}`,
     `場所: ${job.locationName}`,

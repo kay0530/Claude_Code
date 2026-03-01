@@ -1,6 +1,6 @@
 import { useApp } from '../../context/AppContext';
 import { STATUS_LABELS } from '../../utils/constants';
-import { formatDateJa, formatDateTimeJa, toISODate } from '../../utils/dateUtils';
+import { formatDateTimeJa, toISODate } from '../../utils/dateUtils';
 
 // Helper to get today's date string in YYYY-MM-DD format
 function getTodayStr() {

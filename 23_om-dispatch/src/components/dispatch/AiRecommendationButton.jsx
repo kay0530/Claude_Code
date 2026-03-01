@@ -7,7 +7,7 @@ export default function AiRecommendationButton({
   jobType,
   onReasonGenerated,
 }) {
-  const { loading, error, lastUsage, generateReason, hasApiKey } =
+  const { loading, error, generateReason, hasApiKey } =
     useClaudeApi();
   const [result, setResult] = useState(null);
 

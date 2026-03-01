@@ -1,7 +1,7 @@
 import { useApp } from '../../context/AppContext';
 import MemberCard from './MemberCard';
 
-export default function MemberListView({ onNavigate }) {
+export default function MemberListView() {
   const { state } = useApp();
   const { members } = state;
 

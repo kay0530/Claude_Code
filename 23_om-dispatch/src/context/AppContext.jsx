@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import { DEFAULT_MEMBERS } from '../data/members';
 import { DEFAULT_JOB_TYPES } from '../data/jobTypes';
@@ -150,7 +151,7 @@ export function AppProvider({ children }) {
 
     loadDoc(FIRESTORE_DOC_ID).then((data) => {
       if (data) {
-        const { updatedAt, ...appData } = data;
+        const { updatedAt: _updatedAt, ...appData } = data;
         isRemoteUpdate.current = true;
         dispatch({ type: 'SYNC_FROM_REMOTE', payload: appData });
       }
@@ -164,7 +165,7 @@ export function AppProvider({ children }) {
 
     const unsub = subscribeDoc(FIRESTORE_DOC_ID, (data) => {
       if (initialLoad.current) return;
-      const { updatedAt, ...appData } = data;
+      const { updatedAt: _updatedAt, ...appData } = data;
       isRemoteUpdate.current = true;
       dispatch({ type: 'SYNC_FROM_REMOTE', payload: appData });
     });

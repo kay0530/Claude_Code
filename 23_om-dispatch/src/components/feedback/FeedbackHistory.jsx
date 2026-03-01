@@ -6,9 +6,9 @@ import { SKILL_CATEGORIES } from '../../data/skillCategories';
 /**
  * Displays a filterable, expandable list of past feedback entries.
  */
-export default function FeedbackHistory({ onNavigate }) {
+export default function FeedbackHistory() {
   const { state } = useApp();
-  const { feedbacks, jobs, assignments, members } = state;
+  const { feedbacks, jobs, members } = state;
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [expandedId, setExpandedId] = useState(null);

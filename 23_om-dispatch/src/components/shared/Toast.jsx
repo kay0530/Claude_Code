@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { useState, useCallback } from 'react';
 
 const TYPE_STYLES = {
   success: {

@@ -4,6 +4,7 @@ import JobTypeEditor from './JobTypeEditor';
 import ConditionEditor from './ConditionEditor';
 import StretchSettings from './StretchSettings';
 import DataManagement from './DataManagement';
+import AzureAdSettings from './AzureAdSettings';
 
 /**
  * Main settings page with tab-based navigation.
@@ -15,6 +16,7 @@ const TABS = [
   { key: 'conditions', label: '条件管理', icon: 'adjustments' },
   { key: 'stretch', label: 'ストレッチモード', icon: 'zap' },
   { key: 'data', label: 'データ管理', icon: 'database' },
+  { key: 'ms365', label: 'MS365連携', icon: 'calendar' },
   { key: 'api', label: 'API設定', icon: 'cloud' },
 ];
 
@@ -28,6 +30,8 @@ function TabIcon({ icon, className }) {
     zap: 'M13 10V3L4 14h7v7l9-11h-7z',
     database:
       'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4',
+    calendar:
+      'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
     cloud:
       'M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z',
   };
@@ -64,6 +68,8 @@ export default function SettingsView() {
         return <StretchSettings />;
       case 'data':
         return <DataManagement />;
+      case 'ms365':
+        return <AzureAdSettings />;
       case 'api':
         return (
           <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">

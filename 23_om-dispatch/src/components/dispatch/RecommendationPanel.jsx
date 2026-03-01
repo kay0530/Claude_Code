@@ -51,7 +51,7 @@ export default function RecommendationPanel({ recommendations, selectedIndex, on
  * Individual recommendation card.
  */
 function RecommendationCard({ recommendation, isSelected, onClick, stretchMultiplier }) {
-  const { rank, team, score, breakdown, isStretch, stretchRatio, teamSkillTotal, requiredSkillTotal, vehicleArrangement, vehicleDetails, leadCandidate, mentoringPairs } = recommendation;
+  const { rank, team, score, breakdown, isStretch, teamSkillTotal, requiredSkillTotal, vehicleArrangement, vehicleDetails, leadCandidate, mentoringPairs } = recommendation;
 
   const scorePercentage = Math.round((score / 10) * 100);
 
