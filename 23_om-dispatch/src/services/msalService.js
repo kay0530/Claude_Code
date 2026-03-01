@@ -1,7 +1,7 @@
 import { PublicClientApplication } from '@azure/msal-browser';
 
 /** Default scopes for Microsoft Graph calendar access */
-export const DEFAULT_SCOPES = ['Calendars.ReadWrite', 'User.Read'];
+export const DEFAULT_SCOPES = ['Calendars.ReadWrite', 'Calendars.ReadWrite.Shared', 'User.Read'];
 
 /** localStorage keys for Azure AD config */
 export const STORAGE_KEYS = {

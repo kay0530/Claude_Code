@@ -196,7 +196,7 @@ export default function AzureAdSettings() {
         </h4>
         <div className="text-xs text-gray-500 space-y-1">
           <p>
-            Azure AD でアプリ登録が必要です。必要な権限: <span className="font-mono text-blue-600">Calendars.ReadWrite</span>, <span className="font-mono text-blue-600">User.Read</span>
+            Azure AD でアプリ登録が必要です。必要な権限: <span className="font-mono text-blue-600">Calendars.ReadWrite</span>, <span className="font-mono text-blue-600">Calendars.ReadWrite.Shared</span>, <span className="font-mono text-blue-600">User.Read</span>
           </p>
           <p className="text-gray-400">
             ※ アプリの種類は「SPA (シングルページアプリケーション)」を選択し、リダイレクト URI にこのアプリの URL を設定してください。
