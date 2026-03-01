@@ -16,8 +16,9 @@ Solar power plant O&M (Operations & Maintenance) team dispatch application. Help
 - **Routing**: Manual useState-based routing in App.jsx (no react-router)
 - **Charts**: Pure SVG (no chart library)
 - **State**: useReducer (AppContext) + useState (CalendarContext) + localStorage persistence
-- **AI**: Claude API (Haiku 4.5 / Sonnet 4.5) for dispatch recommendations
-- **Calendar data**: Static JSON files pre-fetched from Outlook (not live API calls)
+- **AI**: Claude API (Opus 4.6 / Sonnet 4.5 / Haiku 4.5) for dispatch recommendations
+- **Calendar data**: Static JSON files pre-fetched from Outlook + live MS365 Graph API (optional)
+- **Auth**: MSAL.js (@azure/msal-browser, @azure/msal-react) for Azure AD auth
 - **Package manager**: npm
 
 ## Dev Server
@@ -47,8 +48,9 @@ npm run lint    # ESLint
 │   │   ├── AppContext.jsx      # useReducer-based state: members, jobs, assignments,
 │   │   │                       #   feedbacks, jobTypes, conditions, settings
 │   │   │                       #   All persisted to localStorage with individual keys
-│   │   └── CalendarContext.jsx # Calendar events state + localStorage with DATA_VERSION
-│   │                           #   CRITICAL: Bump DATA_VERSION when JSON data changes
+│   │   ├── CalendarContext.jsx # Calendar events state + localStorage with DATA_VERSION
+│   │   │                       #   CRITICAL: Bump DATA_VERSION when JSON data changes
+│   │   └── AuthContext.jsx     # MS365 auth state (isAuthenticated, account, msalInstance)
 │   │
 │   ├── data/
 │   │   ├── members.js              # DEFAULT_MEMBERS: 8 team members with skills/emails
@@ -101,6 +103,7 @@ npm run lint    # ESLint
 │   │   │   ├── ConditionEditor.jsx # CRUD for site conditions
 │   │   │   ├── DataManagement.jsx  # JSON export/import/reset
 │   │   │   ├── JobTypeEditor.jsx   # CRUD for job types
+│   │   │   ├── AzureAdSettings.jsx  # Azure AD config (clientId/tenantId) with connection test
 │   │   │   ├── StretchSettings.jsx # Stretch threshold config
 │   │   │   └── WorkingHoursSettings.jsx # Working hours config
 │   │   └── shared/
@@ -120,6 +123,8 @@ npm run lint    # ESLint
 │   │   ├── claudeService.js        # Claude API: generateRecommendationReason,
 │   │   │                           #   evaluateStretchRisk, optimizeMultiJobSchedule
 │   │   │                           #   Models: claude-haiku-4-5 (haiku), claude-sonnet-4-5 (sonnet)
+│   │   ├── msalService.js         # MSAL auth: login/logout/token, Azure config localStorage
+│   │   ├── graphCalendarService.js # Graph API: fetch/create calendar events for 8 members
 │   │   ├── dispatchEngine.js       # Core dispatch algorithm: rankTeams, scoreTeam,
 │   │   │                           #   generateTeamCombinations, vehicle/leadership/guidance checks
 │   │   └── travelService.js        # Travel time estimation (haversine + road correction)
@@ -229,11 +234,26 @@ Defined in `jobTypes.js`. Each has: nameJa, baseTimeHours, requiredSkillTotal, p
 
 - API key stored in localStorage (`om-dispatch-claude-api-key`)
 - Uses `anthropic-dangerous-direct-browser-access` header for browser-side calls
-- Model selection: `aiComplexity === 'sonnet'` -> claude-sonnet-4-5, else claude-haiku-4-5
-- Three AI functions:
+- Model selection via `selectModel(aiComplexity)`:
+  - `'opus'` → `claude-opus-4-6` (AI dispatch)
+  - `'sonnet'` → `claude-sonnet-4-5-20250514`
+  - default → `claude-haiku-4-5-20251001`
+- Four AI functions:
   1. `generateRecommendationReason()` - explain why team was recommended
   2. `evaluateStretchRisk()` - risk assessment for stretch assignments (always uses Sonnet)
   3. `optimizeMultiJobSchedule()` - multi-job same-day optimization (always uses Sonnet)
+  4. `aiDispatchTeams()` - **AI-powered team composition** (always uses Opus)
+
+### AI Dispatch (`aiDispatchTeams`)
+
+Replaces rule-based `rankTeams()` with Claude Opus AI for comprehensive team optimization:
+
+- **Input**: members, job, jobType, conditions, settings
+- **Output**: `{ recommendations[], content, error, usage, model }`
+- **Flow**: `useDispatchEngine.js` checks `hasApiKey` → tries AI dispatch → falls back to rule-based on failure
+- **JSON response**: Up to 5 team recommendations with `memberIds`, `leadMemberId`, `aiReasoning`, `breakdown`, `vehicleArrangement`, `mentoringPairs`
+- **UI**: Indigo "AI推薦理由" label in `RecommendationPanel.jsx`, mode indicator badge in `DispatchView.jsx`
+- **Fallback**: Rule-based engine used when API key not configured or AI call fails
 
 ## Outlook Calendar Integration
 
@@ -313,6 +333,53 @@ Special treatment required because date-only strings cause NaN in time parsing:
    - `hasAnyAllDayEvents` memoized flag controls banner visibility
    - Banner sits between date headers and scrollable time grid
 
+## MS365 Live API Integration (Optional)
+
+### Architecture Overview
+```
+User → AzureAdSettings (configure clientId/tenantId)
+     → Header "MS365 連携" button → MSAL popup login
+     → CalendarView "Outlook同期" → Graph API fetch all 8 members
+     → DispatchView "Outlookに登録" → Graph API create events
+```
+
+### Authentication (msalService.js)
+- **Flow**: MSAL popup (SPA, no backend required)
+- **Config storage**: localStorage (`om-dispatch-azure-client-id`, `om-dispatch-azure-tenant-id`)
+- **Scopes**: `Calendars.ReadWrite`, `User.Read`
+- **Token**: Silent acquisition with popup fallback
+- **Functions**: `createMsalInstance()`, `login()`, `logout()`, `getAccessToken()`, `loadAzureConfig()`, `saveAzureConfig()`
+
+### Graph API Calendar Operations (graphCalendarService.js)
+- `fetchMemberCalendarEvents(token, email, start, end)` → single member events with pagination
+- `fetchAllMembersCalendarEvents(token, members, start, end)` → all 8 members via Promise.allSettled
+- `createCalendarEvent(token, email, eventData)` → create single event
+- `createDispatchCalendarEvents(token, assignment, job, members)` → bulk create for dispatch team
+- Uses `MEMBER_EMAIL_MAP` for email→memberKey mapping
+- `$select` optimization: only fetches needed fields
+- `$top=500` for large calendars
+
+### Auth State (AuthContext.jsx)
+- React context: `{ isAuthenticated, account, msalInstance, loading, error }`
+- Wraps with MsalProvider when MSAL instance available
+- Auto-loads config from localStorage on mount
+
+### UI Integration Points
+| Component | Feature | When Visible |
+|---|---|---|
+| Header.jsx | MS365連携 login/status | Always |
+| CalendarView.jsx | "Outlook同期" button | When authenticated |
+| DispatchView.jsx | "Outlookに登録" button | After dispatch confirmation, when authenticated |
+| SettingsView.jsx | MS365連携 tab | Always |
+| AzureAdSettings.jsx | Azure AD config form | Settings → MS365連携 tab |
+
+### Azure AD Requirements
+- Azure Portal → App registrations → New registration
+- Platform: SPA (Single-page application)
+- Redirect URI: `https://kay0530.github.io/OM_dispatch/` (production) or `http://localhost:5180/OM_dispatch/` (dev)
+- API permissions: Microsoft Graph → Delegated → `Calendars.ReadWrite`, `User.Read`
+- Save Client ID and Tenant ID → enter in app Settings → MS365連携
+
 ## CalendarView Member Display Order
 
 Defined as `MEMBER_ORDER` constant in CalendarView.jsx (matches Outlook column order):
@@ -339,6 +406,8 @@ Each stored independently in localStorage with prefix `om-dispatch-`:
 | om-dispatch-settings | APP_DEFAULTS |
 | om-dispatch-calendar-events | REAL_CALENDAR_EVENTS (versioned) |
 | om-dispatch-claude-api-key | (user-entered) |
+| om-dispatch-azure-client-id | (user-entered Azure AD) |
+| om-dispatch-azure-tenant-id | (user-entered Azure AD) |
 
 ### Reducer Actions
 Members: SET_MEMBERS, UPDATE_MEMBER
@@ -393,7 +462,7 @@ Provides: events, loading, lastSynced, syncError, setEvents, addEvents, clearEve
 - Initial mock data implementation
 - Calendar weekly view with time grid
 
-### Session 4: Real Outlook Data Integration (Most Recent)
+### Session 4: Real Outlook Data Integration
 - Removed all mock data
 - Fetched real Outlook calendar data for all 8 members via MS365 MCP
 - Implemented DATA_VERSION cache invalidation strategy
@@ -402,15 +471,65 @@ Provides: events, loading, lastSynced, syncError, setEvents, addEvents, clearEve
 - Fixed pagination (廣木), batch fetching (BOLD/笹沼), date format (isAllDay)
 - Current DATA_VERSION: 7
 
+### Session 5: Firebase & GitHub Pages Deployment
+- Added Firebase/Firestore integration for multi-device real-time sync
+- Configured GitHub Pages deployment via GitHub Actions
+- Fixed working-day date display logic
+- Initial deploy to Claude_Code monorepo's GitHub Pages
+- Committed and pushed 73 files
+
+### Session 6: AI Dispatch with Opus & Dedicated Repository
+- Replaced rule-based dispatch with Claude Opus AI (`aiDispatchTeams()`)
+- Added `selectModel()` with opus/sonnet/haiku support
+- Updated `useDispatchEngine.js` for async AI dispatch with rule-based fallback
+- Added AI推薦理由 display in `RecommendationPanel.jsx`
+- Added AI/rule mode indicator + token usage badge in `DispatchView.jsx`
+- Fixed response shape mismatch bug (double JSON parse → direct use of `recommendations`)
+- Created dedicated OM_dispatch repository (https://github.com/kay0530/OM_dispatch)
+- Set up GitHub Pages at https://kay0530.github.io/OM_dispatch/
+- Changed vite.config.js base path from `/Claude_Code/` to `/OM_dispatch/`
+
+### Session 7: MS365 Outlook Calendar API Integration (Current)
+- Added MSAL.js authentication (popup flow for GitHub Pages SPA compatibility)
+- Created `msalService.js` for Azure AD auth (login/logout/silent token acquisition)
+- Created `graphCalendarService.js` for Graph API calendar CRUD operations
+- Created `AuthContext.jsx` for React auth state management
+- Added `AzureAdSettings.jsx` for Azure AD clientId/tenantId configuration
+- CalendarView: "Outlook同期" button for live calendar data sync
+- DispatchView: "Outlookに登録" button to write dispatch results to Outlook
+- Header: MS365 connection status indicator
+- SettingsView: Added MS365連携 tab
+- All existing offline functionality preserved as fallback
+- Required Azure AD App Registration with SPA platform + Calendars.ReadWrite scope
+- 25 files changed, +1,236 lines
+
+## Deployment
+
+### Repositories
+- **Claude_Code (monorepo)**: https://github.com/kay0530/Claude_Code — contains `23_om-dispatch/` as subdirectory
+- **OM_dispatch (専用)**: https://github.com/kay0530/OM_dispatch — standalone repo for GitHub Pages
+
+### GitHub Pages
+- **URL**: https://kay0530.github.io/OM_dispatch/
+- **Deploy method**: GitHub Actions (`.github/workflows/deploy.yml`)
+- **Trigger**: Push to `main` branch → auto build & deploy
+- **Vite base path**: `/OM_dispatch/` (in vite.config.js)
+- **Note**: Environment protection rules removed from `github-pages` environment to allow Actions deploy
+
+### Keeping Repos in Sync
+When making changes to `23_om-dispatch/` in the Claude_Code monorepo, also push to OM_dispatch repo for deployment.
+
 ## Known Issues & TODOs
 
-1. Calendar data is static (pre-fetched); no live Outlook API calls at runtime
+1. Calendar data defaults to static JSON; live Outlook API available when Azure AD configured
 2. `temp_*.json` filenames are temporary; consider renaming to permanent format
 3. 廣木's event count (~110) may be lower than expected vs other members (100-160)
 4. No automated tests
 5. Travel time estimation uses placeholder values in most cases
 6. Availability score in dispatch engine is hardcoded to 8 (full calendar integration pending)
 7. `filterAvailableMembers()` uses `memberId` matching which may not align with `memberEmail` in events
+8. Claude_Code monorepoとOM_dispatch専用リポの同期が手動
+9. Azure AD App Registration required for MS365 live API features (see Azure AD Requirements section)
 
 ## Important Rules for Claude
 
@@ -422,3 +541,4 @@ Provides: events, loading, lastSynced, syncError, setEvents, addEvents, clearEve
 6. **No react-router**: All navigation is via `navigate(viewKey, params)` prop drilling
 7. **Output files**: Store generated files in `Claude_Code_Demo/` with numbered folders (per global CLAUDE.md)
 8. **Commit style**: English, conventional commit format (feat:, fix:, refactor:, etc.)
+9. **MS365 Auth**: MSAL uses popup flow only (no redirect) for GitHub Pages SPA compatibility
