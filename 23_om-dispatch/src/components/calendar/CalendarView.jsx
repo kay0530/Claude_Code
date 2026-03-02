@@ -240,7 +240,7 @@ export default function CalendarView() {
   }, [weekDates, displayDates, showWeekend]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col" style={{ height: 'calc(100vh - 104px)' }}>
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-4">
@@ -446,182 +446,187 @@ export default function CalendarView() {
       </div>
 
       {/* Calendar grid — Outlook schedule view style */}
-      {/* Frame shows ~11 hours (8:00-19:00) at a time; scrolls 0-24h inside */}
-      <div className="bg-gray-900 rounded-xl overflow-hidden border border-gray-700 flex flex-col flex-1 min-h-0">
-        {/* Fixed header area */}
-        <div className="flex shrink-0 border-b border-gray-700">
-          {/* Time column header spacer */}
-          <div className="w-14 shrink-0 border-r border-gray-700" />
-
-          {/* Member column headers */}
-          {visibleOrderedMembers.map((member, mIdx) => (
-            <div
-              key={member.id}
-              className={`flex-1 min-w-[160px] ${mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''}`}
-            >
-              {/* Member name header */}
-              <div
-                className="flex items-center justify-between px-2 py-1.5 text-white text-xs font-bold truncate"
-                style={{ backgroundColor: member.color }}
-              >
-                <span className="truncate">{member.nameJa}</span>
-                <button
-                  onClick={() => hideMember(member.id)}
-                  className="shrink-0 ml-1 opacity-60 hover:opacity-100 transition-opacity"
-                  title={`${member.nameJa}を非表示`}
-                >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              {/* Day name + date sub-headers */}
+      {/* Single scroll container with sticky header + sticky time column */}
+      <div className="bg-gray-900 rounded-xl overflow-hidden border border-gray-700 flex-1 min-h-0">
+        <div ref={scrollRef} className="h-full overflow-auto">
+          <div className="inline-flex flex-col" style={{ minWidth: '100%' }}>
+            {/* Sticky header area — stays visible during vertical scroll */}
+            <div className="sticky top-0 z-20 bg-gray-900 border-b border-gray-700">
+              {/* Member name + day sub-headers row */}
               <div className="flex">
-                {displayDates.map((date, dIdx) => {
-                  const today = isToday(date);
-                  const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-                  return (
-                    <div
-                      key={toISODate(date)}
-                      className={`flex-1 text-center py-1 ${
-                        dIdx < displayDates.length - 1 ? 'border-r border-gray-700/50' : ''
-                      } ${today ? 'bg-blue-900/40' : ''}`}
-                    >
-                      <div className={`text-[10px] leading-tight ${isWeekend ? 'text-gray-500' : 'text-gray-400'}`}>
-                        {getDayNameJa(date)}
-                      </div>
-                      <div
-                        className={`text-xs font-semibold leading-tight ${
-                          today
-                            ? 'text-blue-400'
-                            : isWeekend
-                              ? 'text-gray-500'
-                              : 'text-gray-300'
-                        }`}
-                      >
-                        {date.getDate()}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
+                {/* Time column spacer (sticky left) */}
+                <div className="w-14 shrink-0 border-r border-gray-700 sticky left-0 z-30 bg-gray-900" />
 
-        {/* All-day events banner */}
-        {hasAnyAllDayEvents && (
-          <div className="flex shrink-0 border-b border-gray-700" style={{ minHeight: '28px' }}>
-            {/* Time label column */}
-            <div className="w-14 shrink-0 border-r border-gray-700 flex items-center justify-end pr-2 text-[10px] text-gray-500">
-              終日
-            </div>
-            {/* Member columns */}
-            {visibleOrderedMembers.map((member, mIdx) => (
-              <div
-                key={`allday-${member.id}`}
-                className={`flex-1 min-w-[160px] flex ${
-                  mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''
-                }`}
-              >
-                {displayDates.map((date, dIdx) => {
-                  const allDayEvents = getAllDayEventsForMemberDate(member.outlookEmail, date);
-                  return (
+                {/* Member column headers */}
+                {visibleOrderedMembers.map((member, mIdx) => (
+                  <div
+                    key={member.id}
+                    className={`min-w-[250px] flex-1 ${mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''}`}
+                  >
+                    {/* Member name header */}
                     <div
-                      key={`allday-${member.id}-${toISODate(date)}`}
-                      className={`flex-1 px-0.5 py-0.5 ${
-                        dIdx < displayDates.length - 1 ? 'border-r border-gray-700/50' : ''
+                      className="flex items-center justify-between px-2 py-1.5 text-white text-xs font-bold truncate"
+                      style={{ backgroundColor: member.color }}
+                    >
+                      <span className="truncate">{member.nameJa}</span>
+                      <button
+                        onClick={() => hideMember(member.id)}
+                        className="shrink-0 ml-1 opacity-60 hover:opacity-100 transition-opacity"
+                        title={`${member.nameJa}を非表示`}
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Day name + date sub-headers */}
+                    <div className="flex bg-gray-900">
+                      {displayDates.map((date, dIdx) => {
+                        const today = isToday(date);
+                        const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+                        return (
+                          <div
+                            key={toISODate(date)}
+                            className={`flex-1 text-center py-1 ${
+                              dIdx < displayDates.length - 1 ? 'border-r border-gray-700/50' : ''
+                            } ${today ? 'bg-blue-900/40' : ''}`}
+                          >
+                            <div className={`text-[10px] leading-tight ${isWeekend ? 'text-gray-500' : 'text-gray-400'}`}>
+                              {getDayNameJa(date)}
+                            </div>
+                            <div
+                              className={`text-xs font-semibold leading-tight ${
+                                today
+                                  ? 'text-blue-400'
+                                  : isWeekend
+                                    ? 'text-gray-500'
+                                    : 'text-gray-300'
+                              }`}
+                            >
+                              {date.getDate()}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* All-day events banner (inside sticky header) */}
+              {hasAnyAllDayEvents && (
+                <div className="flex border-t border-gray-700" style={{ minHeight: '28px' }}>
+                  {/* Time label column (sticky left) */}
+                  <div className="w-14 shrink-0 border-r border-gray-700 flex items-center justify-end pr-2 text-[10px] text-gray-500 sticky left-0 z-30 bg-gray-900">
+                    終日
+                  </div>
+                  {/* Member columns */}
+                  {visibleOrderedMembers.map((member, mIdx) => (
+                    <div
+                      key={`allday-${member.id}`}
+                      className={`min-w-[250px] flex-1 flex ${
+                        mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''
                       }`}
                     >
-                      {allDayEvents.map((event) => (
-                        <div
-                          key={event.id}
-                          onClick={() => setSelectedEvent(event)}
-                          className="text-[9px] truncate rounded-sm px-1 py-0.5 cursor-pointer mb-0.5"
-                          style={{
-                            backgroundColor: member.color + '55',
-                            borderLeft: `3px solid ${member.color}`,
-                            color: '#e5e7eb',
-                            lineHeight: '1.2',
-                          }}
-                          title={event.title}
-                        >
-                          {event.title}
-                        </div>
-                      ))}
+                      {displayDates.map((date, dIdx) => {
+                        const allDayEvents = getAllDayEventsForMemberDate(member.outlookEmail, date);
+                        return (
+                          <div
+                            key={`allday-${member.id}-${toISODate(date)}`}
+                            className={`flex-1 px-0.5 py-0.5 ${
+                              dIdx < displayDates.length - 1 ? 'border-r border-gray-700/50' : ''
+                            }`}
+                          >
+                            {allDayEvents.map((event) => (
+                              <div
+                                key={event.id}
+                                onClick={() => setSelectedEvent(event)}
+                                className="text-[9px] truncate rounded-sm px-1 py-0.5 cursor-pointer mb-0.5"
+                                style={{
+                                  backgroundColor: member.color + '55',
+                                  borderLeft: `3px solid ${member.color}`,
+                                  color: '#e5e7eb',
+                                  lineHeight: '1.2',
+                                }}
+                                title={event.title}
+                              >
+                                {event.title}
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })}
                     </div>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        )}
+                  ))}
+                </div>
+              )}
+            </div>
 
-        {/* Scrollable time grid */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto overflow-x-auto min-h-0">
-          <div className="flex" style={{ minHeight: `${24 * HOUR_HEIGHT}px` }}>
-            {/* Time column */}
-            <div className="w-14 shrink-0 border-r border-gray-700">
-              {HOURS.map((hour) => (
+            {/* Time grid body */}
+            <div className="flex" style={{ minHeight: `${24 * HOUR_HEIGHT}px` }}>
+              {/* Time column (sticky left) */}
+              <div className="w-14 shrink-0 border-r border-gray-700 sticky left-0 z-10 bg-gray-900">
+                {HOURS.map((hour) => (
+                  <div
+                    key={hour}
+                    className="border-b border-gray-800 text-right pr-2 text-[11px] text-gray-500 flex items-start justify-end"
+                    style={{ height: `${HOUR_HEIGHT}px` }}
+                  >
+                    <span className="-mt-2">
+                      {String(hour).padStart(2, '0')}:00
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Member day columns */}
+              {visibleOrderedMembers.map((member, mIdx) => (
                 <div
-                  key={hour}
-                  className="border-b border-gray-800 text-right pr-2 text-[11px] text-gray-500 flex items-start justify-end"
-                  style={{ height: `${HOUR_HEIGHT}px` }}
+                  key={member.id}
+                  className={`min-w-[250px] flex-1 flex ${
+                    mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''
+                  }`}
                 >
-                  <span className="-mt-2">
-                    {String(hour).padStart(2, '0')}:00
-                  </span>
+                  {displayDates.map((date, dIdx) => {
+                    const dateStr = toISODate(date);
+                    const dayEvents = getEventsForMemberDate(member.outlookEmail, date);
+                    const today = isToday(date);
+                    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+
+                    return (
+                      <div
+                        key={dateStr}
+                        className={`flex-1 relative ${
+                          dIdx < displayDates.length - 1 ? 'border-r border-gray-700/50' : ''
+                        } ${today ? 'bg-blue-900/10' : ''} ${isWeekend ? 'bg-gray-800/30' : ''}`}
+                      >
+                        {/* Hour grid lines */}
+                        {HOURS.map((hour) => (
+                          <div
+                            key={hour}
+                            className="border-b border-gray-800"
+                            style={{ height: `${HOUR_HEIGHT}px` }}
+                          />
+                        ))}
+
+                        {/* Event blocks */}
+                        {dayEvents.map((event) => (
+                          <EventBlock
+                            key={event.id}
+                            event={event}
+                            memberColor={member.color}
+                            hourHeight={HOUR_HEIGHT}
+                            hourStart={0}
+                            onClick={setSelectedEvent}
+                          />
+                        ))}
+                      </div>
+                    );
+                  })}
                 </div>
               ))}
             </div>
-
-            {/* Member day columns */}
-            {visibleOrderedMembers.map((member, mIdx) => (
-              <div
-                key={member.id}
-                className={`flex-1 min-w-[160px] flex ${
-                  mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''
-                }`}
-              >
-                {displayDates.map((date, dIdx) => {
-                  const dateStr = toISODate(date);
-                  const dayEvents = getEventsForMemberDate(member.outlookEmail, date);
-                  const today = isToday(date);
-                  const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-
-                  return (
-                    <div
-                      key={dateStr}
-                      className={`flex-1 relative ${
-                        dIdx < displayDates.length - 1 ? 'border-r border-gray-700/50' : ''
-                      } ${today ? 'bg-blue-900/10' : ''} ${isWeekend ? 'bg-gray-800/30' : ''}`}
-                    >
-                      {/* Hour grid lines */}
-                      {HOURS.map((hour) => (
-                        <div
-                          key={hour}
-                          className="border-b border-gray-800"
-                          style={{ height: `${HOUR_HEIGHT}px` }}
-                        />
-                      ))}
-
-                      {/* Event blocks */}
-                      {dayEvents.map((event) => (
-                        <EventBlock
-                          key={event.id}
-                          event={event}
-                          memberColor={member.color}
-                          hourHeight={HOUR_HEIGHT}
-                          hourStart={0}
-                          onClick={setSelectedEvent}
-                        />
-                      ))}
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
           </div>
         </div>
       </div>

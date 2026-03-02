@@ -47,10 +47,10 @@ export default function EventBlock({ event, memberColor, hourHeight, hourStart =
         if (onClick) onClick(event);
       }}
     >
-      {/* Event title (only show if block is tall enough and wide enough) */}
+      {/* Event title (only show if block is tall enough) */}
       {height >= 18 && (
         <p
-          className="text-[11px] font-medium truncate leading-tight px-1 text-white"
+          className={`text-[11px] font-medium leading-tight px-1 text-white ${height >= 50 ? 'line-clamp-2' : 'truncate'}`}
         >
           {event.title}
         </p>
