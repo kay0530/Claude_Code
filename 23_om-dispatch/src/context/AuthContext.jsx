@@ -5,6 +5,7 @@ import {
   createMsalInstance,
   login as msalLogin,
   logout as msalLogout,
+  handleRedirectResponse,
   getAccessToken,
   loadAzureConfig,
   DEFAULT_SCOPES,
@@ -36,6 +37,17 @@ export function AuthProvider({ children }) {
       try {
         const instance = createMsalInstance(clientId, tenantId);
         await instance.initialize();
+
+        // Handle redirect response (returning from login redirect)
+        const redirectResult = await handleRedirectResponse(instance);
+        if (redirectResult && redirectResult.account) {
+          instance.setActiveAccount(redirectResult.account);
+          setAccount(redirectResult.account);
+          setIsAuthenticated(true);
+          setMsalInstance(instance);
+          setLoading(false);
+          return;
+        }
 
         // Check for existing accounts (already logged in)
         const accounts = instance.getAllAccounts();
@@ -78,10 +90,8 @@ export function AuthProvider({ children }) {
         setMsalInstance(instance);
       }
 
-      const acct = await msalLogin(instance);
-      instance.setActiveAccount(acct);
-      setAccount(acct);
-      setIsAuthenticated(true);
+      // loginRedirect navigates away — state is restored on return via handleRedirectPromise
+      await msalLogin(instance);
     } catch (err) {
       console.error('Login failed:', err);
       setError(err.message);

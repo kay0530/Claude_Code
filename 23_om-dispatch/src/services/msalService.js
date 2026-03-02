@@ -33,27 +33,33 @@ export function createMsalInstance(clientId, tenantId, redirectUri) {
 }
 
 /**
- * Login via popup and return the account.
+ * Login via redirect (navigates away from the app, then returns).
  * @param {PublicClientApplication} msalInstance
  * @param {string[]} [scopes] - Scopes to request
- * @returns {Promise<import('@azure/msal-browser').AccountInfo>}
  */
-export async function login(msalInstance, scopes = DEFAULT_SCOPES) {
-  const response = await msalInstance.loginPopup({
+export function login(msalInstance, scopes = DEFAULT_SCOPES) {
+  return msalInstance.loginRedirect({
     scopes,
     prompt: 'select_account',
   });
-  return response.account;
 }
 
 /**
- * Logout via popup.
+ * Handle redirect response after returning from login.
+ * @param {PublicClientApplication} msalInstance
+ * @returns {Promise<import('@azure/msal-browser').AuthenticationResult|null>}
+ */
+export function handleRedirectResponse(msalInstance) {
+  return msalInstance.handleRedirectPromise();
+}
+
+/**
+ * Logout via redirect.
  * @param {PublicClientApplication} msalInstance
  * @param {import('@azure/msal-browser').AccountInfo} [account]
- * @returns {Promise<void>}
  */
-export async function logout(msalInstance, account) {
-  await msalInstance.logoutPopup({
+export function logout(msalInstance, account) {
+  return msalInstance.logoutRedirect({
     account: account || msalInstance.getActiveAccount(),
   });
 }
@@ -70,9 +76,9 @@ export async function getAccessToken(msalInstance, account, scopes = DEFAULT_SCO
     const response = await msalInstance.acquireTokenSilent({ scopes, account });
     return response.accessToken;
   } catch {
-    // Silent acquisition failed — fall back to popup
-    const response = await msalInstance.acquireTokenPopup({ scopes, account });
-    return response.accessToken;
+    // Silent acquisition failed — fall back to redirect
+    await msalInstance.acquireTokenRedirect({ scopes, account });
+    return null;
   }
 }
 
