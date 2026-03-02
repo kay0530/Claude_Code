@@ -33,3 +33,6 @@ nul
 supply-demand-market-bot/output.txt
 supply-demand-market-bot/config.local.json
 supply-demand-market-bot/run.log
+ai-news-bot/output.txt
+ai-news-bot/config.local.json
+ai-news-bot/run.log
