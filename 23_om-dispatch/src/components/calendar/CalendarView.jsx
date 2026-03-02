@@ -13,7 +13,7 @@ import EventBlock from './EventBlock';
 import EventDetailModal from './EventDetailModal';
 
 // Calendar grid constants
-const HOUR_HEIGHT = 48; // px per hour row
+const HOUR_HEIGHT = 56; // px per hour row
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 
 // Member display order (matches Outlook)
@@ -447,7 +447,7 @@ export default function CalendarView() {
 
       {/* Calendar grid — Outlook schedule view style */}
       {/* Frame shows ~11 hours (8:00-19:00) at a time; scrolls 0-24h inside */}
-      <div className="bg-gray-900 rounded-xl overflow-hidden border border-gray-700 flex flex-col" style={{ maxHeight: `${11 * HOUR_HEIGHT + 80}px` }}>
+      <div className="bg-gray-900 rounded-xl overflow-hidden border border-gray-700 flex flex-col flex-1 min-h-0">
         {/* Fixed header area */}
         <div className="flex shrink-0 border-b border-gray-700">
           {/* Time column header spacer */}
@@ -457,7 +457,7 @@ export default function CalendarView() {
           {visibleOrderedMembers.map((member, mIdx) => (
             <div
               key={member.id}
-              className={`flex-1 min-w-0 ${mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''}`}
+              className={`flex-1 min-w-[160px] ${mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''}`}
             >
               {/* Member name header */}
               <div
@@ -521,7 +521,7 @@ export default function CalendarView() {
             {visibleOrderedMembers.map((member, mIdx) => (
               <div
                 key={`allday-${member.id}`}
-                className={`flex-1 min-w-0 flex ${
+                className={`flex-1 min-w-[160px] flex ${
                   mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''
                 }`}
               >
@@ -530,7 +530,7 @@ export default function CalendarView() {
                   return (
                     <div
                       key={`allday-${member.id}-${toISODate(date)}`}
-                      className={`flex-1 min-w-0 px-0.5 py-0.5 ${
+                      className={`flex-1 px-0.5 py-0.5 ${
                         dIdx < displayDates.length - 1 ? 'border-r border-gray-700/50' : ''
                       }`}
                     >
@@ -580,7 +580,7 @@ export default function CalendarView() {
             {visibleOrderedMembers.map((member, mIdx) => (
               <div
                 key={member.id}
-                className={`flex-1 min-w-0 flex ${
+                className={`flex-1 min-w-[160px] flex ${
                   mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''
                 }`}
               >
@@ -593,7 +593,7 @@ export default function CalendarView() {
                   return (
                     <div
                       key={dateStr}
-                      className={`flex-1 min-w-0 relative ${
+                      className={`flex-1 relative ${
                         dIdx < displayDates.length - 1 ? 'border-r border-gray-700/50' : ''
                       } ${today ? 'bg-blue-900/10' : ''} ${isWeekend ? 'bg-gray-800/30' : ''}`}
                     >

@@ -22,7 +22,10 @@ const MEMBER_EMAIL_MAP = {
  */
 async function graphGet(url, accessToken) {
   const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${accessToken}` },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      Prefer: 'outlook.timezone="Asia/Tokyo"',
+    },
   });
   if (!res.ok) {
     const errorBody = await res.text();
