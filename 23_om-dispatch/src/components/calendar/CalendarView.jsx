@@ -449,7 +449,7 @@ export default function CalendarView() {
       {/* Single scroll container with sticky header + sticky time column */}
       <div className="bg-gray-900 rounded-xl overflow-hidden border border-gray-700 flex-1 min-h-0">
         <div ref={scrollRef} className="h-full overflow-auto">
-          <div className="inline-flex flex-col" style={{ minWidth: '100%' }}>
+          <div className="flex flex-col">
             {/* Sticky header area — stays visible during vertical scroll */}
             <div className="sticky top-0 z-20 bg-gray-900 border-b border-gray-700">
               {/* Member name + day sub-headers row */}
@@ -461,7 +461,7 @@ export default function CalendarView() {
                 {visibleOrderedMembers.map((member, mIdx) => (
                   <div
                     key={member.id}
-                    className={`min-w-[250px] flex-1 ${mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''}`}
+                    className={`flex-1 ${mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''}`}
                   >
                     {/* Member name header */}
                     <div
@@ -525,7 +525,7 @@ export default function CalendarView() {
                   {visibleOrderedMembers.map((member, mIdx) => (
                     <div
                       key={`allday-${member.id}`}
-                      className={`min-w-[250px] flex-1 flex ${
+                      className={`flex-1 flex ${
                         mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''
                       }`}
                     >
@@ -584,7 +584,7 @@ export default function CalendarView() {
               {visibleOrderedMembers.map((member, mIdx) => (
                 <div
                   key={member.id}
-                  className={`min-w-[250px] flex-1 flex ${
+                  className={`flex-1 flex ${
                     mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''
                   }`}
                 >
