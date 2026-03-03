@@ -519,6 +519,20 @@ Provides: events, loading, lastSynced, syncError, setEvents, addEvents, clearEve
 ### Keeping Repos in Sync
 When making changes to `23_om-dispatch/` in the Claude_Code monorepo, also push to OM_dispatch repo for deployment.
 
+### Session 8: Calendar UI — Outlook-style Layout & Full-width
+- Switched MSAL auth from popup to redirect flow (`msalService.js`, `AuthContext.jsx`, `Header.jsx`)
+- Added JST timezone header (`Prefer: outlook.timezone="Asia/Tokyo"`) to Graph API calls (`graphCalendarService.js`)
+- Restructured CalendarView.jsx to Outlook-style layout:
+  - Single scroll container with CSS sticky header (member names stay visible on vertical scroll)
+  - CSS sticky time column (stays visible on horizontal scroll)
+  - Viewport-constrained height: `calc(100vh - 104px)` for internal scroll instead of page scroll
+  - Auto-scroll to 8:00 on mount
+- EventBlock.jsx: `line-clamp-2` for events >= 50px tall (was `truncate`)
+- MainLayout.jsx: Conditionally removes `max-w-7xl` constraint for calendar view → full-width layout
+- Removed `min-w-[250px]` from member columns → `flex-1` auto-sizing to fit all members without horizontal scrollbar
+- Azure AD App: Client ID `85420e2f-eb38-4a8e-931f-4be552f953b0`, Tenant ID `61b80e23-6dd9-4dc6-b355-d7f210b12ef5`
+- Commits: `8749fd4` (sticky headers), `1e9a6eb` (full-width auto-fit)
+
 ## Known Issues & TODOs
 
 1. Calendar data defaults to static JSON; live Outlook API available when Azure AD configured
@@ -541,4 +555,4 @@ When making changes to `23_om-dispatch/` in the Claude_Code monorepo, also push 
 6. **No react-router**: All navigation is via `navigate(viewKey, params)` prop drilling
 7. **Output files**: Store generated files in `Claude_Code_Demo/` with numbered folders (per global CLAUDE.md)
 8. **Commit style**: English, conventional commit format (feat:, fix:, refactor:, etc.)
-9. **MS365 Auth**: MSAL uses popup flow only (no redirect) for GitHub Pages SPA compatibility
+9. **MS365 Auth**: MSAL uses redirect flow (switched from popup in Session 8)
