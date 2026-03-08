@@ -1,9 +1,19 @@
+import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import MemberCard from './MemberCard';
+import MemberEditModal from './MemberEditModal';
 
 export default function MemberListView() {
-  const { state } = useApp();
+  const { state, dispatch } = useApp();
   const { members } = state;
+  const [editingMember, setEditingMember] = useState(null);
+
+  function handleSave(memberId, manpowerByJobType) {
+    dispatch({
+      type: 'UPDATE_MEMBER',
+      payload: { id: memberId, manpowerByJobType },
+    });
+  }
 
   return (
     <div>
@@ -19,10 +29,18 @@ export default function MemberListView() {
           <MemberCard
             key={member.id}
             member={member}
-            onClick={() => {}}
+            onClick={() => setEditingMember(member)}
           />
         ))}
       </div>
+
+      <MemberEditModal
+        key={editingMember?.id}
+        member={editingMember}
+        isOpen={!!editingMember}
+        onClose={() => setEditingMember(null)}
+        onSave={handleSave}
+      />
     </div>
   );
 }

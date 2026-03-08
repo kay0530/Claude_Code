@@ -1,13 +1,6 @@
 /**
- * @typedef {Object} SkillSet
- * @property {number} electrical - 電気・設備知識 (1-10)
- * @property {number} technical - 技術力 (1-10)
- * @property {number} onSiteJudgment - 現場判断力 (1-10)
- * @property {number} safetyManagement - 安全管理意識 (1-10)
- * @property {number} qualityAccuracy - 品質・正確性 (1-10)
- * @property {number} communication - コミュニケーション力 (1-10)
- * @property {number} leadership - リーダーシップ (1-10)
- * @property {number} adaptability - 応用力 (1-10)
+ * @typedef {Object.<string, number>} ManpowerByJobType
+ * Maps job type IDs to manpower values (0.5-1.2)
  */
 
 /**
@@ -20,8 +13,7 @@
  * @property {boolean} needsGuidance
  * @property {string} color
  * @property {string} outlookEmail
- * @property {SkillSet} skills
- * @property {number} avgSkill
+ * @property {ManpowerByJobType} manpowerByJobType
  * @property {string} [sfContactId] - Future Salesforce Contact ID
  */
 
@@ -30,12 +22,10 @@
  * @property {string} id
  * @property {string} nameJa
  * @property {number} baseTimeHours
- * @property {number} requiredSkillTotal
- * @property {string[]} primarySkills
+ * @property {number} baseManpower
  * @property {string[]} defaultConditionIds
  * @property {number} minPersonnel
  * @property {number} maxPersonnel
- * @property {'haiku'|'sonnet'} aiComplexity
  * @property {string} [sfJobTypeId] - Future Salesforce ID
  */
 
@@ -44,8 +34,9 @@
  * @property {string} id
  * @property {string} nameJa
  * @property {string} description
- * @property {number} timeMultiplier
- * @property {string[]} applicableJobTypes
+ * @property {string} jobTypeId - Job type this condition applies to
+ * @property {'additive'|'multiplicative'} adjustmentType
+ * @property {number} adjustmentValue - Manpower adjustment value
  */
 
 /**
@@ -60,8 +51,9 @@
  * @property {number} [longitude]
  * @property {number} estimatedTravelMinutes
  * @property {string[]} activeConditionIds
+ * @property {string[]} [conditionIds]
  * @property {number} estimatedTimeHours
- * @property {number} requiredSkillTotal
+ * @property {number} requiredManpower
  * @property {string} [preferredDate]
  * @property {string} [scheduledStart]
  * @property {string} [scheduledEnd]
@@ -78,15 +70,18 @@
  * @property {string} jobId
  * @property {string[]} memberIds
  * @property {string} leadMemberId
- * @property {number} teamSkillTotal
+ * @property {number} teamManpower
+ * @property {number} requiredManpower
  * @property {boolean} isStretch
- * @property {number} stretchMultiplier
+ * @property {number} stretchRatio
  * @property {'hiace'|'yodogawa_vehicle'|'both'|'multiple_hiace'} vehicleArrangement
+ * @property {string} vehicleDetails
  * @property {string} aiRecommendation
  * @property {'ai_recommended'|'manual'|'ai_modified'} selectionMethod
  * @property {string} [calendarEventId]
  * @property {string} scheduledDeparture
  * @property {string} scheduledArrival
+ * @property {string} [scheduledDate]
  * @property {string} createdAt
  * @property {string} [sfAssignmentId] - Future Salesforce ID
  */
@@ -99,7 +94,7 @@
  * @property {number} actualTimeHours
  * @property {number} difficultyRating
  * @property {string} notes
- * @property {Object} [skillAdjustments]
+ * @property {Object} [manpowerAdjustments]
  * @property {string} submittedBy
  * @property {string} createdAt
  */
@@ -123,6 +118,22 @@
  * @property {number} baseLocation.latitude
  * @property {number} baseLocation.longitude
  * @property {number} hiaceCapacity
+ */
+
+/**
+ * @typedef {Object} MultiDayPlan
+ * @property {number} rank
+ * @property {'single-day'|'multi-day'} planType
+ * @property {number} totalDays
+ * @property {number} score
+ * @property {DaySchedule[]} daySchedules
+ */
+
+/**
+ * @typedef {Object} DaySchedule
+ * @property {string} date
+ * @property {string} label
+ * @property {Object[]} assignments
  */
 
 export {};

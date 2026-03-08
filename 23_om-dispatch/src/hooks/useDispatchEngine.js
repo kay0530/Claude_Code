@@ -1,17 +1,19 @@
 import { useState, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
-import { rankTeams } from '../services/dispatchEngine';
+import { rankTeams, rankMultiDayPlans } from '../services/dispatchEngine';
 import { useClaudeApi } from './useClaudeApi';
 
 /**
  * React hook wrapping the dispatch engine.
  * Uses AI (Opus) when API key is available, falls back to rule-based engine.
- * @returns {{ recommendations, loading, error, runDispatch, clearRecommendations, isAiMode }}
+ * Supports single-job and multi-job dispatch.
+ * @returns {{ recommendations, multiJobPlans, loading, error, runDispatch, runMultiJobDispatch, clearRecommendations, isAiMode }}
  */
 export function useDispatchEngine() {
   const { state } = useApp();
   const { aiDispatch, hasApiKey, loading: aiLoading } = useClaudeApi();
   const [recommendations, setRecommendations] = useState([]);
+  const [multiJobPlans, setMultiJobPlans] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [dispatchMode, setDispatchMode] = useState(null); // 'ai' | 'rule' | null
@@ -22,6 +24,7 @@ export function useDispatchEngine() {
     setLoading(true);
     setError(null);
     setRecommendations([]);
+    setMultiJobPlans([]);
     setDispatchMode(null);
     setAiUsage(null);
     setAiModel(null);
@@ -55,12 +58,9 @@ export function useDispatchEngine() {
           state.settings
         );
 
-        // aiDispatchTeams already parses JSON and returns { recommendations, error, usage, model }
-        // executeApiCall passes it through, so aiResult has the same shape
         const aiRecs = (aiResult.recommendations || []);
         if (!aiResult.error && aiRecs.length > 0) {
           const formattedAiRecs = aiRecs.map((rec) => {
-            // Resolve member IDs to member objects
             const team = (rec.memberIds || [])
               .map(id => state.members.find(m => m.id === id))
               .filter(Boolean);
@@ -77,8 +77,8 @@ export function useDispatchEngine() {
               breakdown: rec.breakdown || {},
               isStretch: rec.isStretch || false,
               stretchRatio: rec.stretchRatio || 1.0,
-              teamSkillTotal: 0,
-              requiredSkillTotal: jobType.requiredSkillTotal * team.length,
+              teamManpower: rec.teamManpower || 0,
+              requiredManpower: rec.requiredManpower || jobType.baseManpower,
               vehicleArrangement: rec.vehicleArrangement || 'hiace',
               vehicleDetails: rec.vehicleDetails || '',
               leadCandidate,
@@ -105,6 +105,7 @@ export function useDispatchEngine() {
         state.members,
         job,
         jobType,
+        jobConditions,
         state.settings,
         []
       );
@@ -116,8 +117,8 @@ export function useDispatchEngine() {
         breakdown: result.breakdown,
         isStretch: result.isStretch,
         stretchRatio: result.stretchRatio,
-        teamSkillTotal: result.teamSkillTotal,
-        requiredSkillTotal: result.requiredSkillTotal,
+        teamManpower: result.teamManpower,
+        requiredManpower: result.requiredManpower,
         vehicleArrangement: result.vehicleArrangement,
         vehicleDetails: result.vehicleDetails,
         leadCandidate: result.leadCandidate,
@@ -133,8 +134,78 @@ export function useDispatchEngine() {
     }
   }, [state, hasApiKey, aiDispatch]);
 
+  /**
+   * Run multi-job dispatch for multiple selected jobs.
+   * @param {string[]} jobIds - Array of job IDs to dispatch together
+   */
+  const runMultiJobDispatch = useCallback(async (jobIds) => {
+    setLoading(true);
+    setError(null);
+    setRecommendations([]);
+    setMultiJobPlans([]);
+    setDispatchMode('rule');
+    setAiUsage(null);
+    setAiModel(null);
+
+    try {
+      const jobsWithTypes = jobIds.map(jobId => {
+        const job = state.jobs.find(j => j.id === jobId);
+        if (!job) throw new Error(`案件が見つかりません: ${jobId}`);
+        const jobType = state.jobTypes.find(jt => jt.id === job.jobTypeId);
+        if (!jobType) throw new Error(`案件種別が見つかりません: ${job.jobTypeId}`);
+        const conditions = (job.conditionIds || [])
+          .map(cid => state.conditions?.find(c => c.id === cid))
+          .filter(Boolean);
+        return { job, jobType, conditions };
+      });
+
+      const plans = rankMultiDayPlans(
+        state.members,
+        jobsWithTypes,
+        state.settings,
+        []
+      );
+
+      // Augment plans with resolved member objects
+      const augmentedPlans = plans.map((plan, planIndex) => ({
+        ...plan,
+        rank: planIndex + 1,
+        daySchedules: plan.daySchedules.map(daySchedule => ({
+          ...daySchedule,
+          assignments: (daySchedule.jobAssignments || []).map(assignment => {
+            const team = assignment.team || [];
+            return {
+              teamMemberIds: team.map(m => m.id),
+              teamMembers: team,
+              leadMemberId: assignment.leadCandidate?.id || null,
+              leadCandidate: assignment.leadCandidate || null,
+              score: assignment.score,
+              breakdown: assignment.breakdown,
+              isStretch: assignment.isStretch,
+              teamManpower: assignment.teamManpower,
+              requiredManpower: assignment.requiredManpower,
+              vehicleArrangement: assignment.vehicleArrangement,
+              vehicleDetails: assignment.vehicleDetails,
+              mentoringPairs: assignment.mentoringPairs || [],
+              jobTitle: assignment.job?.title || '',
+              jobTypeName: assignment.jobType?.nameJa || '',
+              jobId: assignment.job?.id || '',
+            };
+          }),
+        })),
+      }));
+
+      setMultiJobPlans(augmentedPlans);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [state]);
+
   const clearRecommendations = useCallback(() => {
     setRecommendations([]);
+    setMultiJobPlans([]);
     setError(null);
     setDispatchMode(null);
     setAiUsage(null);
@@ -143,9 +214,11 @@ export function useDispatchEngine() {
 
   return {
     recommendations,
+    multiJobPlans,
     loading: loading || aiLoading,
     error,
     runDispatch,
+    runMultiJobDispatch,
     clearRecommendations,
     dispatchMode,
     aiUsage,

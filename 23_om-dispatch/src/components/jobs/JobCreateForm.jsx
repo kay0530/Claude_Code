@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { generateId } from '../../utils/idGenerator';
+import { calculateRequiredManpower } from '../../utils/skillUtils';
 import ConditionSelector from './ConditionSelector';
 import TimeEstimator from './TimeEstimator';
 
@@ -22,8 +23,9 @@ export default function JobCreateForm({ onNavigate }) {
 
   const selectedType = jobTypes.find(jt => jt.id === form.jobTypeId);
   const activeConditions = conditions.filter(c => form.activeConditionIds.includes(c.id));
-  const totalMultiplier = activeConditions.reduce((acc, c) => acc * c.timeMultiplier, 1.0);
-  const estimatedTime = selectedType ? selectedType.baseTimeHours * totalMultiplier : 0;
+  const requiredManpower = selectedType
+    ? calculateRequiredManpower(selectedType.baseManpower, activeConditions)
+    : 0;
 
   function handleSubmit() {
     const job = {
@@ -37,8 +39,9 @@ export default function JobCreateForm({ onNavigate }) {
       longitude: null,
       estimatedTravelMinutes: 0,
       activeConditionIds: form.activeConditionIds,
-      estimatedTimeHours: parseFloat(estimatedTime.toFixed(1)),
-      requiredSkillTotal: selectedType ? selectedType.requiredSkillTotal : 0,
+      conditionIds: form.activeConditionIds,
+      estimatedTimeHours: selectedType ? selectedType.baseTimeHours : 0,
+      requiredManpower,
       preferredDate: form.preferredDate || null,
       scheduledStart: null,
       scheduledEnd: null,
@@ -99,7 +102,7 @@ export default function JobCreateForm({ onNavigate }) {
                 >
                   <p className="font-bold text-gray-800">{jt.nameJa}</p>
                   <p className="text-xs text-gray-500 mt-1">
-                    基本 {jt.baseTimeHours}h / {jt.minPersonnel}〜{jt.maxPersonnel}名
+                    基本 {jt.baseTimeHours}h / {jt.minPersonnel}〜{jt.maxPersonnel}名 / 人工 {jt.baseManpower}
                   </p>
                 </button>
               ))}
@@ -121,9 +124,9 @@ export default function JobCreateForm({ onNavigate }) {
               <div className="mt-6">
                 <TimeEstimator
                   baseTime={selectedType.baseTimeHours}
+                  baseManpower={selectedType.baseManpower}
                   conditions={conditions}
                   activeConditionIds={form.activeConditionIds}
-                  requiredSkill={selectedType.requiredSkillTotal}
                   minPersonnel={selectedType.minPersonnel}
                   maxPersonnel={selectedType.maxPersonnel}
                 />
@@ -230,12 +233,12 @@ export default function JobCreateForm({ onNavigate }) {
                 </span>
               </div>
               <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-500">推定時間</span>
-                <span className="font-bold text-blue-600">{estimatedTime.toFixed(1)}h</span>
+                <span className="text-gray-500">基本作業時間</span>
+                <span className="font-bold text-blue-600">{selectedType?.baseTimeHours}h</span>
               </div>
               <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-500">必要スキル</span>
-                <span className="font-bold text-purple-600">{selectedType?.requiredSkillTotal}</span>
+                <span className="text-gray-500">必要人工</span>
+                <span className="font-bold text-purple-600">{requiredManpower.toFixed(1)}</span>
               </div>
               <div className="flex justify-between py-2 border-b">
                 <span className="text-gray-500">推奨人数</span>

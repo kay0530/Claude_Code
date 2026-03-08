@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { generateId } from '../../utils/idGenerator';
-import { SKILL_CATEGORIES } from '../../data/skillCategories';
 
 /**
  * CRUD editor for job types.
@@ -10,11 +9,9 @@ import { SKILL_CATEGORIES } from '../../data/skillCategories';
 const EMPTY_FORM = {
   nameJa: '',
   baseTimeHours: '',
-  requiredSkillTotal: '',
-  primarySkills: [],
+  baseManpower: '',
   minPersonnel: '',
   maxPersonnel: '',
-  aiComplexity: 'haiku',
 };
 
 export default function JobTypeEditor() {
@@ -32,11 +29,9 @@ export default function JobTypeEditor() {
     setForm({
       nameJa: jt.nameJa,
       baseTimeHours: jt.baseTimeHours,
-      requiredSkillTotal: jt.requiredSkillTotal,
-      primarySkills: [...jt.primarySkills],
+      baseManpower: jt.baseManpower,
       minPersonnel: jt.minPersonnel,
       maxPersonnel: jt.maxPersonnel,
-      aiComplexity: jt.aiComplexity || 'haiku',
     });
     setEditingId(jt.id);
     setShowForm(true);
@@ -58,23 +53,13 @@ export default function JobTypeEditor() {
     setErrors({});
   }
 
-  // Toggle a skill in primarySkills
-  function toggleSkill(key) {
-    setForm((prev) => ({
-      ...prev,
-      primarySkills: prev.primarySkills.includes(key)
-        ? prev.primarySkills.filter((s) => s !== key)
-        : [...prev.primarySkills, key],
-    }));
-  }
-
   function validate() {
     const newErrors = {};
     if (!form.nameJa.trim()) newErrors.nameJa = '名称を入力してください';
     if (!form.baseTimeHours || parseFloat(form.baseTimeHours) <= 0)
       newErrors.baseTimeHours = '基本時間を入力してください';
-    if (!form.requiredSkillTotal || parseInt(form.requiredSkillTotal) < 0)
-      newErrors.requiredSkillTotal = '必要スキル値を入力してください';
+    if (!form.baseManpower || parseFloat(form.baseManpower) <= 0)
+      newErrors.baseManpower = '基本必要人工を入力してください';
     if (!form.minPersonnel || parseInt(form.minPersonnel) < 1)
       newErrors.minPersonnel = '最小人数を入力してください';
     if (!form.maxPersonnel || parseInt(form.maxPersonnel) < 1)
@@ -96,12 +81,10 @@ export default function JobTypeEditor() {
     const payload = {
       nameJa: form.nameJa.trim(),
       baseTimeHours: parseFloat(form.baseTimeHours),
-      requiredSkillTotal: parseInt(form.requiredSkillTotal),
-      primarySkills: form.primarySkills,
+      baseManpower: parseFloat(form.baseManpower),
       defaultConditionIds: [],
       minPersonnel: parseInt(form.minPersonnel),
       maxPersonnel: parseInt(form.maxPersonnel),
-      aiComplexity: form.aiComplexity,
     };
 
     if (editingId) {
@@ -214,47 +197,31 @@ export default function JobTypeEditor() {
               )}
             </div>
 
-            {/* Required skill total */}
+            {/* Base manpower */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                必要スキル合計値<span className="text-red-500">*</span>
+                基本必要人工<span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
-                min="0"
-                value={form.requiredSkillTotal}
+                step="0.5"
+                min="0.5"
+                value={form.baseManpower}
                 onChange={(e) =>
-                  setForm({ ...form, requiredSkillTotal: e.target.value })
+                  setForm({ ...form, baseManpower: e.target.value })
                 }
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.requiredSkillTotal
+                  errors.baseManpower
                     ? 'border-red-500'
                     : 'border-gray-300'
                 }`}
-                placeholder="例: 12"
+                placeholder="例: 2.0"
               />
-              {errors.requiredSkillTotal && (
+              {errors.baseManpower && (
                 <p className="text-red-500 text-xs mt-1">
-                  {errors.requiredSkillTotal}
+                  {errors.baseManpower}
                 </p>
               )}
-            </div>
-
-            {/* AI Complexity */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                AI複雑度
-              </label>
-              <select
-                value={form.aiComplexity}
-                onChange={(e) =>
-                  setForm({ ...form, aiComplexity: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="haiku">Haiku（簡易判断）</option>
-                <option value="sonnet">Sonnet（複雑判断）</option>
-              </select>
             </div>
 
             {/* Min personnel */}
@@ -282,7 +249,7 @@ export default function JobTypeEditor() {
             </div>
 
             {/* Max personnel */}
-            <div>
+            <div className="md:col-span-2 md:max-w-[calc(50%-0.5rem)]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 最大人数<span className="text-red-500">*</span>
               </label>
@@ -303,29 +270,6 @@ export default function JobTypeEditor() {
                   {errors.maxPersonnel}
                 </p>
               )}
-            </div>
-          </div>
-
-          {/* Primary skills multi-select */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              主要スキル（複数選択）
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {SKILL_CATEGORIES.map((skill) => (
-                <button
-                  key={skill.key}
-                  type="button"
-                  onClick={() => toggleSkill(skill.key)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-                    form.primarySkills.includes(skill.key)
-                      ? 'border-blue-600 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                  }`}
-                >
-                  {skill.nameJa}
-                </button>
-              ))}
             </div>
           </div>
 
@@ -359,29 +303,11 @@ export default function JobTypeEditor() {
               <p className="font-medium text-gray-800">{jt.nameJa}</p>
               <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500 mt-1">
                 <span>基本 {jt.baseTimeHours}h</span>
-                <span>スキル {jt.requiredSkillTotal}</span>
+                <span>人工 {jt.baseManpower}</span>
                 <span>
                   {jt.minPersonnel}〜{jt.maxPersonnel}名
                 </span>
-                <span className="uppercase">
-                  AI: {jt.aiComplexity}
-                </span>
               </div>
-              {jt.primarySkills.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-1.5">
-                  {jt.primarySkills.map((sk) => {
-                    const cat = SKILL_CATEGORIES.find((c) => c.key === sk);
-                    return (
-                      <span
-                        key={sk}
-                        className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600"
-                      >
-                        {cat ? cat.nameJa : sk}
-                      </span>
-                    );
-                  })}
-                </div>
-              )}
             </div>
 
             <div className="flex items-center gap-2">

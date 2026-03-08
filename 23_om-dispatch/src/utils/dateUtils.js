@@ -73,3 +73,37 @@ export function formatDateShort(dateStr) {
   const d = new Date(dateStr);
   return `${d.getMonth() + 1}/${d.getDate()}`;
 }
+
+/**
+ * Generate a list of business days (excluding weekends) starting from a date.
+ * @param {string|Date} startDate - Start date
+ * @param {number} count - Number of business days to generate
+ * @returns {string[]} Array of ISO date strings
+ */
+export function generateBusinessDays(startDate, count) {
+  const result = [];
+  const d = new Date(startDate);
+
+  while (result.length < count) {
+    const day = d.getDay();
+    if (day !== 0 && day !== 6) {
+      result.push(toISODate(d));
+    }
+    d.setDate(d.getDate() + 1);
+  }
+
+  return result;
+}
+
+/**
+ * Format a date string as "M/D(曜日)" label.
+ * @param {string} dateStr - ISO date string
+ * @returns {string} Formatted label like "3/10(月)"
+ */
+export function formatDayLabel(dateStr) {
+  const d = new Date(dateStr);
+  const month = d.getMonth() + 1;
+  const day = d.getDate();
+  const dayName = DAY_NAMES_JA[d.getDay()];
+  return `${month}/${day}(${dayName})`;
+}

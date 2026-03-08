@@ -2,10 +2,10 @@ import { useState } from 'react';
 
 /**
  * Visual indicator for stretch mode.
- * Shows a badge with the stretch multiplier (e.g. 120%) meaning "perform at 120% effort".
- * @param {{ isStretch: boolean, stretchMultiplier?: number, teamSkillTotal?: number, requiredSkillTotal?: number }}
+ * Shows a badge when team manpower is below required manpower.
+ * @param {{ isStretch: boolean, stretchMultiplier?: number, teamManpower?: number, requiredManpower?: number }}
  */
-export default function StretchIndicator({ isStretch, stretchMultiplier, teamSkillTotal, requiredSkillTotal }) {
+export default function StretchIndicator({ isStretch, stretchMultiplier, teamManpower, requiredManpower }) {
   const [showTooltip, setShowTooltip] = useState(false);
 
   if (!isStretch) return null;
@@ -31,11 +31,11 @@ export default function StretchIndicator({ isStretch, stretchMultiplier, teamSki
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-10">
           <div className="bg-gray-800 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
             <p className="font-bold mb-1">ストレッチモード（{effortPercent}%）</p>
+            <p>チーム人工が必要人工数に満たない状態です。</p>
             <p>通常より頑張ってもらうモードです。</p>
-            <p>チームに通常の{effortPercent}%の力を発揮してもらいます。</p>
-            {teamSkillTotal != null && requiredSkillTotal != null && (
+            {teamManpower != null && requiredManpower != null && (
               <p className="mt-1 text-gray-300">
-                チームスキル: {Math.round(teamSkillTotal * 10) / 10} / 必要: {requiredSkillTotal}
+                チーム人工: {Math.round(teamManpower * 10) / 10} / 必要: {requiredManpower}
               </p>
             )}
             {/* Tooltip arrow */}

@@ -3,6 +3,7 @@ import { createContext, useContext, useReducer, useEffect, useRef } from 'react'
 import { DEFAULT_MEMBERS } from '../data/members';
 import { DEFAULT_JOB_TYPES } from '../data/jobTypes';
 import { DEFAULT_CONDITIONS } from '../data/conditions';
+import { DEFAULT_JOBS } from '../data/sampleJobs';
 import { APP_DEFAULTS } from '../data/defaults';
 import { isFirestoreEnabled, saveDoc, loadDoc, subscribeDoc } from '../services/firestoreService';
 
@@ -41,7 +42,7 @@ const initialState = {
   members: loadFromStorage(STORAGE_KEYS.members, DEFAULT_MEMBERS),
   jobTypes: loadFromStorage(STORAGE_KEYS.jobTypes, DEFAULT_JOB_TYPES),
   conditions: loadFromStorage(STORAGE_KEYS.conditions, DEFAULT_CONDITIONS),
-  jobs: loadFromStorage(STORAGE_KEYS.jobs, []),
+  jobs: loadFromStorage(STORAGE_KEYS.jobs, DEFAULT_JOBS),
   assignments: loadFromStorage(STORAGE_KEYS.assignments, []),
   feedbacks: loadFromStorage(STORAGE_KEYS.feedbacks, []),
   settings: loadFromStorage(STORAGE_KEYS.settings, APP_DEFAULTS),

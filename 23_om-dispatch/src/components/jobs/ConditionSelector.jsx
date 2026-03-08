@@ -1,6 +1,6 @@
 export default function ConditionSelector({ conditions, activeIds, onChange, jobTypeId }) {
   const applicableConditions = conditions.filter(
-    c => c.applicableJobTypes.length === 0 || c.applicableJobTypes.includes(jobTypeId)
+    c => !c.jobTypeId || c.jobTypeId === jobTypeId
   );
 
   function toggle(condId) {
@@ -30,9 +30,12 @@ export default function ConditionSelector({ conditions, activeIds, onChange, job
             }`}
           >
             {cond.nameJa}
-            {active && cond.timeMultiplier !== 1.0 && (
+            {active && cond.adjustmentValue != null && (
               <span className="ml-1 opacity-80">
-                ({cond.timeMultiplier < 1 ? '' : '+'}{((cond.timeMultiplier - 1) * 100).toFixed(0)}%)
+                {cond.adjustmentType === 'additive'
+                  ? `(${cond.adjustmentValue > 0 ? '+' : ''}${cond.adjustmentValue}人工)`
+                  : `(×${cond.adjustmentValue})`
+                }
               </span>
             )}
           </button>

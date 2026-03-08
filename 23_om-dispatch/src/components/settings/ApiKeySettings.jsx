@@ -291,7 +291,7 @@ export default function ApiKeySettings() {
             </span>
           </div>
           <p className="mt-1 text-gray-400">
-            ※ モデルは案件種別のaiComplexity設定に基づき自動選択されます。ストレッチリスク評価と複数案件最適化は常にSonnetを使用します。
+            ※ AI差配にはOpus、ストレッチリスク評価と複数案件最適化にはSonnet、推薦理由生成にはHaikuを使用します。
           </p>
         </div>
       </div>

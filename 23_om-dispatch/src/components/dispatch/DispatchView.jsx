@@ -270,7 +270,7 @@ export default function DispatchView({ onNavigate }) {
                 <div>
                   <span className="text-sm font-medium text-gray-700">ストレッチモード</span>
                   <span className="text-xs text-gray-400 ml-2">
-                    スキル不足チームも許容（{stretchMultiplier}x）
+                    人工不足チームも許容（{stretchMultiplier}x）
                   </span>
                 </div>
               </div>
@@ -305,7 +305,7 @@ export default function DispatchView({ onNavigate }) {
                     延長可能: {(selectedJob.estimatedTimeHours * stretchMultiplier).toFixed(1)}h
                   </span>
                   <span className="text-orange-500">
-                    （スキル要件を{Math.round((1 - 1/stretchMultiplier) * 100)}%緩和）
+                    （人工要件を{Math.round((1 - 1/stretchMultiplier) * 100)}%緩和）
                   </span>
                 </div>
               </div>

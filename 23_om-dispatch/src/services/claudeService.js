@@ -1,3 +1,5 @@
+import { getMemberManpower } from '../utils/skillUtils';
+
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 const STORAGE_KEY = 'om-dispatch-claude-api-key';
 
@@ -71,7 +73,7 @@ export async function generateRecommendationReason(
   breakdown,
   isStretch
 ) {
-  const model = selectModel(jobType.aiComplexity);
+  const model = selectModel('haiku');
 
   const systemPrompt = `あなたは太陽光発電所のO&M（運用保守）ディスパッチシステムのAIアシスタントです。
 チーム編成の推薦理由を簡潔に日本語で説明してください。
@@ -80,10 +82,13 @@ export async function generateRecommendationReason(
 
   const memberInfo = team
     .map((m) => {
-      const skillEntries = Object.entries(m.skills)
-        .map(([k, v]) => `${k}:${v}`)
-        .join(', ');
-      return `- ${m.nameJa}（スキル平均: ${m.avgSkill}、${skillEntries}）`;
+      const manpower = getMemberManpower(m, jobType.id);
+      const flags = [];
+      if (m.needsGuidance) flags.push('要指導');
+      if (m.employmentType === 'freelancer') flags.push('フリーランス');
+      if (m.hasVehicle) flags.push('自車あり');
+      const flagStr = flags.length > 0 ? ` [${flags.join(', ')}]` : '';
+      return `- ${m.nameJa}${flagStr}（人工: ${manpower}）`;
     })
     .join('\n');
 
@@ -92,7 +97,7 @@ export async function generateRecommendationReason(
     .join(', ');
 
   const stretchNote = isStretch
-    ? '\n※ストレッチ配置（通常より高難度の案件への挑戦的配置）です。成長機会とリスクの観点も含めてください。'
+    ? '\n※ストレッチ配置（チーム人工が必要人工数に満たない挑戦的配置）です。成長機会とリスクの観点も含めてください。'
     : '';
 
   const userMessage = `以下のチーム編成の推薦理由を説明してください。
@@ -100,8 +105,7 @@ export async function generateRecommendationReason(
 【案件情報】
 - 案件名: ${job.title}
 - 作業種別: ${jobType.nameJa}
-- 必要スキル合計: ${jobType.requiredSkillTotal}
-- 主要スキル: ${jobType.primarySkills.join(', ')}
+- 基本必要人工: ${jobType.baseManpower}
 - 必要人数: ${jobType.minPersonnel}〜${jobType.maxPersonnel}名
 
 【チームメンバー】
@@ -126,7 +130,7 @@ export async function evaluateStretchRisk(
   const model = selectModel('sonnet');
 
   const systemPrompt = `あなたは太陽光発電所のO&M（運用保守）ディスパッチシステムのリスク評価AIです。
-ストレッチ配置（通常より高難度の案件への挑戦的配置）のリスクを評価してください。
+ストレッチ配置（チーム人工が必要人工数に満たない挑戦的配置）のリスクを評価してください。
 
 以下の形式で回答してください:
 1. リスクレベル: 「低」「中」「高」のいずれか
@@ -136,14 +140,12 @@ export async function evaluateStretchRisk(
 
   const memberInfo = team
     .map((m) => {
-      const skillEntries = Object.entries(m.skills)
-        .map(([k, v]) => `${k}:${v}`)
-        .join(', ');
+      const manpower = getMemberManpower(m, jobType.id);
       const flags = [];
       if (m.needsGuidance) flags.push('要指導');
       if (m.employmentType === 'freelancer') flags.push('フリーランス');
       const flagStr = flags.length > 0 ? `[${flags.join(', ')}]` : '';
-      return `- ${m.nameJa} ${flagStr}（スキル平均: ${m.avgSkill}、${skillEntries}）`;
+      return `- ${m.nameJa} ${flagStr}（人工: ${manpower}）`;
     })
     .join('\n');
 
@@ -152,13 +154,12 @@ export async function evaluateStretchRisk(
 【案件情報】
 - 案件名: ${job.title}
 - 作業種別: ${jobType.nameJa}
-- 必要スキル合計: ${jobType.requiredSkillTotal}
-- 主要スキル: ${jobType.primarySkills.join(', ')}
+- 基本必要人工: ${jobType.baseManpower}
 - 基準作業時間: ${jobType.baseTimeHours}時間
 
 【ストレッチ情報】
 - ストレッチ倍率: ${stretchMultiplier}x
-- 通常スキル要件に対して${Math.round((1 - 1 / stretchMultiplier) * 100)}%低いスキルで配置
+- チーム人工が必要人工数に対して不足している状態
 
 【チームメンバー】
 ${memberInfo}`;
@@ -175,11 +176,11 @@ export async function optimizeMultiJobSchedule(jobs, members, constraints) {
 同日に複数の案件がある場合の最適なスケジュール配置を提案してください。
 
 以下を考慮してください:
-- 各メンバーの移動時間
-- スキル適性と案件要件のマッチング
+- 各メンバーの人工値（案件タイプ別能力）と案件要件のマッチング
 - 作業時間帯の重複回避
 - メンバーの負荷バランス
 - 安全管理上の考慮事項
+- 車両制約
 
 JSON形式で回答してください:
 {
@@ -206,7 +207,7 @@ JSON形式で回答してください:
   const memberInfo = members
     .map(
       (m) =>
-        `- ${m.nameJa}（ID: ${m.id}, スキル平均: ${m.avgSkill}, 車両: ${m.hasVehicle ? 'あり' : 'なし'}）`
+        `- ${m.nameJa}（ID: ${m.id}, 車両: ${m.hasVehicle ? 'あり' : 'なし'}）`
     )
     .join('\n');
 
@@ -233,14 +234,19 @@ export async function aiDispatchTeams(members, job, jobType, conditions, setting
   const systemPrompt = `あなたは太陽光発電所のO&M（運用保守）ディスパッチシステムのAI差配エンジンです。
 案件情報とメンバー情報を分析し、最適なチーム編成を提案してください。
 
+【人工（ニンク）ベース差配システム】
+- 各メンバーは案件タイプ別に人工値（0.5〜1.2）を持つ
+- チームの人工合算が必要人工数を満たす必要がある
+- 必ず1.0以上の人工値を持つメンバーを最低1人含めること
+- 条件によって必要人工数が増減する
+
 以下の観点を総合的に判断してください:
-- メンバーのスキルと案件要件のマッチング（主要スキルの重み付け）
-- チームのリーダーシップ適性（最低1名はリーダーシップスキル4以上が望ましい）
+- メンバーの人工値と案件要件のマッチング
+- チーム内の人工合算が必要人工数を満たすか
+- 1.0以上メンバー（有資格者）の存在
 - 指導が必要なメンバー（needsGuidance: true）がいる場合、経験豊富なメンターとのペアリング
 - 車両制約（ハイエース最大${settings.hiaceCapacity || 4}名、淀川は自車で単独移動）
 - フリーランスメンバーの適切な配置
-- チーム内のスキルバランスと相互補完性
-- 過去の案件経験や得意分野の考慮
 
 必ず以下のJSON形式で回答してください（JSON以外のテキストは含めないでください）:
 {
@@ -252,13 +258,16 @@ export async function aiDispatchTeams(members, job, jobType, conditions, setting
       "score": 8.5,
       "aiReasoning": "この編成を推薦する理由を2〜3文で説明",
       "breakdown": {
-        "skill": 8.5,
-        "availability": 8.0,
-        "travel": 7.0,
-        "leadership": 8.0,
-        "guidance": 5.0
+        "manpower": 8.5,
+        "qualified": 10.0,
+        "vehicle": 10.0,
+        "teamSize": 8.0,
+        "stretch": 10.0
       },
       "isStretch": false,
+      "stretchRatio": 1.2,
+      "teamManpower": 2.4,
+      "requiredManpower": 2.0,
       "vehicleArrangement": "hiace",
       "vehicleDetails": "ハイエース（2名）",
       "mentoringPairs": []
@@ -273,7 +282,8 @@ mentoringPairs は指導ペアがある場合 [{"juniorId": "id", "mentorId": "i
 
   const memberInfo = members
     .map((m) => {
-      const skillEntries = Object.entries(m.skills)
+      const manpower = getMemberManpower(m, jobType.id);
+      const manpowerEntries = Object.entries(m.manpowerByJobType || {})
         .map(([k, v]) => `${k}:${v}`)
         .join(', ');
       const flags = [];
@@ -281,16 +291,16 @@ mentoringPairs は指導ペアがある場合 [{"juniorId": "id", "mentorId": "i
       if (m.employmentType === 'freelancer') flags.push('フリーランス');
       if (m.hasVehicle) flags.push('自車あり');
       const flagStr = flags.length > 0 ? ` [${flags.join(', ')}]` : '';
-      return `- ${m.nameJa}（ID: ${m.id}, 平均スキル: ${m.avgSkill}${flagStr}）: ${skillEntries}`;
+      return `- ${m.nameJa}（ID: ${m.id}, 当案件人工: ${manpower}${flagStr}）: ${manpowerEntries}`;
     })
     .join('\n');
 
   const conditionInfo = conditions && conditions.length > 0
-    ? conditions.map((c) => `- ${c.nameJa}（時間倍率: ${c.timeMultiplier}x）`).join('\n')
+    ? conditions.map((c) => `- ${c.nameJa}（${c.adjustmentType === 'additive' ? '+' : '×'}${c.adjustmentValue}人工）`).join('\n')
     : 'なし';
 
   const stretchInfo = settings.stretchMode?.enabled
-    ? `有効（倍率: ${settings.stretchMode.defaultMultiplier || 1.2}x - スキル要件を${Math.round((1 - 1 / (settings.stretchMode.defaultMultiplier || 1.2)) * 100)}%緩和）`
+    ? `有効（人工不足チームも許容）`
     : '無効';
 
   const locationInfo = job.locationName || job.locationAddress || '未指定';
@@ -300,14 +310,13 @@ mentoringPairs は指導ペアがある場合 [{"juniorId": "id", "mentorId": "i
 【案件情報】
 - 案件名: ${job.title}
 - 作業種別: ${jobType.nameJa}
-- 必要スキル合計: ${jobType.requiredSkillTotal}
-- 主要スキル: ${jobType.primarySkills.join(', ')}
+- 基本必要人工: ${jobType.baseManpower}
 - 必要人数: ${jobType.minPersonnel}〜${jobType.maxPersonnel}名
 - 基準作業時間: ${jobType.baseTimeHours}時間
 - 見積作業時間: ${job.estimatedTimeHours || jobType.baseTimeHours}時間
 - 場所: ${locationInfo}
 
-【条件】
+【条件（人工増減）】
 ${conditionInfo}
 
 【ストレッチモード】

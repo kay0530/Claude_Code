@@ -1,14 +1,13 @@
 import Badge from '../shared/Badge';
 import StretchIndicator from './StretchIndicator';
 import { VEHICLE_LABELS } from '../../utils/constants';
-import { SKILL_CATEGORIES } from '../../data/skillCategories';
 
 const SCORE_LABELS = {
-  skill: 'スキル',
-  availability: '稼働',
-  travel: '移動',
-  leadership: 'リーダー',
-  guidance: '指導',
+  manpower: '人工',
+  qualified: '有資格',
+  vehicle: '車両',
+  teamSize: 'チーム',
+  stretch: 'ストレッチ',
 };
 
 /**
@@ -51,7 +50,7 @@ export default function RecommendationPanel({ recommendations, selectedIndex, on
  * Individual recommendation card.
  */
 function RecommendationCard({ recommendation, isSelected, onClick, stretchMultiplier }) {
-  const { rank, team, score, breakdown, isStretch, teamSkillTotal, requiredSkillTotal, vehicleArrangement, vehicleDetails, leadCandidate, mentoringPairs } = recommendation;
+  const { rank, team, score, breakdown, isStretch, teamManpower, requiredManpower, vehicleArrangement, vehicleDetails, leadCandidate, mentoringPairs } = recommendation;
 
   const scorePercentage = Math.round((score / 10) * 100);
 
@@ -90,12 +89,22 @@ function RecommendationCard({ recommendation, isSelected, onClick, stretchMultip
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {/* Manpower summary badge */}
+          {teamManpower != null && requiredManpower != null && (
+            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+              teamManpower >= requiredManpower
+                ? 'bg-green-50 text-green-700 border border-green-200'
+                : 'bg-orange-50 text-orange-700 border border-orange-200'
+            }`}>
+              人工 {teamManpower.toFixed(1)}/{requiredManpower.toFixed(1)}
+            </span>
+          )}
           {isStretch && (
             <StretchIndicator
               isStretch={isStretch}
               stretchMultiplier={stretchMultiplier}
-              teamSkillTotal={teamSkillTotal}
-              requiredSkillTotal={requiredSkillTotal}
+              teamManpower={teamManpower}
+              requiredManpower={requiredManpower}
             />
           )}
           {vehicleArrangement && vehicleArrangement !== 'invalid' && (
@@ -147,7 +156,7 @@ function RecommendationCard({ recommendation, isSelected, onClick, stretchMultip
         ))}
       </div>
 
-      {/* Skill breakdown chart */}
+      {/* Score breakdown chart */}
       <div className="grid grid-cols-5 gap-1.5">
         {Object.entries(breakdown).map(([key, value]) => (
           <div key={key} className="text-center">
