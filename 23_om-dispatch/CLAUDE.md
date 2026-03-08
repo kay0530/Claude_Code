@@ -533,6 +533,60 @@ When making changes to `23_om-dispatch/` in the Claude_Code monorepo, also push 
 - Azure AD App: Client ID `85420e2f-eb38-4a8e-931f-4be552f953b0`, Tenant ID `61b80e23-6dd9-4dc6-b355-d7f210b12ef5`
 - Commits: `8749fd4` (sticky headers), `1e9a6eb` (full-width auto-fit)
 
+### Session 14: カレンダーUI修正 + マルチジョブUI復元 + カレンダー差配設計
+
+**概要**: Session 13のワークツリーマージ後に先祖返りした修正を復元し、カレンダー空き予定ベースの差配機能を設計。
+
+**ワークツリー**: `crazy-nash` (ブランチ: `claude/crazy-nash`)
+
+#### 実施済み変更
+
+**1. CalendarView.jsx — グリッド罫線ずれ + 終日予定はみ出し修正**
+- flex列に `min-w-0` 追加（3箇所: ヘッダー行、終日バナー、タイムグリッド）→ `min-width: auto` デフォルトによる幅不整合を修正
+- 終日予定の日セルに `overflow-hidden` + `maxWidth: '100%'` 追加 → テキストはみ出し修正
+
+**2. DispatchView.jsx — マルチジョブ選択UI完全書き換え**
+- 単一`<select>`ドロップダウン → チェックボックスリスト（複数選択対応）
+- `selectedJobIds` (配列) ステート、`isMultiJobMode = selectedJobIds.length >= 2` 判定
+- 1件: AI/ルールベース差配、2件以上: `runMultiJobDispatch()` → `MultiJobPlanPanel`表示
+- パープル色「N件の差配を実行」ボタン、マルチジョブ確認モーダル
+
+**3. MultiJobPlanPanel.jsx — 新規作成（304行）**
+- `PlanCard`, `DayScheduleBlock`, `AssignmentBlock` サブコンポーネント
+- single-day（緑バッジ「同日実施」）/ multi-day（紫バッジ「N日間のスケジュール」）対応
+- メンバーアバター、リーダーチェックマーク、人工比率、車両バッジ、ストレッチ表示
+
+**4. useDispatchEngine.js — CalendarContext統合**
+- `useCalendar()` インポート、`calendarEvents` を `rankTeams` と `rankMultiDayPlans` に渡す
+- **注意**: `filterAvailableMembers()` のフィールド名不一致は未修正（次セッションで対応）
+
+#### コミット
+- `940f849` feat: fix calendar grid alignment, add multi-job dispatch UI, integrate CalendarContext
+
+#### 次セッション: カレンダー空き予定ベースの差配実装
+
+**詳細な実行プランは [plan-calendar-dispatch.md](./plan-calendar-dispatch.md) を参照**
+
+**最初にやること**:
+1. プランファイルを読み込む
+2. Agent Teams 3並列で実装（エンジン層 / Hook・AI層 / UI層）
+3. `npm run build` + preview_start で検証
+
+**核心的な問題**: `dispatchEngine.js` の `filterAvailableMembers()` が壊れている
+- `event.memberId` → 正しくは `event.memberEmail`（`member.outlookEmail` と照合）
+- `event.date` → 正しくは `event.start.substring(0, 10)`
+- `calendarService.js` の `findAvailableSlots()` を呼ぶだけで解決（既に本番品質の実装あり）
+
+**変更対象6ファイル**:
+1. `src/services/dispatchEngine.js` — filterAvailableMembers書換 + scoreTeamカレンダースコア
+2. `src/hooks/useDispatchEngine.js` — excludedMembers + dependency修正
+3. `src/services/claudeService.js` — AI差配プロンプトにカレンダー空き情報
+4. `src/hooks/useClaudeApi.js` — calendarEventsパラメータ追加
+5. `src/components/dispatch/RecommendationPanel.jsx` — breakdownに「カレンダー」列
+6. `src/components/dispatch/DispatchView.jsx` — 除外メンバー表示UI
+
+**変更しない**: `calendarService.js`（既存 `findAvailableSlots` をそのまま再利用）
+
 ## Known Issues & TODOs
 
 1. Calendar data defaults to static JSON; live Outlook API available when Azure AD configured
@@ -540,10 +594,10 @@ When making changes to `23_om-dispatch/` in the Claude_Code monorepo, also push 
 3. 廣木's event count (~110) may be lower than expected vs other members (100-160)
 4. No automated tests
 5. Travel time estimation uses placeholder values in most cases
-6. Availability score in dispatch engine is hardcoded to 8 (full calendar integration pending)
-7. `filterAvailableMembers()` uses `memberId` matching which may not align with `memberEmail` in events
-8. Claude_Code monorepoとOM_dispatch専用リポの同期が手動
-9. Azure AD App Registration required for MS365 live API features (see Azure AD Requirements section)
+6. ~~`filterAvailableMembers()` uses wrong field names~~ → **Session 14で設計完了、次セッションで実装予定** ([plan-calendar-dispatch.md](./plan-calendar-dispatch.md))
+7. Claude_Code monorepoとOM_dispatch専用リポの同期が手動
+8. Azure AD App Registration required for MS365 live API features (see Azure AD Requirements section)
+9. `calendarEvents`はCalendarContextから渡されるようになったが（Session 14）、`filterAvailableMembers()`のフィールド名不一致で実質無効 → 次セッションで修正
 
 ## Important Rules for Claude
 
@@ -556,3 +610,5 @@ When making changes to `23_om-dispatch/` in the Claude_Code monorepo, also push 
 7. **Output files**: Store generated files in `Claude_Code_Demo/` with numbered folders (per global CLAUDE.md)
 8. **Commit style**: English, conventional commit format (feat:, fix:, refactor:, etc.)
 9. **MS365 Auth**: MSAL uses redirect flow (switched from popup in Session 8)
+10. **人工ベース移行**: Session 10で実装完了。Session 11で複数日分散差配を追加
+11. **カレンダー差配**: Session 14で設計完了。`plan-calendar-dispatch.md` に8フェーズの実装プランあり
