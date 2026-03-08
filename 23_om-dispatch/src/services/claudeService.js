@@ -1,4 +1,5 @@
 import { getMemberManpower } from '../utils/skillUtils';
+import { findAvailableSlots } from './calendarService';
 
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 const STORAGE_KEY = 'om-dispatch-claude-api-key';
@@ -228,7 +229,7 @@ ${constraintStr}`;
 }
 
 // AI-powered dispatch: use Opus to select optimal teams
-export async function aiDispatchTeams(members, job, jobType, conditions, settings) {
+export async function aiDispatchTeams(members, job, jobType, conditions, settings, calendarEvents = []) {
   const model = selectModel('opus');
 
   const systemPrompt = `あなたは太陽光発電所のO&M（運用保守）ディスパッチシステムのAI差配エンジンです。
@@ -247,6 +248,9 @@ export async function aiDispatchTeams(members, job, jobType, conditions, setting
 - 指導が必要なメンバー（needsGuidance: true）がいる場合、経験豊富なメンターとのペアリング
 - 車両制約（ハイエース最大${settings.hiaceCapacity || 4}名、淀川は自車で単独移動）
 - フリーランスメンバーの適切な配置
+- メンバーの【】内のカレンダー情報を考慮し、予定が空いているメンバーを優先してください
+- 「終日予定あり」のメンバーは原則除外してください
+- 「空きNh」のメンバーは作業時間が確保できるか確認してください
 
 必ず以下のJSON形式で回答してください（JSON以外のテキストは含めないでください）:
 {
@@ -291,7 +295,25 @@ mentoringPairs は指導ペアがある場合 [{"juniorId": "id", "mentorId": "i
       if (m.employmentType === 'freelancer') flags.push('フリーランス');
       if (m.hasVehicle) flags.push('自車あり');
       const flagStr = flags.length > 0 ? ` [${flags.join(', ')}]` : '';
-      return `- ${m.nameJa}（ID: ${m.id}, 当案件人工: ${manpower}${flagStr}）: ${manpowerEntries}`;
+
+      // Calendar availability
+      let calendarText = '';
+      if (calendarEvents.length > 0 && job.preferredDate) {
+        const workingHours = settings?.workingHours || { start: '09:00', end: '18:00' };
+        const slots = findAvailableSlots(m.outlookEmail, calendarEvents, job.preferredDate, workingHours);
+        const totalFree = slots.reduce((sum, s) => sum + s.durationMinutes, 0);
+        if (totalFree === 0) {
+          calendarText = '【終日予定あり（利用不可）】';
+        } else if (totalFree < (jobType.baseTimeHours || 4) * 60) {
+          const freeHours = (totalFree / 60).toFixed(1);
+          const slotText = slots.map(s => `${s.start}-${s.end}`).join(', ');
+          calendarText = `【空き${freeHours}h（${slotText}）】`;
+        } else {
+          calendarText = '【空き十分】';
+        }
+      }
+
+      return `- ${m.nameJa}（ID: ${m.id}, 当案件人工: ${manpower}${flagStr}）${calendarText}: ${manpowerEntries}`;
     })
     .join('\n');
 

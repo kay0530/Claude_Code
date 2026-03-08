@@ -9,7 +9,7 @@ import { useClaudeApi } from './useClaudeApi';
  * Uses AI (Opus) when API key is available, falls back to rule-based engine.
  * Supports single-job and multi-job dispatch.
  * Uses CalendarContext events to check member availability.
- * @returns {{ recommendations, multiJobPlans, loading, error, runDispatch, runMultiJobDispatch, clearRecommendations, isAiMode }}
+ * @returns {{ recommendations, multiJobPlans, loading, error, runDispatch, runMultiJobDispatch, clearRecommendations, isAiMode, excludedMembers }}
  */
 export function useDispatchEngine() {
   const { state } = useApp();
@@ -22,6 +22,7 @@ export function useDispatchEngine() {
   const [dispatchMode, setDispatchMode] = useState(null); // 'ai' | 'rule' | null
   const [aiUsage, setAiUsage] = useState(null);
   const [aiModel, setAiModel] = useState(null);
+  const [excludedMembers, setExcludedMembers] = useState([]);
 
   const runDispatch = useCallback(async (jobId) => {
     setLoading(true);
@@ -31,6 +32,7 @@ export function useDispatchEngine() {
     setDispatchMode(null);
     setAiUsage(null);
     setAiModel(null);
+    setExcludedMembers([]);
 
     try {
       // Find the job from state
@@ -58,7 +60,8 @@ export function useDispatchEngine() {
           job,
           jobType,
           jobConditions,
-          state.settings
+          state.settings,
+          calendarEvents
         );
 
         const aiRecs = (aiResult.recommendations || []);
@@ -113,6 +116,10 @@ export function useDispatchEngine() {
         calendarEvents
       );
 
+      // Extract meta info about excluded members
+      const meta = ranked._meta || {};
+      setExcludedMembers(meta.excludedMembers || []);
+
       const formattedRecommendations = ranked.map((result) => ({
         rank: result.rank,
         team: result.team,
@@ -135,7 +142,7 @@ export function useDispatchEngine() {
     } finally {
       setLoading(false);
     }
-  }, [state, hasApiKey, aiDispatch]);
+  }, [state, hasApiKey, aiDispatch, calendarEvents]);
 
   /**
    * Run multi-job dispatch for multiple selected jobs.
@@ -149,6 +156,7 @@ export function useDispatchEngine() {
     setDispatchMode('rule');
     setAiUsage(null);
     setAiModel(null);
+    setExcludedMembers([]);
 
     try {
       const jobsWithTypes = jobIds.map(jobId => {
@@ -204,7 +212,7 @@ export function useDispatchEngine() {
     } finally {
       setLoading(false);
     }
-  }, [state]);
+  }, [state, calendarEvents]);
 
   const clearRecommendations = useCallback(() => {
     setRecommendations([]);
@@ -226,5 +234,6 @@ export function useDispatchEngine() {
     dispatchMode,
     aiUsage,
     aiModel,
+    excludedMembers,
   };
 }

@@ -5,6 +5,7 @@ import {
   getMemberManpower,
 } from '../utils/skillUtils';
 import { generateBusinessDays, formatDayLabel, toISODate } from '../utils/dateUtils';
+import { findAvailableSlots } from './calendarService';
 
 /**
  * Generate all combinations of members with size between min and max.
@@ -85,8 +86,8 @@ export function identifyMentoringPairs(team, jobTypeId) {
 
 /**
  * Score a team for a given job using manpower-based system.
- * Weights: manpower 40%, qualified 20%, vehicle 15%, teamSize 15%, stretch 10%.
- * @param {Array} team - Array of member objects
+ * Weights: manpower 35%, qualified 15%, vehicle 15%, teamSize 10%, calendar 15%, stretch 10%.
+ * @param {Array} team - Array of member objects (may include calendarFit from filterAvailableMembers)
  * @param {object} job - Job object
  * @param {object} jobType - Job type with baseManpower
  * @param {Array} conditions - Selected conditions
@@ -99,7 +100,7 @@ export function scoreTeam(team, job, jobType, conditions, settings) {
   if (!vehicleCheck.valid) {
     return {
       score: -1,
-      breakdown: { manpower: 0, qualified: 0, vehicle: 0, teamSize: 0, stretch: 0 },
+      breakdown: { manpower: 0, qualified: 0, vehicle: 0, teamSize: 0, calendar: 0, stretch: 0 },
       isStretch: false,
       vehicleArrangement: vehicleCheck.vehicleArrangement,
       vehicleDetails: vehicleCheck.details,
@@ -117,7 +118,7 @@ export function scoreTeam(team, job, jobType, conditions, settings) {
   if (qualifiedCount === 0) {
     return {
       score: -1,
-      breakdown: { manpower: 0, qualified: 0, vehicle: 0, teamSize: 0, stretch: 0 },
+      breakdown: { manpower: 0, qualified: 0, vehicle: 0, teamSize: 0, calendar: 0, stretch: 0 },
       isStretch: false,
       vehicleArrangement: vehicleCheck.vehicleArrangement,
       vehicleDetails: vehicleCheck.details,
@@ -143,6 +144,10 @@ export function scoreTeam(team, job, jobType, conditions, settings) {
   const minPersonnel = jobType.minPersonnel;
   const teamSizeScore = Math.max(0, 10 - (team.length - minPersonnel) * 2);
 
+  // Calendar fit score (0-10): average calendarFit across team members
+  const avgCalendarFit = team.reduce((sum, m) => sum + (m.calendarFit ?? 1.0), 0) / team.length;
+  const calendarScore = avgCalendarFit * 10;
+
   // Stretch determination
   const isStretch = teamManpower < requiredManpower;
   const stretchPenalty = isStretch ? Math.max(0, (1 - manpowerRatio) * 10) : 0;
@@ -150,10 +155,11 @@ export function scoreTeam(team, job, jobType, conditions, settings) {
 
   // Weighted total
   const totalScore =
-    manpowerScore * 0.40 +
-    qualifiedScore * 0.20 +
+    manpowerScore * 0.35 +
+    qualifiedScore * 0.15 +
     vehicleScore * 0.15 +
-    teamSizeScore * 0.15 +
+    teamSizeScore * 0.10 +
+    calendarScore * 0.15 +
     stretchScore * 0.10;
 
   // Lead candidate: highest manpower for this job type
@@ -170,6 +176,7 @@ export function scoreTeam(team, job, jobType, conditions, settings) {
       qualified: Math.round(qualifiedScore * 100) / 100,
       vehicle: vehicleScore,
       teamSize: teamSizeScore,
+      calendar: Math.round(calendarScore * 100) / 100,
       stretch: Math.round(stretchScore * 100) / 100,
     },
     isStretch,
@@ -185,25 +192,38 @@ export function scoreTeam(team, job, jobType, conditions, settings) {
 
 /**
  * Filter members by availability based on calendar events.
+ * Uses calendarService.findAvailableSlots() for proper busy/free slot analysis.
  * @param {Array} members - All members
  * @param {object} job - Job with preferredDate
  * @param {Array} calendarEvents - Calendar events
- * @returns {Array} Available members
+ * @param {object} settings - App settings (for workingHours)
+ * @param {object} jobType - Job type (for baseTimeHours)
+ * @returns {Array} Available members enriched with calendarFit, availableMinutes, freeSlots
  */
-function filterAvailableMembers(members, job, calendarEvents) {
-  if (!calendarEvents || calendarEvents.length === 0) {
-    return members;
+function filterAvailableMembers(members, job, calendarEvents, settings, jobType) {
+  if (!calendarEvents || calendarEvents.length === 0 || !job.preferredDate) {
+    return members.map(m => ({ ...m, availableMinutes: 540, calendarFit: 1.0, freeSlots: [] }));
   }
 
   const jobDate = job.preferredDate;
-  if (!jobDate) return members;
+  const workingHours = settings?.workingHours || { start: '09:00', end: '18:00' };
+  const requiredMinutes = (jobType?.baseTimeHours || 4) * 60;
 
-  return members.filter(member => {
-    const memberEvents = calendarEvents.filter(
-      event => event.memberId === member.id && event.date === jobDate
-    );
-    return memberEvents.length === 0;
-  });
+  return members
+    .map(member => {
+      const memberEmail = member.outlookEmail || member.email || '';
+      const slots = findAvailableSlots(memberEmail, calendarEvents, jobDate, workingHours);
+      const totalFreeMinutes = slots.reduce((sum, s) => sum + (s.durationMinutes || 0), 0);
+      const calendarFit = Math.min(totalFreeMinutes / requiredMinutes, 1.0);
+
+      return {
+        ...member,
+        availableMinutes: totalFreeMinutes,
+        calendarFit,
+        freeSlots: slots,
+      };
+    })
+    .filter(member => member.availableMinutes >= 60);
 }
 
 /**
@@ -219,7 +239,7 @@ function filterAvailableMembers(members, job, calendarEvents) {
 export function rankTeams(members, job, jobType, conditions, settings, calendarEvents = []) {
   const { minPersonnel, maxPersonnel } = jobType;
 
-  const availableMembers = filterAvailableMembers(members, job, calendarEvents);
+  const availableMembers = filterAvailableMembers(members, job, calendarEvents, settings, jobType);
   const combinations = generateTeamCombinations(availableMembers, minPersonnel, maxPersonnel);
 
   const scoredTeams = combinations
@@ -230,7 +250,13 @@ export function rankTeams(members, job, jobType, conditions, settings, calendarE
     .filter(t => !t.disqualified && t.score > 0);
 
   scoredTeams.sort((a, b) => b.score - a.score);
-  return scoredTeams.slice(0, 5).map((t, i) => ({ ...t, rank: i + 1 }));
+  const result = scoredTeams.slice(0, 5).map((t, i) => ({ ...t, rank: i + 1 }));
+  result._meta = {
+    excludedMembers: members.filter(m => !availableMembers.some(am => am.id === m.id)),
+    availableCount: availableMembers.length,
+    totalCount: members.length,
+  };
+  return result;
 }
 
 /**
@@ -272,7 +298,7 @@ export function rankMultiJobPlans(members, jobsWithTypes, settings, calendarEven
 
     const { job, jobType, conditions } = jobsWithTypes[jobIndex];
     const availableMembers = members.filter(m => !usedMemberIds.has(m.id));
-    const filtered = filterAvailableMembers(availableMembers, job, calendarEvents);
+    const filtered = filterAvailableMembers(availableMembers, job, calendarEvents, settings, jobType);
     const combinations = generateTeamCombinations(filtered, jobType.minPersonnel, jobType.maxPersonnel);
 
     for (const team of combinations) {

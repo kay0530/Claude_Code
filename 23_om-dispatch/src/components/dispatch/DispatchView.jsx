@@ -32,6 +32,7 @@ export default function DispatchView({ onNavigate }) {
     clearRecommendations,
     dispatchMode,
     aiUsage,
+    excludedMembers,
   } = useDispatchEngine();
   const hasApiKey = Boolean(localStorage.getItem('om-dispatch-claude-api-key'));
 
@@ -543,6 +544,36 @@ export default function DispatchView({ onNavigate }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <p className="text-sm font-medium">{error}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Excluded members by calendar */}
+      {excludedMembers && excludedMembers.length > 0 && (recommendations.length > 0 || multiJobPlans.length > 0) && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+          <div className="flex items-center gap-2 text-amber-700 mb-2">
+            <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            <p className="text-sm font-medium">
+              カレンダーにより除外されたメンバー ({excludedMembers.length}名)
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {excludedMembers.map(member => (
+              <div
+                key={member.id}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200"
+              >
+                <div
+                  className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                  style={{ backgroundColor: member.color }}
+                >
+                  {member.nameJa.charAt(0)}
+                </div>
+                <span>{member.nameJa}</span>
+              </div>
+            ))}
           </div>
         </div>
       )}
