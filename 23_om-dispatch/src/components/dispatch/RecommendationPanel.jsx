@@ -7,6 +7,7 @@ const SCORE_LABELS = {
   qualified: '有資格',
   vehicle: '車両',
   teamSize: 'チーム',
+  calendar: 'カレンダー',
   stretch: 'ストレッチ',
 };
 
@@ -157,7 +158,7 @@ function RecommendationCard({ recommendation, isSelected, onClick, stretchMultip
       </div>
 
       {/* Score breakdown chart */}
-      <div className="grid grid-cols-5 gap-1.5">
+      <div className="grid grid-cols-6 gap-1.5">
         {Object.entries(breakdown).map(([key, value]) => (
           <div key={key} className="text-center">
             <div className="text-[10px] text-gray-500 mb-1 truncate">

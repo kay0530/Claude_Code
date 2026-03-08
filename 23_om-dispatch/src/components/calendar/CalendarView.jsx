@@ -461,7 +461,7 @@ export default function CalendarView() {
                 {visibleOrderedMembers.map((member, mIdx) => (
                   <div
                     key={member.id}
-                    className={`flex-1 ${mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''}`}
+                    className={`flex-1 min-w-0 ${mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''}`}
                   >
                     {/* Member name header */}
                     <div
@@ -525,7 +525,7 @@ export default function CalendarView() {
                   {visibleOrderedMembers.map((member, mIdx) => (
                     <div
                       key={`allday-${member.id}`}
-                      className={`flex-1 flex ${
+                      className={`flex-1 min-w-0 flex ${
                         mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''
                       }`}
                     >
@@ -534,7 +534,7 @@ export default function CalendarView() {
                         return (
                           <div
                             key={`allday-${member.id}-${toISODate(date)}`}
-                            className={`flex-1 px-0.5 py-0.5 ${
+                            className={`flex-1 min-w-0 overflow-hidden px-0.5 py-0.5 ${
                               dIdx < displayDates.length - 1 ? 'border-r border-gray-700/50' : ''
                             }`}
                           >
@@ -542,12 +542,13 @@ export default function CalendarView() {
                               <div
                                 key={event.id}
                                 onClick={() => setSelectedEvent(event)}
-                                className="text-[9px] truncate rounded-sm px-1 py-0.5 cursor-pointer mb-0.5"
+                                className="text-[9px] truncate rounded-sm px-1 py-0.5 cursor-pointer mb-0.5 overflow-hidden"
                                 style={{
                                   backgroundColor: member.color + '55',
                                   borderLeft: `3px solid ${member.color}`,
                                   color: '#e5e7eb',
                                   lineHeight: '1.2',
+                                  maxWidth: '100%',
                                 }}
                                 title={event.title}
                               >
@@ -584,7 +585,7 @@ export default function CalendarView() {
               {visibleOrderedMembers.map((member, mIdx) => (
                 <div
                   key={member.id}
-                  className={`flex-1 flex ${
+                  className={`flex-1 min-w-0 flex ${
                     mIdx < visibleOrderedMembers.length - 1 ? 'border-r border-gray-600' : ''
                   }`}
                 >

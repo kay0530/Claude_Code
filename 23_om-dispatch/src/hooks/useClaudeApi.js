@@ -81,9 +81,9 @@ export function useClaudeApi() {
 
   // AI dispatch teams
   const aiDispatch = useCallback(
-    (members, job, jobType, conditions, settings) =>
+    (members, job, jobType, conditions, settings, calendarEvents) =>
       executeApiCall(() =>
-        claudeService.aiDispatchTeams(members, job, jobType, conditions, settings)
+        claudeService.aiDispatchTeams(members, job, jobType, conditions, settings, calendarEvents)
       ),
     [executeApiCall]
   );
