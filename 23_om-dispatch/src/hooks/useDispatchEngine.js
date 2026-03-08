@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
+import { useCalendar } from '../context/CalendarContext';
 import { rankTeams, rankMultiDayPlans } from '../services/dispatchEngine';
 import { useClaudeApi } from './useClaudeApi';
 
@@ -11,6 +12,7 @@ import { useClaudeApi } from './useClaudeApi';
  */
 export function useDispatchEngine() {
   const { state } = useApp();
+  const { events: calendarEvents } = useCalendar();
   const { aiDispatch, hasApiKey, loading: aiLoading } = useClaudeApi();
   const [recommendations, setRecommendations] = useState([]);
   const [multiJobPlans, setMultiJobPlans] = useState([]);
@@ -107,7 +109,7 @@ export function useDispatchEngine() {
         jobType,
         jobConditions,
         state.settings,
-        []
+        calendarEvents
       );
 
       const formattedRecommendations = ranked.map((result) => ({
@@ -132,7 +134,7 @@ export function useDispatchEngine() {
     } finally {
       setLoading(false);
     }
-  }, [state, hasApiKey, aiDispatch]);
+  }, [state, hasApiKey, aiDispatch, calendarEvents]);
 
   /**
    * Run multi-job dispatch for multiple selected jobs.
@@ -163,7 +165,7 @@ export function useDispatchEngine() {
         state.members,
         jobsWithTypes,
         state.settings,
-        []
+        calendarEvents
       );
 
       // Augment plans with resolved member objects
@@ -201,7 +203,7 @@ export function useDispatchEngine() {
     } finally {
       setLoading(false);
     }
-  }, [state]);
+  }, [state, calendarEvents]);
 
   const clearRecommendations = useCallback(() => {
     setRecommendations([]);

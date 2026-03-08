@@ -199,9 +199,12 @@ function filterAvailableMembers(members, job, calendarEvents) {
   if (!jobDate) return members;
 
   return members.filter(member => {
-    const memberEvents = calendarEvents.filter(
-      event => event.memberId === member.id && event.date === jobDate
-    );
+    const memberEvents = calendarEvents.filter(event => {
+      if (event.memberEmail?.toLowerCase() !== member.outlookEmail?.toLowerCase()) return false;
+      if (!event.isBusy) return false;
+      const eventDate = event.start?.substring(0, 10);
+      return eventDate === jobDate;
+    });
     return memberEvents.length === 0;
   });
 }
@@ -331,7 +334,7 @@ export function rankMultiDayPlans(members, jobsWithTypes, settings, calendarEven
 
   const evaluatedPlans = [];
   for (const pattern of dayAssignmentPatterns) {
-    const result = evaluateDayAssignment(pattern, members, settings, calendarEvents);
+    const result = evaluateDayAssignment(pattern, members, jobsWithTypes, settings, calendarEvents);
     if (result) evaluatedPlans.push(result);
   }
 
@@ -384,8 +387,14 @@ function generateDayAssignments(jobsWithTypes, businessDays, jobIndex, currentPa
 
 /**
  * Evaluate a day assignment pattern by running rankMultiJobPlans per day.
+ * @param {Array} pattern - Array of { jobId, date, jobIndex }
+ * @param {Array} members - All members
+ * @param {Array} jobsWithTypes - Array of { job, jobType, conditions }
+ * @param {object} settings - App settings
+ * @param {Array} calendarEvents - Calendar events
+ * @returns {object|null} Multi-day plan or null if infeasible
  */
-function evaluateDayAssignment(pattern, members, settings, calendarEvents) {
+function evaluateDayAssignment(pattern, members, jobsWithTypes, settings, calendarEvents) {
   const dayGroups = {};
   for (const item of pattern) {
     if (!dayGroups[item.date]) dayGroups[item.date] = [];
@@ -398,35 +407,37 @@ function evaluateDayAssignment(pattern, members, settings, calendarEvents) {
 
   for (const [date, items] of Object.entries(dayGroups).sort(([a], [b]) => a.localeCompare(b))) {
     totalDays++;
-    // For each day, we can reuse all members since different days
+
+    // Map items to proper jobsWithTypes and override preferredDate with assigned date
     const dayJobsWithTypes = items.map(item => ({
-      // Need to find jobsWithTypes somehow — items have jobIndex
-      // We pass the actual job/jobType from the closure
-      ...item,
+      ...jobsWithTypes[item.jobIndex],
+      job: { ...jobsWithTypes[item.jobIndex].job, preferredDate: date },
     }));
 
-    // Since we only have jobId/jobIndex, this is a simplified evaluation
-    // In practice, use the full jobsWithTypes from the caller
+    // Run team composition for this day's jobs
+    const dayPlans = rankMultiJobPlans(members, dayJobsWithTypes, settings, calendarEvents);
+    if (dayPlans.length === 0) return null;
+
+    const bestPlan = dayPlans[0];
+    totalScore += bestPlan.totalScore;
+
     daySchedules.push({
       date,
       dateLabel: formatDayLabel(date),
-      jobAssignments: items, // Will be augmented by useDispatchEngine
+      jobAssignments: bestPlan.assignments,
     });
   }
 
-  // Day count penalty: prefer fewer days
+  const avgScore = totalScore / totalDays;
   const dayCountPenalty = (totalDays - 1) * 0.5;
-
-  // Date proximity bonus: prefer dates close to preferred
   const dateProximityBonus = pattern.reduce((sum, item) => {
-    return sum; // Simplified
-  }, 0);
-
-  totalScore = 8 - dayCountPenalty + dateProximityBonus;
+    const originalDate = jobsWithTypes[item.jobIndex]?.job?.preferredDate;
+    return sum + (originalDate === item.date ? 0.3 : 0);
+  }, 0) / pattern.length;
 
   return {
     planType: 'multi-day',
-    totalScore: Math.round(totalScore * 100) / 100,
+    totalScore: Math.round((avgScore - dayCountPenalty + dateProximityBonus) * 100) / 100,
     totalDays,
     daySchedules,
   };
