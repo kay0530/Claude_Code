@@ -357,7 +357,7 @@ export function rankMultiDayPlans(members, jobsWithTypes, settings, calendarEven
 
   const evaluatedPlans = [];
   for (const pattern of dayAssignmentPatterns) {
-    const result = evaluateDayAssignment(pattern, members, settings, calendarEvents);
+    const result = evaluateDayAssignment(pattern, members, jobsWithTypes, settings, calendarEvents);
     if (result) evaluatedPlans.push(result);
   }
 
@@ -411,7 +411,7 @@ function generateDayAssignments(jobsWithTypes, businessDays, jobIndex, currentPa
 /**
  * Evaluate a day assignment pattern by running rankMultiJobPlans per day.
  */
-function evaluateDayAssignment(pattern, members, settings, calendarEvents) {
+function evaluateDayAssignment(pattern, members, jobsWithTypes, settings, calendarEvents) {
   const dayGroups = {};
   for (const item of pattern) {
     if (!dayGroups[item.date]) dayGroups[item.date] = [];
@@ -424,35 +424,38 @@ function evaluateDayAssignment(pattern, members, settings, calendarEvents) {
 
   for (const [date, items] of Object.entries(dayGroups).sort(([a], [b]) => a.localeCompare(b))) {
     totalDays++;
-    // For each day, we can reuse all members since different days
-    const dayJobsWithTypes = items.map(item => ({
-      // Need to find jobsWithTypes somehow — items have jobIndex
-      // We pass the actual job/jobType from the closure
-      ...item,
-    }));
 
-    // Since we only have jobId/jobIndex, this is a simplified evaluation
-    // In practice, use the full jobsWithTypes from the caller
+    // Reconstruct jobsWithTypes for this day's jobs using jobIndex
+    const dayJobsWithTypes = items.map(item => jobsWithTypes[item.jobIndex]);
+
+    // Run rankMultiJobPlans for this day to get full team assignments
+    const dayPlans = rankMultiJobPlans(members, dayJobsWithTypes, settings, calendarEvents);
+
+    if (dayPlans.length === 0) return null; // Can't assign teams for this day
+
+    const bestDayPlan = dayPlans[0];
+    totalScore += bestDayPlan.totalScore;
+
     daySchedules.push({
       date,
       dateLabel: formatDayLabel(date),
-      jobAssignments: items, // Will be augmented by useDispatchEngine
+      jobAssignments: bestDayPlan.assignments, // Full objects with team, job, jobType, score etc.
     });
   }
 
+  const avgScore = totalScore / totalDays;
   // Day count penalty: prefer fewer days
   const dayCountPenalty = (totalDays - 1) * 0.5;
 
-  // Date proximity bonus: prefer dates close to preferred
+  // Date proximity bonus: prefer dates matching preferredDate
   const dateProximityBonus = pattern.reduce((sum, item) => {
-    return sum; // Simplified
-  }, 0);
-
-  totalScore = 8 - dayCountPenalty + dateProximityBonus;
+    const preferredDate = jobsWithTypes[item.jobIndex]?.job?.preferredDate;
+    return sum + (preferredDate === item.date ? 0.3 : 0);
+  }, 0) / pattern.length;
 
   return {
     planType: 'multi-day',
-    totalScore: Math.round(totalScore * 100) / 100,
+    totalScore: Math.round((avgScore - dayCountPenalty + dateProximityBonus) * 100) / 100,
     totalDays,
     daySchedules,
   };
