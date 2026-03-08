@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
+import { useCalendar } from '../context/CalendarContext';
 import { rankTeams, rankMultiDayPlans } from '../services/dispatchEngine';
 import { useClaudeApi } from './useClaudeApi';
 
@@ -7,10 +8,12 @@ import { useClaudeApi } from './useClaudeApi';
  * React hook wrapping the dispatch engine.
  * Uses AI (Opus) when API key is available, falls back to rule-based engine.
  * Supports single-job and multi-job dispatch.
+ * Uses CalendarContext events to check member availability.
  * @returns {{ recommendations, multiJobPlans, loading, error, runDispatch, runMultiJobDispatch, clearRecommendations, isAiMode }}
  */
 export function useDispatchEngine() {
   const { state } = useApp();
+  const { events: calendarEvents } = useCalendar();
   const { aiDispatch, hasApiKey, loading: aiLoading } = useClaudeApi();
   const [recommendations, setRecommendations] = useState([]);
   const [multiJobPlans, setMultiJobPlans] = useState([]);
@@ -107,7 +110,7 @@ export function useDispatchEngine() {
         jobType,
         jobConditions,
         state.settings,
-        []
+        calendarEvents
       );
 
       const formattedRecommendations = ranked.map((result) => ({
@@ -163,7 +166,7 @@ export function useDispatchEngine() {
         state.members,
         jobsWithTypes,
         state.settings,
-        []
+        calendarEvents
       );
 
       // Augment plans with resolved member objects
