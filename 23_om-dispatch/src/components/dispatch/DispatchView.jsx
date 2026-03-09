@@ -549,15 +549,20 @@ export default function DispatchView({ onNavigate }) {
       )}
 
       {/* Excluded members by calendar */}
-      {excludedMembers && excludedMembers.length > 0 && (recommendations.length > 0 || multiJobPlans.length > 0) && (
+      {excludedMembers && excludedMembers.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-          <div className="flex items-center gap-2 text-amber-700 mb-2">
-            <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-start gap-2 text-amber-700 mb-2">
+            <svg className="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
-            <p className="text-sm font-medium">
-              カレンダーにより除外されたメンバー ({excludedMembers.length}名)
-            </p>
+            <div>
+              <p className="text-sm font-medium">
+                Outlookカレンダーの予定により差配対象外 ({excludedMembers.length}名)
+              </p>
+              <p className="text-xs text-amber-600 mt-0.5">
+                希望日に既存の予定が入っているメンバーは差配候補から除外されます
+              </p>
+            </div>
           </div>
           <div className="flex flex-wrap gap-2">
             {excludedMembers.map(member => (
@@ -760,6 +765,21 @@ export default function DispatchView({ onNavigate }) {
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* No results message for single-job (e.g., all members excluded by calendar) */}
+      {isSingleJobMode && !loading && recommendations.length === 0 && dispatchMode && error === null && (
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-center">
+          <svg className="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <p className="text-sm font-medium text-gray-500 mb-1">有効なチーム編成が見つかりませんでした</p>
+          <p className="text-xs text-gray-400">
+            {excludedMembers.length > 0
+              ? `${excludedMembers.length}名がカレンダー予定により除外されたため、必要人数を満たすチームを編成できません。別の日程をお試しください。`
+              : '条件を変更するか、ストレッチモードを有効にしてお試しください。'}
+          </p>
         </div>
       )}
 
