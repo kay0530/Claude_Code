@@ -155,7 +155,7 @@ else {
     try {
         # Escape for JSON
         $escapedText = $slackText.Replace('\', '\\').Replace('"', '\"').Replace("`n", '\n').Replace("`r", '').Replace("`t", '\t')
-        $jsonBody = "{`"text`": `"$escapedText`"}"
+        $jsonBody = "{`"text`": `"$escapedText`", `"username`": `"AI News Weekly`", `"icon_emoji`": `":newspaper:`"}"
 
         $response = Invoke-RestMethod -Uri $webhookUrl -Method Post `
             -ContentType "application/json; charset=utf-8" `
@@ -168,7 +168,7 @@ else {
 
         # Try posting error notification
         try {
-            $errorJson = "{`"text`": `":warning: AIニュースボットの実行中にエラーが発生しました: $_`"}"
+            $errorJson = "{`"text`": `":warning: AIニュースボットの実行中にエラーが発生しました: $_`", `"username`": `"AI News Weekly`", `"icon_emoji`": `":newspaper:`"}"
             Invoke-RestMethod -Uri $webhookUrl -Method Post `
                 -ContentType "application/json; charset=utf-8" `
                 -Body ([System.Text.Encoding]::UTF8.GetBytes($errorJson))
