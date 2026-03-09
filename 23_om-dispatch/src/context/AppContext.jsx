@@ -19,6 +19,10 @@ const STORAGE_KEYS = {
   settings: 'om-dispatch-settings',
 };
 
+// Bump to invalidate stale members/jobTypes/conditions in localStorage
+const MASTER_DATA_VERSION = 1;
+const MASTER_DATA_VERSION_KEY = 'om-dispatch-master-data-version';
+
 const FIRESTORE_DOC_ID = 'appState';
 
 function loadFromStorage(key, defaultValue) {
@@ -30,6 +34,33 @@ function loadFromStorage(key, defaultValue) {
   }
 }
 
+// Check if master data (members, jobTypes, conditions) needs refresh
+function loadMasterData() {
+  try {
+    const storedVersion = parseInt(localStorage.getItem(MASTER_DATA_VERSION_KEY), 10);
+    if (storedVersion === MASTER_DATA_VERSION) {
+      return {
+        members: loadFromStorage(STORAGE_KEYS.members, DEFAULT_MEMBERS),
+        jobTypes: loadFromStorage(STORAGE_KEYS.jobTypes, DEFAULT_JOB_TYPES),
+        conditions: loadFromStorage(STORAGE_KEYS.conditions, DEFAULT_CONDITIONS),
+      };
+    }
+  } catch {
+    // Fall through to defaults
+  }
+  // Version mismatch or missing — reset to defaults
+  console.log('[AppContext] Master data version mismatch. Resetting members/jobTypes/conditions to defaults.');
+  localStorage.removeItem(STORAGE_KEYS.members);
+  localStorage.removeItem(STORAGE_KEYS.jobTypes);
+  localStorage.removeItem(STORAGE_KEYS.conditions);
+  localStorage.setItem(MASTER_DATA_VERSION_KEY, String(MASTER_DATA_VERSION));
+  return {
+    members: DEFAULT_MEMBERS,
+    jobTypes: DEFAULT_JOB_TYPES,
+    conditions: DEFAULT_CONDITIONS,
+  };
+}
+
 function saveToStorage(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
@@ -38,10 +69,12 @@ function saveToStorage(key, value) {
   }
 }
 
+const masterData = loadMasterData();
+
 const initialState = {
-  members: loadFromStorage(STORAGE_KEYS.members, DEFAULT_MEMBERS),
-  jobTypes: loadFromStorage(STORAGE_KEYS.jobTypes, DEFAULT_JOB_TYPES),
-  conditions: loadFromStorage(STORAGE_KEYS.conditions, DEFAULT_CONDITIONS),
+  members: masterData.members,
+  jobTypes: masterData.jobTypes,
+  conditions: masterData.conditions,
   jobs: loadFromStorage(STORAGE_KEYS.jobs, DEFAULT_JOBS),
   assignments: loadFromStorage(STORAGE_KEYS.assignments, []),
   feedbacks: loadFromStorage(STORAGE_KEYS.feedbacks, []),
@@ -179,6 +212,7 @@ export function AppProvider({ children }) {
     saveToStorage(STORAGE_KEYS.members, state.members);
     saveToStorage(STORAGE_KEYS.jobTypes, state.jobTypes);
     saveToStorage(STORAGE_KEYS.conditions, state.conditions);
+    localStorage.setItem(MASTER_DATA_VERSION_KEY, String(MASTER_DATA_VERSION));
     saveToStorage(STORAGE_KEYS.jobs, state.jobs);
     saveToStorage(STORAGE_KEYS.assignments, state.assignments);
     saveToStorage(STORAGE_KEYS.feedbacks, state.feedbacks);
