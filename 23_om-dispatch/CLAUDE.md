@@ -539,6 +539,7 @@ Provides: events, loading, lastSynced, syncError, setEvents, addEvents, clearEve
 ### Repositories
 - **Claude_Code (monorepo)**: https://github.com/kay0530/Claude_Code — contains `23_om-dispatch/` as subdirectory
 - **OM_dispatch (専用)**: https://github.com/kay0530/OM_dispatch — standalone repo for GitHub Pages
+  - **ローカルパス**: `Claude_Code_Demo/OM_dispatch/` (Session 18でDesktopから移動)
 
 ### GitHub Pages
 - **URL**: https://kay0530.github.io/OM_dispatch/
@@ -548,7 +549,16 @@ Provides: events, loading, lastSynced, syncError, setEvents, addEvents, clearEve
 - **Note**: Environment protection rules removed from `github-pages` environment to allow Actions deploy
 
 ### Keeping Repos in Sync
-When making changes to `23_om-dispatch/` in the Claude_Code monorepo, also push to OM_dispatch repo for deployment.
+
+**同期手順** (monorepo → OM_dispatch):
+1. OM_dispatchリポに`claude_code`リモートを追加済み: `git remote add claude_code https://github.com/kay0530/Claude_Code.git`
+2. `git fetch claude_code main` でmonorepoの最新を取得
+3. `git show claude_code/main:23_om-dispatch/<file> > <dest>` で個別ファイルを抽出
+4. **⚠️ CRITICAL: `vite.config.js`のbase pathを必ず変更**:
+   - monorepo: `base: '/Claude_Code/'`
+   - OM_dispatch: `base: '/OM_dispatch/'`
+   - base pathを変更せずにデプロイすると**GitHub Pagesが白画面**になる
+5. コミット & push → GitHub Actionsが自動デプロイ
 
 ### Session 8: Calendar UI — Outlook-style Layout & Full-width
 - Switched MSAL auth from popup to redirect flow (`msalService.js`, `AuthContext.jsx`, `Header.jsx`)
@@ -983,3 +993,4 @@ const dayJobsWithTypes = items.map(item => ({
 9. **MS365 Auth**: MSAL uses redirect flow (switched from popup in Session 8)
 10. **人工ベース移行**: Session 10で実装完了。Session 11で複数日分散差配を追加
 11. **複数日分散差配**: `rankMultiDayPlans()`を使用。`preferredDate`起点で営業日に分散。Session 12で全テスト完了
+12. **OM_dispatch同期時のbase path**: monorepo(`/Claude_Code/`)とOM_dispatch(`/OM_dispatch/`)でvite.config.jsのbase pathが異なる。同期時に必ず変更すること
