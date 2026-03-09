@@ -84,7 +84,7 @@ export default function JobListView({ onNavigate }) {
             return (
               <div
                 key={job.id}
-                onClick={() => onNavigate('job-detail', { jobId: job.id })}
+                onClick={() => onNavigate('job-edit', { jobId: job.id })}
                 className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer"
               >
                 <div className="flex items-start justify-between">

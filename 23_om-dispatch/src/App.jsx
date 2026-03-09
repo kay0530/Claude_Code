@@ -7,6 +7,7 @@ import DashboardView from './components/dashboard/DashboardView';
 import MemberListView from './components/members/MemberListView';
 import JobListView from './components/jobs/JobListView';
 import JobCreateForm from './components/jobs/JobCreateForm';
+import JobEditForm from './components/jobs/JobEditForm';
 import CalendarView from './components/calendar/CalendarView';
 import DispatchView from './components/dispatch/DispatchView';
 import FeedbackHistory from './components/feedback/FeedbackHistory';
@@ -31,7 +32,7 @@ function PlaceholderView({ title }) {
 
 export default function App() {
   const [activeView, setActiveView] = useState('dashboard');
-  const [, setViewParams] = useState({});
+  const [viewParams, setViewParams] = useState({});
 
   function navigate(view, params = {}) {
     setActiveView(view);
@@ -46,6 +47,8 @@ export default function App() {
         return <JobListView onNavigate={navigate} />;
       case 'job-create':
         return <JobCreateForm onNavigate={navigate} />;
+      case 'job-edit':
+        return <JobEditForm jobId={viewParams.jobId} onNavigate={navigate} />;
       case 'dispatch':
         return <DispatchView onNavigate={navigate} />;
       case 'calendar':
