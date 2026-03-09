@@ -25,7 +25,7 @@ Solar power plant O&M (Operations & Maintenance) team dispatch application. Help
 
 ```bash
 cd 23_om-dispatch
-npm run dev     # Vite on port 5180 (configured in vite.config.js)
+npm run dev     # Vite on port 5189 (configured in vite.config.js)
 npm run build   # Production build to dist/
 npm run preview # Preview production build
 npm run lint    # ESLint
@@ -36,7 +36,7 @@ npm run lint    # ESLint
 ```
 23_om-dispatch/
 ├── package.json
-├── vite.config.js              # Vite config (port 5180, React + Tailwind plugins)
+├── vite.config.js              # Vite config (port 5189, React + Tailwind plugins)
 ├── index.html
 ├── CLAUDE.md                   # This file
 ├── src/
@@ -634,7 +634,7 @@ When making changes to `23_om-dispatch/` in the Claude_Code monorepo, also push 
    - `src/services/claudeService.js`: AI差配プロンプトを人工ベースに更新
    - `src/data/skillCategories.js`: バックアップ退避、差配ロジックから除外
    - UI: MemberCard, SkillRadarChart, DispatchView, JobCreateForm等の更新
-3. **検証**: dev server (port 5180) で差配テスト
+3. **検証**: dev server (port 5189) で差配テスト
 
 #### 新ディスパッチアルゴリズム（概要）
 ```
@@ -911,6 +911,51 @@ const dayJobsWithTypes = items.map(item => ({
 #### 変更ファイル
 - `src/services/dispatchEngine.js`: 4箇所修正
 - `src/hooks/useDispatchEngine.js`: CalendarContext連携 + dependency array修正
+
+### Session 18: カレンダー連携複数案件差配の完成 (excludedMembers + calendarFit修正)
+
+**ワークツリー**: `agitated-austin` (branch: `claude/agitated-austin`)
+
+#### 修正内容
+
+**1. filterAvailableMembers() → 除外メンバー情報を返す (dispatchEngine.js)**
+- 戻り値を `Array<member>` → `{ available: Array<member>, excluded: Array<{ member, conflictEvents }> }` に変更
+- 除外されたメンバーとその競合イベントを追跡
+
+**2. scoreTeam() → calendarFitスコア修正 (dispatchEngine.js)**
+- CLAUDE.md仕様に合わせ `teamSize: 15%` → `calendarFit: 15%` に変更
+- チームメンバーのカレンダー空き状況を0-10点でスコアリング
+- スコアウェイト: Manpower 40%, Qualified 20%, CalendarFit 15%, Vehicle 15%, Stretch 10%
+
+**3. rankTeams() → _meta.excludedMembers 追加 (dispatchEngine.js)**
+- 返却配列に `_meta = { excludedMembers: [...] }` を付与
+- UI側で除外メンバーバナーが正しく表示されるようになった
+
+**4. rankMultiJobPlans() → 除外メンバー集計 (dispatchEngine.js)**
+- `allExcludedIds` Set で除外メンバーIDを追跡
+- `_meta.excludedMembers` を返却
+
+**5. rankMultiDayPlans() → 除外メンバー伝播 (dispatchEngine.js)**
+- single-day/multi-day 両パスで `_meta` を伝播
+
+**6. useDispatchEngine.js → 複数案件でexcludedMembers取得**
+- `runMultiJobDispatch()` 内で `plans._meta.excludedMembers` を取得・セット
+
+**7. DispatchView.jsx → 除外メンバーバナー改善**
+- テキスト: 「カレンダーにより除外されたメンバー」→「Outlookカレンダーの予定により差配対象外」
+- サブタイトル説明文追加
+- レイアウト修正: `flex items-center` → `flex items-start` + `<div>` ラッパー
+
+**8. vite.config.js → ポート5189に変更**
+
+#### 変更ファイル
+- `src/services/dispatchEngine.js`: 5箇所修正 (filterAvailableMembers, scoreTeam, rankTeams, rankMultiJobPlans, rankMultiDayPlans)
+- `src/hooks/useDispatchEngine.js`: excludedMembers取得追加
+- `src/components/dispatch/DispatchView.jsx`: バナーUI改善
+- `vite.config.js`: ポート5180→5189
+
+#### ビルド結果
+- `npm run build`: 成功（255 modules, 9.60s）
 
 ## Known Issues & TODOs
 

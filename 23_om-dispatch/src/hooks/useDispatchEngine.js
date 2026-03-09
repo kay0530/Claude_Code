@@ -115,7 +115,6 @@ export function useDispatchEngine() {
         state.settings,
         calendarEvents
       );
-
       // Extract meta info about excluded members
       const meta = ranked._meta || {};
       setExcludedMembers(meta.excludedMembers || []);
@@ -176,6 +175,10 @@ export function useDispatchEngine() {
         state.settings,
         calendarEvents
       );
+
+      // Extract excluded members from multi-day plans
+      const meta = plans._meta || {};
+      setExcludedMembers(meta.excludedMembers || []);
 
       // Augment plans with resolved member objects
       const augmentedPlans = plans.map((plan, planIndex) => ({

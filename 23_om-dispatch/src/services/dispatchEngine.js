@@ -85,21 +85,23 @@ export function identifyMentoringPairs(team, jobTypeId) {
 
 /**
  * Score a team for a given job using manpower-based system.
- * Weights: manpower 40%, qualified 20%, vehicle 15%, teamSize 15%, stretch 10%.
+ * Weights: manpower 40%, qualified 20%, calendarFit 15%, vehicle 15%, stretch 10%.
  * @param {Array} team - Array of member objects
  * @param {object} job - Job object
  * @param {object} jobType - Job type with baseManpower
  * @param {Array} conditions - Selected conditions
  * @param {object} settings - App settings
+ * @param {Array} calendarEvents - Calendar events for availability checking
+ * @param {string|null} jobDate - Job date (YYYY-MM-DD) for calendar fit scoring
  * @returns {object} Scoring result
  */
-export function scoreTeam(team, job, jobType, conditions, settings) {
+export function scoreTeam(team, job, jobType, conditions, settings, calendarEvents = [], jobDate = null) {
   // Vehicle constraints check
   const vehicleCheck = checkVehicleConstraints(team, settings);
   if (!vehicleCheck.valid) {
     return {
       score: -1,
-      breakdown: { manpower: 0, qualified: 0, vehicle: 0, teamSize: 0, stretch: 0 },
+      breakdown: { manpower: 0, qualified: 0, calendarFit: 0, vehicle: 0, stretch: 0 },
       isStretch: false,
       vehicleArrangement: vehicleCheck.vehicleArrangement,
       vehicleDetails: vehicleCheck.details,
@@ -117,7 +119,7 @@ export function scoreTeam(team, job, jobType, conditions, settings) {
   if (qualifiedCount === 0) {
     return {
       score: -1,
-      breakdown: { manpower: 0, qualified: 0, vehicle: 0, teamSize: 0, stretch: 0 },
+      breakdown: { manpower: 0, qualified: 0, calendarFit: 0, vehicle: 0, stretch: 0 },
       isStretch: false,
       vehicleArrangement: vehicleCheck.vehicleArrangement,
       vehicleDetails: vehicleCheck.details,
@@ -139,21 +141,32 @@ export function scoreTeam(team, job, jobType, conditions, settings) {
   else if (vehicleCheck.vehicleArrangement === 'both') vehicleScore = 8;
   else if (vehicleCheck.vehicleArrangement === 'multiple_hiace') vehicleScore = 5;
 
-  // Team size efficiency (smaller team meeting requirements = better)
-  const minPersonnel = jobType.minPersonnel;
-  const teamSizeScore = Math.max(0, 10 - (team.length - minPersonnel) * 2);
+  // Calendar fit score (0-10): how well does this team fit the calendar?
+  let calendarFitScore = 10; // Default: assume fully available
+  if (calendarEvents.length > 0 && jobDate) {
+    const busyCount = team.filter(member => {
+      return calendarEvents.some(event => {
+        if (event.memberEmail?.toLowerCase() !== member.outlookEmail?.toLowerCase()) return false;
+        if (!event.isBusy) return false;
+        const eventDate = event.start?.substring(0, 10);
+        return eventDate === jobDate;
+      });
+    }).length;
+    // Members already filtered out shouldn't be in team, but score non-busy ratio
+    calendarFitScore = team.length > 0 ? ((team.length - busyCount) / team.length) * 10 : 10;
+  }
 
   // Stretch determination
   const isStretch = teamManpower < requiredManpower;
   const stretchPenalty = isStretch ? Math.max(0, (1 - manpowerRatio) * 10) : 0;
   const stretchScore = 10 - stretchPenalty;
 
-  // Weighted total
+  // Weighted total (CLAUDE.md spec: manpower 40%, qualified 20%, calendarFit 15%, vehicle 15%, stretch 10%)
   const totalScore =
     manpowerScore * 0.40 +
     qualifiedScore * 0.20 +
+    calendarFitScore * 0.15 +
     vehicleScore * 0.15 +
-    teamSizeScore * 0.15 +
     stretchScore * 0.10;
 
   // Lead candidate: highest manpower for this job type
@@ -168,8 +181,8 @@ export function scoreTeam(team, job, jobType, conditions, settings) {
     breakdown: {
       manpower: Math.round(manpowerScore * 100) / 100,
       qualified: Math.round(qualifiedScore * 100) / 100,
+      calendarFit: Math.round(calendarFitScore * 100) / 100,
       vehicle: vehicleScore,
-      teamSize: teamSizeScore,
       stretch: Math.round(stretchScore * 100) / 100,
     },
     isStretch,
@@ -188,25 +201,33 @@ export function scoreTeam(team, job, jobType, conditions, settings) {
  * @param {Array} members - All members
  * @param {object} job - Job with preferredDate
  * @param {Array} calendarEvents - Calendar events
- * @returns {Array} Available members
+ * @returns {{ available: Array, excluded: Array<{ member: object, conflictEvents: Array }> }}
  */
 function filterAvailableMembers(members, job, calendarEvents) {
   if (!calendarEvents || calendarEvents.length === 0) {
-    return members;
+    return { available: members, excluded: [] };
   }
 
   const jobDate = job.preferredDate;
-  if (!jobDate) return members;
+  if (!jobDate) return { available: members, excluded: [] };
 
-  return members.filter(member => {
-    const memberEvents = calendarEvents.filter(event => {
+  const available = [];
+  const excluded = [];
+
+  for (const member of members) {
+    const conflicts = calendarEvents.filter(event => {
       if (event.memberEmail?.toLowerCase() !== member.outlookEmail?.toLowerCase()) return false;
       if (!event.isBusy) return false;
       const eventDate = event.start?.substring(0, 10);
       return eventDate === jobDate;
     });
-    return memberEvents.length === 0;
-  });
+    if (conflicts.length === 0) {
+      available.push(member);
+    } else {
+      excluded.push({ member, conflictEvents: conflicts });
+    }
+  }
+  return { available, excluded };
 }
 
 /**
@@ -222,18 +243,21 @@ function filterAvailableMembers(members, job, calendarEvents) {
 export function rankTeams(members, job, jobType, conditions, settings, calendarEvents = []) {
   const { minPersonnel, maxPersonnel } = jobType;
 
-  const availableMembers = filterAvailableMembers(members, job, calendarEvents);
-  const combinations = generateTeamCombinations(availableMembers, minPersonnel, maxPersonnel);
+  const { available, excluded } = filterAvailableMembers(members, job, calendarEvents);
+  const combinations = generateTeamCombinations(available, minPersonnel, maxPersonnel);
 
+  const jobDate = job.preferredDate || null;
   const scoredTeams = combinations
     .map(team => {
-      const result = scoreTeam(team, job, jobType, conditions, settings);
+      const result = scoreTeam(team, job, jobType, conditions, settings, calendarEvents, jobDate);
       return { team, ...result };
     })
     .filter(t => !t.disqualified && t.score > 0);
 
   scoredTeams.sort((a, b) => b.score - a.score);
-  return scoredTeams.slice(0, 5).map((t, i) => ({ ...t, rank: i + 1 }));
+  const result = scoredTeams.slice(0, 5).map((t, i) => ({ ...t, rank: i + 1 }));
+  result._meta = { excludedMembers: excluded.map(e => e.member) };
+  return result;
 }
 
 /**
@@ -259,6 +283,7 @@ export function rankMultiJobPlans(members, jobsWithTypes, settings, calendarEven
 
   const plans = [];
   const usedMemberIds = new Set();
+  const allExcludedIds = new Set();
 
   function backtrack(jobIndex, currentAssignments) {
     if (jobIndex >= jobsWithTypes.length) {
@@ -275,11 +300,13 @@ export function rankMultiJobPlans(members, jobsWithTypes, settings, calendarEven
 
     const { job, jobType, conditions } = jobsWithTypes[jobIndex];
     const availableMembers = members.filter(m => !usedMemberIds.has(m.id));
-    const filtered = filterAvailableMembers(availableMembers, job, calendarEvents);
+    const { available: filtered, excluded: jobExcluded } = filterAvailableMembers(availableMembers, job, calendarEvents);
+    jobExcluded.forEach(e => allExcludedIds.add(e.member.id));
     const combinations = generateTeamCombinations(filtered, jobType.minPersonnel, jobType.maxPersonnel);
 
+    const jobDate = job.preferredDate || null;
     for (const team of combinations) {
-      const result = scoreTeam(team, job, jobType, conditions, settings);
+      const result = scoreTeam(team, job, jobType, conditions, settings, calendarEvents, jobDate);
       if (result.disqualified || result.score <= 0) continue;
 
       team.forEach(m => usedMemberIds.add(m.id));
@@ -292,7 +319,11 @@ export function rankMultiJobPlans(members, jobsWithTypes, settings, calendarEven
 
   backtrack(0, []);
   plans.sort((a, b) => b.totalScore - a.totalScore);
-  return plans.slice(0, 5);
+
+  const allExcludedMembers = [...allExcludedIds].map(id => members.find(m => m.id === id)).filter(Boolean);
+  const result = plans.slice(0, 5);
+  result._meta = { excludedMembers: allExcludedMembers };
+  return result;
 }
 
 /**
@@ -308,7 +339,7 @@ export function rankMultiDayPlans(members, jobsWithTypes, settings, calendarEven
   // Try single-day first
   const singleDayPlans = rankMultiJobPlans(members, jobsWithTypes, settings, calendarEvents);
   if (singleDayPlans.length > 0) {
-    return singleDayPlans.map(plan => ({
+    const result = singleDayPlans.map(plan => ({
       ...plan,
       planType: 'single-day',
       totalDays: 1,
@@ -318,6 +349,8 @@ export function rankMultiDayPlans(members, jobsWithTypes, settings, calendarEven
         jobAssignments: plan.assignments,
       }],
     }));
+    result._meta = singleDayPlans._meta || { excludedMembers: [] };
+    return result;
   }
 
   // Multi-day mode
@@ -339,7 +372,18 @@ export function rankMultiDayPlans(members, jobsWithTypes, settings, calendarEven
   }
 
   evaluatedPlans.sort((a, b) => b.totalScore - a.totalScore);
-  return evaluatedPlans.slice(0, 5);
+
+  // Collect excluded members across all evaluated days
+  const allExcluded = new Set();
+  for (const jwt of jobsWithTypes) {
+    const { excluded } = filterAvailableMembers(members, jwt.job, calendarEvents);
+    excluded.forEach(e => allExcluded.add(e.member.id));
+  }
+  const excludedMembers = [...allExcluded].map(id => members.find(m => m.id === id)).filter(Boolean);
+
+  const result = evaluatedPlans.slice(0, 5);
+  result._meta = { excludedMembers };
+  return result;
 }
 
 /**
