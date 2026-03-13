@@ -18,7 +18,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 # ---------------------------------------------------------------------------
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = SCRIPT_DIR
-PVPCS_PATH = r"C:\Users\田中　圭亮\Desktop\PVPCSデータ.xlsx"
+PVPCS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "PVPCSデータ.xlsx")
 TEMP_XLSX = os.path.join(OUTPUT_DIR, "temp_template.xlsx")
 OUTPUT_XLSM = os.path.join(OUTPUT_DIR, "パワまる機器構成_テンプレート.xlsm")
 VBA_BAS_PATH = os.path.join(OUTPUT_DIR, "vba_code.bas")
@@ -104,16 +104,18 @@ def _apply_input_cell_style(ws, row, col_start, col_end):
         cell.border = BORDER_THIN
         cell.font = FONT_DEFAULT
         cell.alignment = ALIGN_CENTER
+        cell.number_format = 'General'
 
 
 def _apply_formula_cell_style(ws, row, col_start, col_end):
-    """Apply formula-cell style (thin border + green fill)."""
+    """Apply formula-cell style (thin border + green fill + General format)."""
     for c in range(col_start, col_end + 1):
         cell = ws.cell(row=row, column=c)
         cell.fill = FILL_FORMULA
         cell.border = BORDER_THIN
         cell.font = FONT_DEFAULT
         cell.alignment = ALIGN_CENTER
+        cell.number_format = 'General'
 
 
 def _set_header_row(ws, row, labels, max_col):
@@ -247,7 +249,10 @@ def create_input_sheet(wb):
     _apply_formula_cell_style(ws, 20, 2, 13)
     for col in range(2, 14):
         cl = get_column_letter(col)
-        ws.cell(row=20, column=col).value = f'=IF({cl}14="","",{cl}14*{cl}16+IF({cl}17="",0,{cl}17*{cl}19))'
+        ws.cell(row=20, column=col).value = (
+            f'=IF({cl}14="","",{cl}14*IF({cl}15="",1,{cl}15)*{cl}16'
+            f'+IF({cl}17="",0,{cl}17*IF({cl}18="",1,{cl}18)*{cl}19))'
+        )
 
     # Formula cells for rows 23-24 (green fill)
     for row_num in [23, 24]:
@@ -278,13 +283,13 @@ def create_input_sheet(wb):
     for col in range(2, 14):
         cl = get_column_letter(col)
         ws.cell(row=23, column=col).value = \
-            f'=IFERROR(VLOOKUP({cl}22,既設PCS!A:B,2,FALSE),"")'
+            f'=IFERROR(VLOOKUP({cl}22,既設PCS!A:C,3,FALSE),"")'
 
     # Row 24: VLOOKUP for PCS容量 (references PCS型番 at row 22)
     for col in range(2, 14):
         cl = get_column_letter(col)
         ws.cell(row=24, column=col).value = \
-            f'=IFERROR(VLOOKUP({cl}22,既設PCS!A:D,4,FALSE),"")'
+            f'=IFERROR(VLOOKUP({cl}22,既設PCS!A:E,5,FALSE),"")'
 
     # Row 25: Cable dropdown
     dv_cable = DataValidation(type="list",
@@ -419,7 +424,10 @@ def create_input_sheet(wb):
     _apply_formula_cell_style(ws, 49, 2, 9)
     for col in range(2, 10):
         cl = get_column_letter(col)
-        ws.cell(row=49, column=col).value = f'=IF({cl}43="","",{cl}43*{cl}45+IF({cl}46="",0,{cl}46*{cl}48))'
+        ws.cell(row=49, column=col).value = (
+            f'=IF({cl}43="","",{cl}43*IF({cl}44="",1,{cl}44)*{cl}45'
+            f'+IF({cl}46="",0,{cl}46*IF({cl}47="",1,{cl}47)*{cl}48))'
+        )
 
     # Formula cells for rows 51-52
     for row_num in [51, 52]:
@@ -443,13 +451,13 @@ def create_input_sheet(wb):
     for col in range(2, 10):
         cl = get_column_letter(col)
         ws.cell(row=51, column=col).value = \
-            f'=IFERROR(VLOOKUP({cl}50,変更後PCS!A:B,2,FALSE),"")'
+            f'=IFERROR(VLOOKUP({cl}50,変更後PCS!A:C,3,FALSE),"")'
 
     # Row 52: VLOOKUP PCS容量 (references PCS型番 at row 50)
     for col in range(2, 10):
         cl = get_column_letter(col)
         ws.cell(row=52, column=col).value = \
-            f'=IFERROR(VLOOKUP({cl}50,変更後PCS!A:D,4,FALSE),"")'
+            f'=IFERROR(VLOOKUP({cl}50,変更後PCS!A:E,5,FALSE),"")'
 
     # Row 53: Cable dropdown
     dv_new_cable = DataValidation(type="list",
@@ -790,76 +798,6 @@ def inject_vba_and_save(xlsx_path, xlsm_path, vba_bas_path):
         vb_module.Name = "ModKikiKousei"
         vb_module.CodeModule.AddFromString(vba_code)
 
-        # Add UserForm for estimate side selection
-        vb_form = wb.VBProject.VBComponents.Add(3)  # vbext_ct_MSForm
-        vb_form.Name = "frmEstimateSide"
-
-        # Set form properties
-        vb_form.Properties("Caption").Value = "ストリング構成推定"
-        vb_form.Properties("Width").Value = 300
-        vb_form.Properties("Height").Value = 150
-
-        # Add buttons via designer
-        designer = vb_form.Designer
-
-        btn_existing = designer.Controls.Add("Forms.CommandButton.1")
-        btn_existing.Name = "btnExisting"
-        btn_existing.Caption = "既設側"
-        btn_existing.Left = 20
-        btn_existing.Top = 40
-        btn_existing.Width = 75
-        btn_existing.Height = 30
-
-        btn_new = designer.Controls.Add("Forms.CommandButton.1")
-        btn_new.Name = "btnNew"
-        btn_new.Caption = "新設側"
-        btn_new.Left = 110
-        btn_new.Top = 40
-        btn_new.Width = 75
-        btn_new.Height = 30
-
-        btn_cancel = designer.Controls.Add("Forms.CommandButton.1")
-        btn_cancel.Name = "btnCancel"
-        btn_cancel.Caption = "キャンセル"
-        btn_cancel.Left = 200
-        btn_cancel.Top = 40
-        btn_cancel.Width = 75
-        btn_cancel.Height = 30
-
-        # Add label
-        lbl = designer.Controls.Add("Forms.Label.1")
-        lbl.Name = "lblPrompt"
-        lbl.Caption = "推定する側を選択してください:"
-        lbl.Left = 20
-        lbl.Top = 15
-        lbl.Width = 260
-        lbl.Height = 20
-
-        # Add form code
-        form_code = (
-            'Public gEstimateSide As String\n'
-            '\n'
-            'Private Sub UserForm_Initialize()\n'
-            '    gEstimateSide = "cancel"\n'
-            'End Sub\n'
-            '\n'
-            'Private Sub btnExisting_Click()\n'
-            '    gEstimateSide = "existing"\n'
-            '    Me.Hide\n'
-            'End Sub\n'
-            '\n'
-            'Private Sub btnNew_Click()\n'
-            '    gEstimateSide = "new"\n'
-            '    Me.Hide\n'
-            'End Sub\n'
-            '\n'
-            'Private Sub btnCancel_Click()\n'
-            '    gEstimateSide = "cancel"\n'
-            '    Me.Hide\n'
-            'End Sub\n'
-        )
-        vb_form.CodeModule.AddFromString(form_code)
-
         # Add Worksheet_Change event code to the input sheet's code module
         ws_input = wb.Sheets("入力")
         ws_code = wb.VBProject.VBComponents(ws_input.CodeName).CodeModule
@@ -923,14 +861,23 @@ def inject_vba_and_save(xlsx_path, xlsm_path, vba_bas_path):
         btn.Characters.Font.Size = 14
         btn.Characters.Font.Bold = True
 
-        # Add "推定" button next to "作成" button
-        left2 = ws_input.Range("B71").Left + 220
-        top2 = ws_input.Range("B71").Top
-        btn2 = ws_input.Buttons().Add(left2, top2, 200, 40)
-        btn2.OnAction = "EstimateStringConfig"
-        btn2.Caption = "\u63a8\u5b9a"  # 推定
-        btn2.Characters.Font.Size = 14
-        btn2.Characters.Font.Bold = True
+        # Add "既設推定" button near existing panel info (row 12)
+        left_est1 = ws_input.Range("H12").Left
+        top_est1 = ws_input.Range("H12").Top
+        btn_est1 = ws_input.Buttons().Add(left_est1, top_est1, 120, 24)
+        btn_est1.OnAction = "EstimateExisting"
+        btn_est1.Caption = "\u65e2\u8a2d\u63a8\u5b9a"  # 既設推定
+        btn_est1.Characters.Font.Size = 10
+        btn_est1.Characters.Font.Bold = True
+
+        # Add "新設推定" button near new panel info (row 41)
+        left_est2 = ws_input.Range("H41").Left
+        top_est2 = ws_input.Range("H41").Top
+        btn_est2 = ws_input.Buttons().Add(left_est2, top_est2, 120, 24)
+        btn_est2.OnAction = "EstimateNew"
+        btn_est2.Caption = "\u65b0\u8a2d\u63a8\u5b9a"  # 新設推定
+        btn_est2.Characters.Font.Size = 10
+        btn_est2.Characters.Font.Bold = True
 
         # Save as .xlsm (macro-enabled: FileFormat=52)
         wb.SaveAs(abs_xlsm, FileFormat=52)
