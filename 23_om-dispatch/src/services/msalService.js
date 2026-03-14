@@ -3,6 +3,12 @@ import { PublicClientApplication } from '@azure/msal-browser';
 /** Default scopes for Microsoft Graph calendar access */
 export const DEFAULT_SCOPES = ['Calendars.ReadWrite', 'Calendars.ReadWrite.Shared', 'User.Read'];
 
+/** Default Azure AD app registration for O&M Dispatch */
+export const DEFAULT_AZURE_CONFIG = {
+  clientId: '85420e2f-eb38-4a8e-931f-4be552f953b0',
+  tenantId: '61b80e23-6dd9-4dc6-b355-d7f210b12ef5',
+};
+
 /** localStorage keys for Azure AD config */
 export const STORAGE_KEYS = {
   clientId: 'om-dispatch-azure-client-id',
@@ -88,8 +94,8 @@ export async function getAccessToken(msalInstance, account, scopes = DEFAULT_SCO
  */
 export function loadAzureConfig() {
   return {
-    clientId: localStorage.getItem(STORAGE_KEYS.clientId),
-    tenantId: localStorage.getItem(STORAGE_KEYS.tenantId),
+    clientId: localStorage.getItem(STORAGE_KEYS.clientId) || DEFAULT_AZURE_CONFIG.clientId,
+    tenantId: localStorage.getItem(STORAGE_KEYS.tenantId) || DEFAULT_AZURE_CONFIG.tenantId,
   };
 }
 

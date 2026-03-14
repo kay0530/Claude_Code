@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { loadAzureConfig, saveAzureConfig } from '../../services/msalService';
+import { loadAzureConfig, saveAzureConfig, DEFAULT_AZURE_CONFIG } from '../../services/msalService';
 import { useAuth } from '../../context/AuthContext';
 
 /**
@@ -16,15 +16,11 @@ export default function AzureAdSettings() {
   const [saveMessage, setSaveMessage] = useState('');
   const [connectingTest, setConnectingTest] = useState(false);
 
-  // Load existing config on mount
+  // Load existing config on mount (defaults provided by loadAzureConfig)
   useEffect(() => {
     const config = loadAzureConfig();
-    if (config.clientId) {
-      setClientId(config.clientId);
-    }
-    if (config.tenantId) {
-      setTenantId(config.tenantId);
-    }
+    setClientId(config.clientId || '');
+    setTenantId(config.tenantId || '');
     if (config.clientId && config.tenantId) {
       setIsConfigured(true);
     }
