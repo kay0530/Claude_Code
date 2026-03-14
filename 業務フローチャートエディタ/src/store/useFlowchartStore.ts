@@ -79,7 +79,7 @@ export const useFlowchartStore = create<FlowchartState>((set, get) => ({
   history: [],
   future: [],
   clipboard: null,
-  showEdgeCrossings: false,
+  showEdgeCrossings: true,
 
   // ── Internal: push current project to history ──────────────────
   pushHistory: () => {

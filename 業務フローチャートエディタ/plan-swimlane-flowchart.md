@@ -19,7 +19,7 @@ firebase projects:create swimlane-flowchart-editor --display-name "Swimlane Flow
 firebase init firestore
 
 # Firebase SDK インストール
-cd 44_swimlane-flowchart-editor
+cd 業務フローチャートエディタ
 npm install firebase
 ```
 
@@ -43,7 +43,7 @@ npm install firebase
 ### 3. GitHub Push
 
 ```bash
-cd 44_swimlane-flowchart-editor
+cd 業務フローチャートエディタ
 git init
 git add .
 git commit -m "feat: swimlane flowchart editor with full editing capabilities"

@@ -6,9 +6,11 @@ import {
   useReactFlow,
   applyNodeChanges,
   applyEdgeChanges,
+  reconnectEdge,
   type OnNodesChange,
   type OnEdgesChange,
   type OnConnect,
+  type OnReconnect,
   type NodeTypes,
   type Node,
   type Edge,
@@ -80,6 +82,7 @@ function FlowCanvasInner() {
   const addNode = useFlowchartStore((s) => s.addNode);
   const updateNode = useFlowchartStore((s) => s.updateNode);
   const addEdge = useFlowchartStore((s) => s.addEdge);
+  const updateEdge = useFlowchartStore((s) => s.updateEdge);
   const deleteEdge = useFlowchartStore((s) => s.deleteEdge);
   const selectNode = useFlowchartStore((s) => s.selectNode);
   const selectEdge = useFlowchartStore((s) => s.selectEdge);
@@ -189,6 +192,25 @@ function FlowCanvasInner() {
     [addEdge],
   );
 
+  // Reconnect edge to a different node by dragging its endpoint
+  const onReconnect: OnReconnect = useCallback(
+    (oldEdge, newConnection) => {
+      // Update local React Flow edges immediately
+      setRfEdges((eds) => reconnectEdge(oldEdge, newConnection, eds));
+
+      // Sync the reconnected edge back to the store
+      if (newConnection.source && newConnection.target) {
+        updateEdge(oldEdge.id, {
+          source: newConnection.source,
+          target: newConnection.target,
+          sourceHandle: newConnection.sourceHandle ?? undefined,
+          targetHandle: newConnection.targetHandle ?? undefined,
+        });
+      }
+    },
+    [updateEdge],
+  );
+
   // Node click -> select node in store
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
@@ -265,6 +287,8 @@ function FlowCanvasInner() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onReconnect={onReconnect}
+        reconnectRadius={25}
         onNodeClick={onNodeClick}
         onEdgeClick={onEdgeClick}
         onPaneClick={onPaneClick}

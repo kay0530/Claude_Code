@@ -37,10 +37,25 @@ body,
   cursor: grabbing;
 }
 
-/* Selection highlight */
-.react-flow__node.selected {
+/* Remove default React Flow node wrapper styles for decision nodes
+   so the SVG diamond shape is visible instead of a rectangle */
+.react-flow__node-decision {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Selection highlight - skip decision nodes (handled internally via SVG) */
+.react-flow__node.selected:not(.react-flow__node-decision) {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
+}
+
+/* Remove outline for selected decision nodes (handled by SVG polygon stroke) */
+.react-flow__node-decision.selected {
+  outline: none !important;
 }
 
 .react-flow__edge.selected .react-flow__edge-path {
