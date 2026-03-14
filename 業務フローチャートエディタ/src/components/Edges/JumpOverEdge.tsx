@@ -3,7 +3,6 @@ import {
   getSmoothStepPath,
   BaseEdge,
   EdgeLabelRenderer,
-  MarkerType,
   type EdgeProps,
 } from "@xyflow/react";
 
@@ -12,6 +11,8 @@ import {
 export type JumpOverEdgeData = {
   /** Pre-computed SVG paths for every edge (including this one) */
   allEdgePaths: Array<{ id: string; path: string }>;
+  /** Whether to use rounded corners (smoothstep) or straight right-angles */
+  smoothEdges?: boolean;
   [key: string]: unknown;
 };
 
@@ -303,7 +304,9 @@ function JumpOverEdgeComponent({
   labelBgBorderRadius,
   data,
 }: EdgeProps) {
-  // Compute the base smooth-step path for this edge
+  // Compute the base path for this edge
+  const edgeData = data as JumpOverEdgeData | undefined;
+  const borderRadius = edgeData?.smoothEdges ? SMOOTH_STEP_BORDER_RADIUS : 0;
   const [basePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
     sourceY,
@@ -311,12 +314,11 @@ function JumpOverEdgeComponent({
     targetX,
     targetY,
     targetPosition,
-    borderRadius: SMOOTH_STEP_BORDER_RADIUS,
+    borderRadius,
   });
 
   // Build jump-over path
   const finalPath = useMemo(() => {
-    const edgeData = data as JumpOverEdgeData | undefined;
     const allEdgePaths = edgeData?.allEdgePaths;
     if (!allEdgePaths || allEdgePaths.length <= 1) return basePath;
 

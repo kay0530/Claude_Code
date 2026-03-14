@@ -56,6 +56,7 @@ export function toReactFlowEdges(
   edges: FlowEdge[],
   edgeType: "smoothstep" | "step" | "jumpOver" = "smoothstep",
   rfNodes?: Node[],
+  smoothEdges?: boolean,
 ): Edge[] {
   // Pre-compute paths when using jumpOver
   let allEdgePaths: Array<{ id: string; path: string }> | undefined;
@@ -102,7 +103,7 @@ export function toReactFlowEdges(
           targetX,
           targetY,
           targetPosition: targetPos,
-          borderRadius: 8,
+          borderRadius: smoothEdges ? 8 : 0,
         });
 
         return { id: edge.id, path };
@@ -128,7 +129,7 @@ export function toReactFlowEdges(
       color: edge.color ?? "#333333",
     },
     data: edgeType === "jumpOver"
-      ? ({ allEdgePaths: allEdgePaths ?? [] } satisfies JumpOverEdgeData)
+      ? ({ allEdgePaths: allEdgePaths ?? [], smoothEdges: smoothEdges ?? false } satisfies JumpOverEdgeData)
       : undefined,
   }));
 }

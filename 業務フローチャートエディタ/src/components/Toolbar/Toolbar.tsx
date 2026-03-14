@@ -9,6 +9,7 @@ import {
   Image,
   FileText,
   GitBranch,
+  Spline,
 } from "lucide-react";
 import { useFlowchartStore } from "@/store/useFlowchartStore";
 import { useExport } from "@/hooks/useExport";
@@ -81,6 +82,8 @@ export function Toolbar() {
     setTitle,
     jumpOverEnabled,
     toggleJumpOver,
+    smoothEdges,
+    toggleSmoothEdges,
   } = useFlowchartStore();
 
   const [editingTitle, setEditingTitle] = useState(false);
@@ -197,6 +200,13 @@ export function Toolbar() {
           icon={GitBranch}
           label={jumpOverEnabled ? "飛び越し点: ON" : "飛び越し点: OFF"}
           onClick={toggleJumpOver}
+        />
+
+        {/* Smooth edges toggle */}
+        <ToolbarButton
+          icon={Spline}
+          label={smoothEdges ? "丸み: ON" : "丸み: OFF"}
+          onClick={toggleSmoothEdges}
         />
 
         {/* Project title - editable on double click */}

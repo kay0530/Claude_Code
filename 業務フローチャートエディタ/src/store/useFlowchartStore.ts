@@ -18,6 +18,7 @@ interface FlowchartState {
   future: FlowchartProject[];
   clipboard: FlowNode | null;
   jumpOverEnabled: boolean;
+  smoothEdges: boolean;
 
   // Project actions
   setProject: (project: FlowchartProject) => void;
@@ -45,8 +46,9 @@ interface FlowchartState {
   updatePhase: (id: string, partial: Partial<Phase>) => void;
   deletePhase: (id: string) => void;
 
-  // Jump-over toggle
+  // Edge display toggles
   toggleJumpOver: () => void;
+  toggleSmoothEdges: () => void;
 
   // Selection actions
   selectNode: (id: string | null) => void;
@@ -80,6 +82,7 @@ export const useFlowchartStore = create<FlowchartState>((set, get) => ({
   future: [],
   clipboard: null,
   jumpOverEnabled: true,
+  smoothEdges: false,
 
   // ── Internal: push current project to history ──────────────────
   pushHistory: () => {
@@ -269,9 +272,12 @@ export const useFlowchartStore = create<FlowchartState>((set, get) => ({
     }));
   },
 
-  // ── Jump-over toggle ─────────────────────────────────────────
+  // ── Edge display toggles ─────────────────────────────────────
   toggleJumpOver: () => {
     set((state) => ({ jumpOverEnabled: !state.jumpOverEnabled }));
+  },
+  toggleSmoothEdges: () => {
+    set((state) => ({ smoothEdges: !state.smoothEdges }));
   },
 
   // ── Selection actions ──────────────────────────────────────────
