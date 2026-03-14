@@ -1055,6 +1055,57 @@ After:  アプリ起動 → MSALセッション確認
 - GitHub Pagesデプロイ + 本番でMSAL認証 → 自動同期動作確認
 - OM_dispatchリポへの同期（base path変更必要）
 
+### Session 21: スコアリングロジック改善 + ストレッチモード修正 + 案件別日付探索
+
+**ワークツリー**: `naughty-hypatia` (branch: `claude/naughty-hypatia`)
+
+#### 完了した変更
+
+**1. マンパワー過剰配置ペナルティ (dispatchEngine.js scoreTeam)**
+- 従来: `manpowerScore = Math.min(ratio * 10, 10)` → ratio >= 1.0で常に満点
+- 修正: ベルカーブ型ペナルティ
+  - ratio < 1.0: `ratio * 10` (不足ペナルティ)
+  - 1.0 ≤ ratio ≤ 1.15: 満点10 (最適範囲)
+  - ratio > 1.15: `max(4, 10 - (ratio - 1.15) * 30)` (過剰ペナルティ)
+
+**2. チームサイズ効率スコア追加 (dispatchEngine.js scoreTeam)**
+- 新スコア `teamSizeScore`: minPersonnel(最小人数)との差でペナルティ
+- `max(4, 10 - (team.length - minPersonnel) * 3)` — 最小人数=10点、1名増=7点、2名増=4点
+- 重み15%で追加
+
+**3. 車両スコア公平化 (dispatchEngine.js scoreTeam)**
+- 淀川車両(`yodogawa_vehicle`)と複合車両(`both`)のスコアを`hiace`と同等の10に統一
+- 淀川のいるチームが車両スコアで不利にならないよう修正
+
+**4. スコアウェイト再配分**
+```
+Manpower: 30%, TeamSize: 15%, Qualified: 15%, CalendarFit: 15%, Vehicle: 15%, Stretch: 10%
+```
+
+**5. ストレッチモード修正 (dispatchEngine.js rankTeams)**
+- 従来: `settings.stretchMode`を読んでいなかった → 結果が変わらないバグ
+- 修正: `requiredManpower = stretchEnabled ? baseRequiredManpower / stretchMultiplier : baseRequiredManpower`
+- 表示用(`requiredManpower`)とスコアリング用(`effectiveRequiredManpower`)を分離
+
+**6. 案件種別別の代替日探索範囲 (dispatchEngine.js rankTeams)**
+- パワまる工事(`jt_pawamaru_construction`): 前後3営業日（発注制約あり）
+- その他全種別: 前3営業日〜後20営業日（柔軟なスケジューリング）
+- UI: DispatchView.jaxに探索範囲テキスト表示
+
+**7. breakdownにteamSizeフィールド追加**
+- RecommendationPanelの動的レンダリング(`Object.entries(breakdown).map()`)で自動表示
+- disqualifiedパスにも`teamSize: 0`を追加
+
+#### 変更ファイル
+- `src/services/dispatchEngine.js`: スコアリング全般(manpower/teamSize/vehicle/stretch/dateRange)
+- `src/components/dispatch/DispatchView.jsx`: 探索範囲テキスト表示
+- `src/components/dispatch/MultiJobPlanPanel.jsx`: 前セッションからのUI修正
+- `src/components/dispatch/RecommendationPanel.jsx`: 前セッションからのUI修正
+
+#### ビルド結果
+- devサーバー: port 5189、HMR動作確認済み
+- 推奨チーム: 全5件が3名チーム(2.4-2.7/3.0人工)に改善（以前は4名チーム3.3-3.5/2.5）
+
 ## Known Issues & TODOs
 
 1. ~~Calendar data defaults to static JSON; live Outlook API available when Azure AD configured~~ — **Session 20で実装完了**

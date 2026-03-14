@@ -563,6 +563,13 @@ export default function DispatchView({ onNavigate }) {
               </p>
               <p className="text-xs text-blue-600 mt-0.5">
                 希望日には全メンバーに予定があるため、最も近い空き日程を自動検索しました
+                {selectedJobType && (
+                  <span className="ml-1">
+                    （探索範囲: {selectedJobType.id === 'jt_pawamaru_construction'
+                      ? '前後3営業日 — 発注制約あり'
+                      : '前3営業日〜後20営業日'}）
+                  </span>
+                )}
               </p>
             </div>
           </div>
@@ -581,7 +588,7 @@ export default function DispatchView({ onNavigate }) {
                 Outlookカレンダーの予定により差配対象外 ({excludedMembers.length}名)
               </p>
               <p className="text-xs text-amber-600 mt-0.5">
-                希望日に既存の予定が入っているメンバーは差配候補から除外されます
+                希望日に十分な空き時間がないメンバーは差配候補から除外されます
               </p>
             </div>
           </div>
@@ -598,6 +605,9 @@ export default function DispatchView({ onNavigate }) {
                   {member.nameJa.charAt(0)}
                 </div>
                 <span>{member.nameJa}</span>
+                {member.excludeReason && (
+                  <span className="text-[9px] text-amber-600">({member.excludeReason})</span>
+                )}
               </div>
             ))}
           </div>
