@@ -980,9 +980,84 @@ const dayJobsWithTypes = items.map(item => ({
 #### ビルド結果
 - `npm run build`: 成功（255 modules, 9.60s）
 
+### Session 19: カレンダーデータ更新 + リアルタイム同期設計
+
+**ワークツリー**: `sweet-wing` (branch: `claude/sweet-wing`)
+
+#### 完了した変更
+
+**1. OM_dispatchリポへのコード同期 + デプロイ**
+- monorepoのmainブランチからOM_dispatchリポに全ファイル同期
+- CalendarView.jsx: `syncWeek` → `loadRealCalendarData` に変更済み
+- CalendarContext.jsx: DATA_VERSION=11, `mergeEvents`追加済み
+- useCalendarSync.js: `syncFromOutlook`で`mergeEvents`使用
+- vite.config.js: base path `/OM_dispatch/` に修正
+- GitHub Pages デプロイ成功 (commit: 363008f)
+
+**2. Azure AD管理者承認: 確認済み**
+- 全8メンバーのカレンダー読み取り権限が承認済み
+- MS365 MCPで全メンバーのカレンダー取得に成功
+
+**3. 静的JSON再取得 (不完全)**
+- MS365 MCPの`get-specific-calendar-view`で全メンバー再取得を試みた
+- `top`パラメータ未指定によりデフォルト10件制限 → 各メンバー10件のみ取得
+- 前回データ(数百件)より大幅に少ないため、デプロイ見送り
+- **教訓**: `get-specific-calendar-view`は`top: 100`以上を指定すること
+
+#### 未完了: リアルタイムOutlook同期
+
+**目標**: 静的JSON依存を脱却し、MSAL認証済みなら起動時にGraph APIから自動取得
+
+**実装プラン** (`45_om-dispatch-realtime-sync/plan-realtime-sync.md`):
+
+1. **CalendarView.jsx 自動同期**: `isAuthenticated` → Graph API自動フェッチ / 未認証 → 静的JSONフォールバック
+2. **週切替時の追加取得**: 表示範囲のデータがなければGraph APIから取得
+3. **ボタン統合**: 「データ同期」「Outlook同期」を1つに統合
+4. **GitHub Pagesテスト**: 本番でMSAL認証 → 自動同期動作確認
+
+**アーキテクチャ変更**:
+```
+Before: アプリ起動 → 静的JSON → 表示 (古いデータ)
+After:  アプリ起動 → MSALセッション確認
+          ├─ 認証済み → Graph API自動同期 → 最新データ表示
+          └─ 未認証 → 静的JSONフォールバック
+```
+
+### Session 20: リアルタイムOutlook同期の実装
+
+**ワークツリー**: `inspiring-mcclintock` (branch: `claude/inspiring-mcclintock`)
+
+#### 完了した変更
+
+**1. useCalendarSync.js: autoSync + fetchWeekData 追加**
+- `autoSync(getToken, members)`: 認証済み → Graph API自動フェッチ(-14日～+42日) / 未認証 → 静的JSONフォールバック
+- `fetchWeekData(getToken, members, weekStartDate)`: 週単位のGraph APIフェッチ（mergeEventsで範囲マージ）
+- 既存の`syncInProgressRef`で同時実行防止
+
+**2. CalendarView.jsx: 自動同期 + ボタン統合**
+- マウント時自動同期: `isAuthenticated` → `autoSync()` / 未認証 → `loadRealCalendarData()`
+- 週切替時フェッチ: 表示範囲にイベントがなければGraph APIから追加取得
+- ボタン統合: 「Outlook同期」(認証時) / 「データ読込」(未認証時) の1ボタンに統合
+- 未認証ユーザーへのMS365連携ヒント表示
+
+**3. アーキテクチャ変更**
+```
+Before: アプリ起動 → 静的JSON → 表示 (古いデータ)
+After:  アプリ起動 → MSALセッション確認
+          ├─ 認証済み → Graph API自動同期 → 最新データ表示
+          └─ 未認証 → 静的JSONフォールバック
+```
+
+#### ビルド結果
+- `npm run build`: 成功（256 modules, 2.80s）
+
+#### 未完了
+- GitHub Pagesデプロイ + 本番でMSAL認証 → 自動同期動作確認
+- OM_dispatchリポへの同期（base path変更必要）
+
 ## Known Issues & TODOs
 
-1. Calendar data defaults to static JSON; live Outlook API available when Azure AD configured
+1. ~~Calendar data defaults to static JSON; live Outlook API available when Azure AD configured~~ — **Session 20で実装完了**
 2. `temp_*.json` filenames are temporary; consider renaming to permanent format
 3. 廣木's event count (~110) may be lower than expected vs other members (100-160)
 4. No automated tests

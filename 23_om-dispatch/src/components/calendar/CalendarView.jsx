@@ -9,6 +9,7 @@ import {
 import { useCalendar } from '../../context/CalendarContext';
 import { useCalendarSync } from '../../hooks/useCalendarSync';
 import { useAuth } from '../../context/AuthContext';
+import { useApp } from '../../context/AppContext';
 import EventBlock from './EventBlock';
 import EventDetailModal from './EventDetailModal';
 
@@ -30,8 +31,9 @@ const MEMBER_ORDER = [
 
 export default function CalendarView() {
   const { events, loading, lastSynced } = useCalendar();
-  const { syncing, syncStatus, loadRealCalendarData, syncFromOutlook } = useCalendarSync();
+  const { syncing, syncStatus, loadRealCalendarData, syncFromOutlook, autoSync, fetchWeekData } = useCalendarSync();
   const { isAuthenticated, getToken } = useAuth();
+  const { state } = useApp();
 
   // Selected event for detail modal
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -82,14 +84,58 @@ export default function CalendarView() {
     }
   }, []);
 
-  // Auto-load real calendar data on first mount if events are empty
+  // Auto-load calendar data on first mount
   const autoLoadedRef = useRef(false);
   useEffect(() => {
-    if (!autoLoadedRef.current && events.length === 0 && !syncing && !loading) {
-      autoLoadedRef.current = true;
+    if (autoLoadedRef.current || syncing || loading) return;
+    if (events.length > 0) return;
+
+    autoLoadedRef.current = true;
+
+    if (isAuthenticated) {
+      // Authenticated: auto-sync from Outlook Graph API, fallback to static data
+      const members = Object.values(state.members || {});
+      autoSync(getToken, members).then((result) => {
+        if (result.source === 'outlook' && result.success) {
+          setToast({ type: 'success', message: `Outlook自動同期完了: ${result.count}件取得` });
+        } else if (result.source === 'outlook' && result.count > 0) {
+          setToast({ type: 'success', message: `${result.count}件取得（一部エラー: ${result.error}）` });
+        } else if (result.source === 'static') {
+          setToast({ type: 'success', message: 'オフラインデータを読み込みました' });
+        } else if (result.error) {
+          setToast({ type: 'error', message: result.error });
+        }
+      });
+    } else {
+      // Not authenticated: load static calendar data
       loadRealCalendarData();
     }
-  }, [events, syncing, loading, loadRealCalendarData]);
+  }, [events, syncing, loading, isAuthenticated, getToken, state.members, autoSync, loadRealCalendarData]);
+
+  // Fetch week data from Outlook when navigating to a new week
+  useEffect(() => {
+    if (!isAuthenticated || !autoLoadedRef.current) return;
+
+    // Check if we have events for the current week view
+    const weekStartStr = toISODate(weekDates[0]);
+    const weekEndStr = toISODate(weekDates[weekDates.length - 1]);
+
+    const hasEventsForWeek = events.some((e) => {
+      const eventDate = e.start.substring(0, 10);
+      return eventDate >= weekStartStr && eventDate <= weekEndStr;
+    });
+
+    if (!hasEventsForWeek) {
+      const members = Object.values(state.members || {});
+      fetchWeekData(getToken, members, weekStartStr).then((result) => {
+        if (result.success && result.count > 0) {
+          setToast({ type: 'success', message: `${result.count}件のイベントを取得` });
+        } else if (result.error) {
+          setToast({ type: 'error', message: result.error });
+        }
+      });
+    }
+  }, [baseDate, isAuthenticated, weekDates, events, state.members, getToken, fetchWeekData]);
 
   // Navigate to previous week
   function goToPrevWeek() {
@@ -300,61 +346,37 @@ export default function CalendarView() {
             </button>
           </div>
 
-          {/* Outlook live sync button (only when authenticated) */}
-          {isAuthenticated && (
-            <button
-              onClick={handleOutlookSync}
-              disabled={outlookSyncing || syncing || loading}
-              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors text-sm font-medium ${
-                outlookSyncing
+          {/* Unified sync button */}
+          <button
+            onClick={isAuthenticated ? handleOutlookSync : handleSync}
+            disabled={outlookSyncing || syncing || loading}
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors text-sm font-medium ${
+              isAuthenticated
+                ? outlookSyncing
                   ? 'bg-blue-500 text-white cursor-not-allowed'
                   : 'bg-blue-600 text-white hover:bg-blue-700'
-              }`}
-            >
-              <svg
-                className={`w-4 h-4 ${outlookSyncing ? 'animate-spin' : ''}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              {outlookSyncing ? '同期中...' : 'Outlook同期'}
-            </button>
-          )}
-
-          {/* Offline sync button (fallback) */}
-          {!isAuthenticated && (
-            <button
-              onClick={handleSync}
-              disabled={syncing || loading}
-              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors text-sm font-medium ${
-                syncing || loading
+                : syncing || loading
                   ? 'bg-gray-400 text-white cursor-not-allowed'
                   : 'bg-gray-600 text-white hover:bg-gray-700'
-              }`}
+            }`}
+          >
+            <svg
+              className={`w-4 h-4 ${outlookSyncing || syncing ? 'animate-spin' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <svg
-                className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              {syncing ? '同期中...' : 'データ同期'}
-            </button>
-          )}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+            {isAuthenticated
+              ? outlookSyncing ? '同期中...' : 'Outlook同期'
+              : syncing ? '同期中...' : 'データ読込'}
+          </button>
 
           {/* Hint for unauthenticated users */}
           {!isAuthenticated && (

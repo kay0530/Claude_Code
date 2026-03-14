@@ -367,6 +367,104 @@ export function useCalendarSync() {
     [mergeEvents, setLoading, setSyncError]
   );
 
+  /**
+   * Auto-sync: try Graph API with token, fall back to static data.
+   * Range: today -14 days to +42 days.
+   *
+   * @param {() => Promise<string|null>} getToken - Async function that returns an access token or null
+   * @param {Array<{outlookEmail: string}>} members - Member objects with outlookEmail
+   * @returns {Promise<{source: 'outlook'|'static', success: boolean, count?: number, error?: string}>}
+   */
+  const autoSync = useCallback(
+    async (getToken, members) => {
+      // Prevent concurrent syncs
+      if (syncInProgressRef.current) {
+        console.warn('[CalendarSync] autoSync: sync already in progress, skipping.');
+        return { source: 'static', success: false, error: 'Sync already in progress' };
+      }
+
+      // Compute date range: today -14 days to +42 days
+      const today = new Date();
+      const startDate = new Date(today);
+      startDate.setDate(today.getDate() - 14);
+      const endDate = new Date(today);
+      endDate.setDate(today.getDate() + 42);
+
+      try {
+        const token = await getToken();
+
+        if (token) {
+          // Token available: sync from Outlook Graph API
+          console.log('[CalendarSync] autoSync: token acquired, syncing from Outlook.');
+          const result = await syncFromOutlook(token, members, startDate, endDate);
+          return {
+            source: 'outlook',
+            success: result.success,
+            count: result.count,
+            error: result.error || undefined,
+          };
+        }
+      } catch (err) {
+        console.warn('[CalendarSync] autoSync: token acquisition failed, falling back to static data.', err.message);
+      }
+
+      // Fallback: load static data
+      console.log('[CalendarSync] autoSync: using static calendar data.');
+      loadRealCalendarData();
+      return {
+        source: 'static',
+        success: true,
+        count: REAL_CALENDAR_EVENTS.length,
+      };
+    },
+    [syncFromOutlook, loadRealCalendarData]
+  );
+
+  /**
+   * Fetch calendar data for a specific week from Graph API.
+   * Uses syncFromOutlook internally (which merges events).
+   *
+   * @param {() => Promise<string>} getToken - Async function that returns an access token
+   * @param {Array<{outlookEmail: string}>} members - Member objects with outlookEmail
+   * @param {Date|string} weekStartDate - The start date of the week to fetch
+   * @returns {Promise<{success: boolean, count?: number, error?: string}>}
+   */
+  const fetchWeekData = useCallback(
+    async (getToken, members, weekStartDate) => {
+      // Prevent concurrent syncs
+      if (syncInProgressRef.current) {
+        console.warn('[CalendarSync] fetchWeekData: sync already in progress, skipping.');
+        return { success: false, error: 'Sync already in progress' };
+      }
+
+      try {
+        const token = await getToken();
+        const startDate = new Date(weekStartDate);
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 6);
+
+        console.log(
+          '[CalendarSync] fetchWeekData: fetching week',
+          toISODate(startDate),
+          'to',
+          toISODate(endDate)
+        );
+
+        const result = await syncFromOutlook(token, members, startDate, endDate);
+        return {
+          success: result.success,
+          count: result.count,
+          error: result.error || undefined,
+        };
+      } catch (err) {
+        const message = err.message || 'fetchWeekData failed';
+        console.error('[CalendarSync] fetchWeekData error:', message);
+        return { success: false, error: message };
+      }
+    },
+    [syncFromOutlook]
+  );
+
   return {
     syncing,
     lastSync,
@@ -377,5 +475,7 @@ export function useCalendarSync() {
     importCalendarData,
     loadRealCalendarData,
     syncFromOutlook,
+    autoSync,
+    fetchWeekData,
   };
 }
