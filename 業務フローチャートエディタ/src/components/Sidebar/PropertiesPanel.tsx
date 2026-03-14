@@ -1,4 +1,3 @@
-import React from "react";
 import { useFlowchartStore } from "@/store/useFlowchartStore";
 import {
   NODE_BORDER_COLORS,

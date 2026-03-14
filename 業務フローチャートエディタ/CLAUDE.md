@@ -1,4 +1,4 @@
-# Swimlane Flowchart Editor
+# 業務フローチャートエディタ
 
 ## Project Overview
 ソラグリWGフロー図（Excel）の「パワまる 2603～(社内SIM）」シートを再現するスイムレーン型フローチャートエディタ。
@@ -13,30 +13,39 @@
 - html-to-image + jsPDF - PNG/PDFエクスポート
 - lucide-react - アイコン
 - nanoid - ID生成
+- Firebase + Firestore - リアルタイム同期
 
-## Implementation Status
+## Deployment
+- GitHub Pages: https://kay0530.github.io/swimlane-flowchart-editor/
+- GitHub Actions workflow でビルド・デプロイ
+- vite.config.ts の `base: '/swimlane-flowchart-editor/'` が必須（GitHub Pages用パス）
 
-### Completed (Items 1-8)
+## Implementation Status - All Complete
+
 1. **レーン入替え** - HTML5ドラッグ&ドロップでスイムレーンの並べ替え (LaneEditor.tsx)
 2. **インライン編集** - ダブルクリックでノードラベル直接編集 (TaskNode, DecisionNode, AnnotationNode, BadgeNode)
 3. **コネクタ作成** - React Flowのネイティブ接続機能 (ハンドル: top/left=target, bottom/right=source)
-4. **飛び越し点** - エッジ交差時にsmoolthstep↔step切替トグル (Toolbar + store)
+4. **飛び越し点** - カスタムエッジ（JumpOverEdge）でエッジ交差箇所に半円アーチを描画（Visio風）
 5. **判定ノード** - SVGポリゴンひし形（CSS rotateから変更、幅100x高60の適切比率）
 6. **ノードリサイズ** - NodeResizer from @xyflow/react (選択時表示)
 7. **キーボードショートカット** - Ctrl+Z/Y, Delete, Ctrl+C/V, Ctrl+S (useKeyboardShortcuts.ts)
 8. **タイトル編集** - ツールバーでダブルクリック→入力→Enter確定/Escキャンセル
+9. **Firebase + Firestore共有編集** - リアルタイム同期実装済み
+10. **コネクタ付け直し** - onReconnect + reconnectEdge() でドラッグによるエッジ再接続
+11. **丸みトグル** - smoothEdges（デフォルトOFF）でstep↔smoothstep切替
 
-### NOT YET DONE (Item 9)
-9. **Firebase新規作成 + Firestore共有編集 + GitHub Push**
-   - Firebase CLIはインストール済み (v15.8.0)
-   - ユーザーは「新規プロジェクト作成」を希望
-   - 必要な作業:
-     1. Firebase新規プロジェクト作成 (`firebase projects:create`)
-     2. Firestore有効化 + セキュリティルール設定
-     3. firebase SDK追加 (`npm install firebase`)
-     4. Firestoreリアルタイム同期の実装 (useFirestoreSync hook)
-     5. GitHubリポジトリへのpush
-   - **注意**: Firebase CLIログイン状態を確認すること (`firebase login:list`)
+## Design Decisions
+
+### エッジ表示制御（2トグル）
+- **飛び越し点** (`jumpOverEnabled`, default: `true`): エッジ交差箇所に半円アーチを描画
+- **丸み** (`smoothEdges`, default: `false`): step（直角）↔ smoothstep（丸み）切替
+- 飛び越しON + 丸みOFF → JumpOverEdge with borderRadius: 0（直線）
+- 飛び越しON + 丸みON → JumpOverEdge with borderRadius: 8（丸み）
+- 飛び越しOFF → 通常の step or smoothstep エッジ
+
+### 判定ノードCSS修正
+- React Flowのデフォルトノードスタイル（`.react-flow__node-decision`）がSVGダイヤモンドを覆う
+- `index.css` で background/border/padding/box-shadow を `none !important` で上書き
 
 ## Architecture Key Points
 
@@ -59,15 +68,18 @@
 ```
 src/
 ├── types/flowchart.ts          # Core type definitions
-├── store/useFlowchartStore.ts  # Zustand store
+├── store/useFlowchartStore.ts  # Zustand store (jumpOverEnabled, smoothEdges)
 ├── utils/
 │   ├── constants.ts            # Default values, style presets
 │   ├── initialData.ts          # Sample data
-│   └── reactFlowAdapter.ts    # FlowNode ↔ React Flow conversion
+│   ├── reactFlowAdapter.ts    # FlowNode ↔ React Flow conversion + edge path calc
+│   └── edgeRouting.ts          # Node avoidance routing (Liang-Barsky algorithm)
 ├── components/
 │   ├── Canvas/
-│   │   ├── FlowCanvas.tsx      # React Flow wrapper + drop handler
+│   │   ├── FlowCanvas.tsx      # React Flow wrapper + reconnection + edge type logic
 │   │   └── SwimlaneBg.tsx      # Lane background layer
+│   ├── Edges/
+│   │   └── JumpOverEdge.tsx    # Custom edge with jump-over arcs at crossings
 │   ├── Nodes/
 │   │   ├── TaskNode.tsx        # Rectangle/rounded node
 │   │   ├── DecisionNode.tsx    # SVG diamond node
@@ -79,12 +91,16 @@ src/
 │   │   ├── LaneEditor.tsx      # Lane CRUD + drag reorder
 │   │   ├── PhaseEditor.tsx     # Phase CRUD
 │   │   └── PropertiesPanel.tsx # Property editor
-│   ├── Toolbar/Toolbar.tsx     # Top toolbar
+│   ├── Toolbar/Toolbar.tsx     # Top toolbar (jump-over toggle, smooth toggle)
 │   └── ui/                     # shadcn/ui components
 ├── hooks/
 │   ├── useKeyboardShortcuts.ts
 │   ├── useExport.ts
+│   ├── useFirestoreSync.ts     # Firebase realtime sync
 │   └── useLaneDetection.ts
+├── lib/
+│   ├── firebase.ts             # Firebase config
+│   └── utils.ts                # cn() utility
 ├── App.tsx                     # Main layout
 └── main.tsx
 ```
@@ -95,8 +111,14 @@ npm run dev -- --host
 # → localhost:5173
 ```
 
+### Preview Server (Claude Code)
+- 日本語パスでNode.jsのspawnがEINVALエラーになる問題あり
+- `C:\tmp_fc` → ワークツリーのシンボリックリンクで回避
+- `dev.cjs` + `.claude/launch.json` で起動設定済み
+
 ## Known Issues
 - `@tailwindcss/vite` peer dependency conflict with Vite 8 → use `--legacy-peer-deps`
+- メインリポジトリ（Claude_Code_Demo）へのワークツリーマージが未完了（次セッションで実施予定）
 
-## Detailed Plan
-詳細な実行プランは [plan-swimlane-flowchart.md](./plan-swimlane-flowchart.md) を参照
+## Pending Tasks
+- メインリポへのワークツリーマージ

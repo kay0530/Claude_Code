@@ -12,6 +12,7 @@ import {
   type OnConnect,
   type OnReconnect,
   type NodeTypes,
+  type EdgeTypes,
   type Node,
   type Edge,
 } from "@xyflow/react";
@@ -24,6 +25,7 @@ import { TaskNode } from "../Nodes/TaskNode";
 import { DecisionNode } from "../Nodes/DecisionNode";
 import { AnnotationNode } from "../Nodes/AnnotationNode";
 import { BadgeNode } from "../Nodes/BadgeNode";
+import { JumpOverEdge } from "../Edges/JumpOverEdge";
 import { SwimlaneBg } from "./SwimlaneBg";
 
 import { useFlowchartStore } from "../../store/useFlowchartStore";
@@ -49,6 +51,11 @@ const nodeTypes: NodeTypes = {
   subprocess: TaskNode,
   annotation: AnnotationNode,
   badge: BadgeNode,
+};
+
+// Register custom edge types
+const edgeTypes: EdgeTypes = {
+  jumpOver: JumpOverEdge,
 };
 
 /** Default style for a node type when dropped from the palette */
@@ -80,7 +87,6 @@ function FlowCanvasInner() {
   const storeNodes = useFlowchartStore((s) => s.project.nodes);
   const storeEdges = useFlowchartStore((s) => s.project.edges);
   const addNode = useFlowchartStore((s) => s.addNode);
-  const updateNode = useFlowchartStore((s) => s.updateNode);
   const addEdge = useFlowchartStore((s) => s.addEdge);
   const updateEdge = useFlowchartStore((s) => s.updateEdge);
   const deleteEdge = useFlowchartStore((s) => s.deleteEdge);
@@ -92,7 +98,8 @@ function FlowCanvasInner() {
   const config = useFlowchartStore((s) => s.project.canvasConfig);
   const lanes = useFlowchartStore((s) => s.project.lanes);
   const phases = useFlowchartStore((s) => s.project.phases);
-  const showEdgeCrossings = useFlowchartStore((s) => s.showEdgeCrossings);
+  const jumpOverEnabled = useFlowchartStore((s) => s.jumpOverEnabled);
+  const smoothEdges = useFlowchartStore((s) => s.smoothEdges);
 
   // Invisible anchor nodes at corners of swimlane area so fitView includes the full background
   const anchorNodes = useMemo<Node[]>(() => {
@@ -104,26 +111,33 @@ function FlowCanvasInner() {
     ];
   }, [config, lanes, phases]);
 
-  // Determine edge type based on crossing toggle
-  const edgeType = showEdgeCrossings ? "step" as const : "smoothstep" as const;
+  // Determine edge type:
+  // jumpOver: custom edge with crossing arcs (smoothEdges controls borderRadius)
+  // smoothstep: curved corners, step: straight right-angle lines
+  const edgeType = jumpOverEnabled
+    ? "jumpOver" as const
+    : smoothEdges ? "smoothstep" as const : "step" as const;
+
+  // Compute React Flow nodes from store
+  const computedNodes = useMemo(
+    () => [...anchorNodes, ...toReactFlowNodes(storeNodes)],
+    [storeNodes, anchorNodes],
+  );
 
   // Local React Flow state, derived from store
-  const [rfNodes, setRfNodes] = useState<Node[]>(() => [
-    ...anchorNodes,
-    ...toReactFlowNodes(storeNodes),
-  ]);
+  const [rfNodes, setRfNodes] = useState<Node[]>(() => computedNodes);
   const [rfEdges, setRfEdges] = useState<Edge[]>(() =>
-    toReactFlowEdges(storeEdges, edgeType),
+    toReactFlowEdges(storeEdges, edgeType, computedNodes, smoothEdges),
   );
 
   // Sync from store when store state changes
   useEffect(() => {
-    setRfNodes([...anchorNodes, ...toReactFlowNodes(storeNodes)]);
-  }, [storeNodes, anchorNodes]);
+    setRfNodes(computedNodes);
+  }, [computedNodes]);
 
   useEffect(() => {
-    setRfEdges(toReactFlowEdges(storeEdges, edgeType));
-  }, [storeEdges, edgeType]);
+    setRfEdges(toReactFlowEdges(storeEdges, edgeType, rfNodes, smoothEdges));
+  }, [storeEdges, edgeType, rfNodes]);
 
   // Handle node changes (drag, select, remove) locally
   const onNodesChange: OnNodesChange = useCallback((changes) => {
@@ -284,6 +298,7 @@ function FlowCanvasInner() {
         nodes={rfNodes}
         edges={rfEdges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
