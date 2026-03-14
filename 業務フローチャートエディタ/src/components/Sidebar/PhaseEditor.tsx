@@ -1,4 +1,3 @@
-import React from "react";
 import { nanoid } from "nanoid";
 import { Trash2, Plus } from "lucide-react";
 import { useFlowchartStore } from "@/store/useFlowchartStore";

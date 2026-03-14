@@ -17,7 +17,7 @@ interface FlowchartState {
   history: FlowchartProject[];
   future: FlowchartProject[];
   clipboard: FlowNode | null;
-  showEdgeCrossings: boolean;
+  jumpOverEnabled: boolean;
 
   // Project actions
   setProject: (project: FlowchartProject) => void;
@@ -45,8 +45,8 @@ interface FlowchartState {
   updatePhase: (id: string, partial: Partial<Phase>) => void;
   deletePhase: (id: string) => void;
 
-  // Edge crossing toggle
-  toggleEdgeCrossings: () => void;
+  // Jump-over toggle
+  toggleJumpOver: () => void;
 
   // Selection actions
   selectNode: (id: string | null) => void;
@@ -79,7 +79,7 @@ export const useFlowchartStore = create<FlowchartState>((set, get) => ({
   history: [],
   future: [],
   clipboard: null,
-  showEdgeCrossings: true,
+  jumpOverEnabled: true,
 
   // ── Internal: push current project to history ──────────────────
   pushHistory: () => {
@@ -269,9 +269,9 @@ export const useFlowchartStore = create<FlowchartState>((set, get) => ({
     }));
   },
 
-  // ── Edge crossing toggle ─────────────────────────────────────
-  toggleEdgeCrossings: () => {
-    set((state) => ({ showEdgeCrossings: !state.showEdgeCrossings }));
+  // ── Jump-over toggle ─────────────────────────────────────────
+  toggleJumpOver: () => {
+    set((state) => ({ jumpOverEnabled: !state.jumpOverEnabled }));
   },
 
   // ── Selection actions ──────────────────────────────────────────

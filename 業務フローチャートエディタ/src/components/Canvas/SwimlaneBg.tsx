@@ -22,9 +22,6 @@ export function SwimlaneBg() {
     config.phaseHeaderHeight +
     lanes.length * DEFAULT_LANE_HEIGHT;
 
-  // Build a map of groupId -> group for quick lookup
-  const groupMap = new Map(laneGroups.map((g) => [g.id, g]));
-
   // Calculate group label spans: for each group, find min y and total height
   const groupSpans = laneGroups
     .map((group) => {

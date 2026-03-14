@@ -1,4 +1,3 @@
-import React from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { NodePalette } from "./NodePalette";
 import { LaneEditor } from "./LaneEditor";

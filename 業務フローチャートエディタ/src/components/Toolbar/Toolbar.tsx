@@ -79,8 +79,8 @@ export function Toolbar() {
     deleteNode,
     deleteEdge,
     setTitle,
-    showEdgeCrossings,
-    toggleEdgeCrossings,
+    jumpOverEnabled,
+    toggleJumpOver,
   } = useFlowchartStore();
 
   const [editingTitle, setEditingTitle] = useState(false);
@@ -192,11 +192,11 @@ export function Toolbar() {
 
         <Separator />
 
-        {/* Edge crossing toggle */}
+        {/* Jump-over toggle */}
         <ToolbarButton
           icon={GitBranch}
-          label={showEdgeCrossings ? "飛び越し点: ON" : "飛び越し点: OFF"}
-          onClick={toggleEdgeCrossings}
+          label={jumpOverEnabled ? "飛び越し点: ON" : "飛び越し点: OFF"}
+          onClick={toggleJumpOver}
         />
 
         {/* Project title - editable on double click */}
