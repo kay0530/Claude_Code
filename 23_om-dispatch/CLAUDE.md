@@ -305,7 +305,7 @@ CalendarView.jsx / useCalendarSync.js
 
 **CRITICAL RULE: Always bump DATA_VERSION in CalendarContext.jsx after modifying any temp_*.json file.**
 
-- Current DATA_VERSION: **7**
+- Current DATA_VERSION: **9**
 - Located in: `src/context/CalendarContext.jsx` line 9
 - localStorage key: `om-dispatch-calendar-events`
 - On load: stored version !== DATA_VERSION -> clear cache, reload from REAL_CALENDAR_EVENTS
@@ -345,6 +345,19 @@ All-day events use **date-only** format: `"start": "2026-03-05"`, `"end": "2026-
 - Period: 2026-01-26 to 2026-03-31 (approx 2 months)
 - Total events: ~841 across all 8 members
 - Data was fetched in 3 date-range batches per member pair to avoid MS365 API limits
+
+### Member Email & Calendar ID Mapping (for MS365 MCP)
+
+| Member ID | Name | Email | MS365 Calendar ID |
+|---|---|---|---|
+| hiroki_n | 廣木 憲文 | norifumi.hiroki@altenergy.co.jp | `AAMkAGY2ZTUzOTM0LTM4ZTYtNGI0Mi1iYmZiLWQ0MWEwYWI3NWQwMwBGAAAAAADcHVyUPzc8TJew_9HezF4OBwC1170GZDtHTZK0Uxnz1tqTAAAAAAEGAABQGDtwpfuBSqn0gqKES5DEAAiEcCvnAAA=` |
+| yodogawa_t | 淀川 大地 | taichi.yodogawa@altenergy.co.jp | `AAMkAGY2ZTUzOTM0LTM4ZTYtNGI0Mi1iYmZiLWQ0MWEwYWI3NWQwMwBGAAAAAADcHVyUPzc8TJew_9HezF4OBwC1170GZDtHTZK0Uxnz1tqTAAAAAAEGAABQGDtwpfuBSqn0gqKES5DEAABlkQyaAAA=` |
+| tano_h | 田野 勇人 | hayato.tano@altenergy.co.jp | `AAMkAGY2ZTUzOTM0LTM4ZTYtNGI0Mi1iYmZiLWQ0MWEwYWI3NWQwMwBGAAAAAADcHVyUPzc8TJew_9HezF4OBwC1170GZDtHTZK0Uxnz1tqTAAAAAAEGAABQGDtwpfuBSqn0gqKES5DEAAiEcCvoAAA=` |
+| ota_t | 太田 賢宏 | takahiro.ota@altenergy.co.jp | `AAMkAGY2ZTUzOTM0LTM4ZTYtNGI0Mi1iYmZiLWQ0MWEwYWI3NWQwMwBGAAAAAADcHVyUPzc8TJew_9HezF4OBwC1170GZDtHTZK0Uxnz1tqTAAAAAAEGAABQGDtwpfuBSqn0gqKES5DEAAiEcCviAAA=` |
+| bold_j | BOLD JIGJIDSUREN | jigjidsuren.bold@altenergy.co.jp | `AAMkAGY2ZTUzOTM0LTM4ZTYtNGI0Mi1iYmZiLWQ0MWEwYWI3NWQwMwBGAAAAAADcHVyUPzc8TJew_9HezF4OBwC1170GZDtHTZK0Uxnz1tqTAAAAAAEGAABQGDtwpfuBSqn0gqKES5DEAAiEcCvmAAA=` |
+| sasanuma_k | 笹沼 和宏 | kazuhiro.sasanuma@altenergy.co.jp | `AAMkAGY2ZTUzOTM0LTM4ZTYtNGI0Mi1iYmZiLWQ0MWEwYWI3NWQwMwBGAAAAAADcHVyUPzc8TJew_9HezF4OBwC1170GZDtHTZK0Uxnz1tqTAAAAAAEGAABQGDtwpfuBSqn0gqKES5DEAAiEcCvjAAA=` |
+| yamazaki_k | 山﨑 魁人 | kaito.yamazaki@altenergy.co.jp | `AAMkAGY2ZTUzOTM0LTM4ZTYtNGI0Mi1iYmZiLWQ0MWEwYWI3NWQwMwBGAAAAAADcHVyUPzc8TJew_9HezF4OBwC1170GZDtHTZK0Uxnz1tqTAAAAAAEGAABQGDtwpfuBSqn0gqKES5DEAAiEcCvlAAA=` |
+| wano_t | 和埜 達斗 | tatsuto.wano@altenergy.co.jp | `AAMkAGY2ZTUzOTM0LTM4ZTYtNGI0Mi1iYmZiLWQ0MWEwYWI3NWQwMwBGAAAAAADcHVyUPzc8TJew_9HezF4OBwC1170GZDtHTZK0Uxnz1tqTAAAAAAEGAABQGDtwpfuBSqn0gqKES5DEAAiEcCvkAAA=` |
 
 ### Re-Fetching Calendar Data
 When re-fetching via MS365 MCP:
@@ -500,7 +513,7 @@ Provides: events, loading, lastSynced, syncError, setEvents, addEvents, clearEve
 - Added all-day event support (banner + EventBlock null guard)
 - Migrated from hardcoded JS events to JSON import architecture
 - Fixed pagination (廣木), batch fetching (BOLD/笹沼), date format (isAllDay)
-- Current DATA_VERSION: 7
+- Current DATA_VERSION: 8
 
 ### Session 5: Firebase & GitHub Pages Deployment
 - Added Firebase/Firestore integration for multi-device real-time sync
