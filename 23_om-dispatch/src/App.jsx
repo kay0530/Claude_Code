@@ -8,6 +8,7 @@ import MemberListView from './components/members/MemberListView';
 import JobListView from './components/jobs/JobListView';
 import JobCreateForm from './components/jobs/JobCreateForm';
 import JobEditForm from './components/jobs/JobEditForm';
+import JobDetailView from './components/jobs/JobDetailView';
 import CalendarView from './components/calendar/CalendarView';
 import DispatchView from './components/dispatch/DispatchView';
 import FeedbackHistory from './components/feedback/FeedbackHistory';
@@ -49,6 +50,8 @@ export default function App() {
         return <JobCreateForm onNavigate={navigate} />;
       case 'job-edit':
         return <JobEditForm jobId={viewParams.jobId} onNavigate={navigate} />;
+      case 'job-detail':
+        return <JobDetailView jobId={viewParams.jobId} onNavigate={navigate} />;
       case 'dispatch':
         return <DispatchView onNavigate={navigate} />;
       case 'calendar':

@@ -4,18 +4,53 @@ import { formatDateJa } from '../../utils/dateUtils';
 import { useState } from 'react';
 
 export default function JobListView({ onNavigate }) {
-  const { state } = useApp();
+  const { state, dispatch } = useApp();
   const { jobs, jobTypes } = state;
   const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedIds, setSelectedIds] = useState([]);
 
   const filteredJobs = statusFilter === 'all'
     ? jobs
     : jobs.filter(j => j.status === statusFilter);
 
+  const sortedJobs = [...filteredJobs].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
   const getJobTypeName = (typeId) => {
     const jt = jobTypes.find(t => t.id === typeId);
     return jt ? jt.nameJa : '不明';
   };
+
+  const toggleSelect = (id) => {
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === sortedJobs.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(sortedJobs.map(j => j.id));
+    }
+  };
+
+  const handleEdit = () => {
+    if (selectedIds.length === 1) {
+      onNavigate('job-edit', { jobId: selectedIds[0] });
+    } else {
+      alert('1件ずつ編集してください');
+    }
+  };
+
+  const handleDelete = () => {
+    if (!window.confirm(`${selectedIds.length}件の案件を削除しますか？`)) return;
+    selectedIds.forEach(id => {
+      dispatch({ type: 'DELETE_JOB', payload: id });
+    });
+    setSelectedIds([]);
+  };
+
+  const hasSelection = selectedIds.length > 0;
 
   return (
     <div>
@@ -66,8 +101,40 @@ export default function JobListView({ onNavigate }) {
         })}
       </div>
 
+      {/* Action bar (appears when jobs are selected) */}
+      {hasSelection && (
+        <div className="sticky top-0 z-10 bg-white shadow rounded-xl border border-gray-200 px-4 py-3 mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selectedIds.length === sortedJobs.length}
+                onChange={toggleSelectAll}
+                className="w-4 h-4 accent-blue-600"
+              />
+              <span className="text-sm font-medium text-gray-700">全選択</span>
+            </label>
+            <span className="text-sm text-gray-500">{selectedIds.length}件選択中</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleEdit}
+              className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+            >
+              編集
+            </button>
+            <button
+              onClick={handleDelete}
+              className="px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium"
+            >
+              削除
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Job list */}
-      {filteredJobs.length === 0 ? (
+      {sortedJobs.length === 0 ? (
         <div className="text-center py-16">
           <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,15 +146,30 @@ export default function JobListView({ onNavigate }) {
         </div>
       ) : (
         <div className="space-y-3">
-          {filteredJobs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map(job => {
+          {sortedJobs.map(job => {
             const statusInfo = STATUS_LABELS[job.status] || STATUS_LABELS.draft;
+            const isSelected = selectedIds.includes(job.id);
             return (
               <div
                 key={job.id}
-                onClick={() => onNavigate('job-edit', { jobId: job.id })}
-                className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => onNavigate('job-detail', { jobId: job.id })}
+                className={`bg-white rounded-xl border p-4 hover:shadow-md transition-shadow cursor-pointer flex items-start gap-3 ${
+                  isSelected ? 'border-blue-500' : 'border-gray-200'
+                }`}
               >
-                <div className="flex items-start justify-between">
+                {/* Checkbox */}
+                <div className="pt-0.5 shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => toggleSelect(job.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-4 h-4 accent-blue-600 cursor-pointer"
+                  />
+                </div>
+
+                {/* Card content */}
+                <div className="flex items-start justify-between flex-1 min-w-0">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-bold text-gray-800 truncate">{job.title}</h3>
