@@ -138,7 +138,9 @@ function RecommendationCard({ recommendation, isSelected, onClick, stretchMultip
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
               leadCandidate && leadCandidate.id === member.id
                 ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                : 'bg-gray-50 text-gray-700 border border-gray-200'
+                : member.availabilityType === 'partial'
+                  ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                  : 'bg-gray-50 text-gray-700 border border-gray-200'
             }`}
           >
             <div
@@ -152,6 +154,11 @@ function RecommendationCard({ recommendation, isSelected, onClick, stretchMultip
               <svg className="w-3 h-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
+            )}
+            {member.availabilityType === 'partial' && member.availableSlots?.length > 0 && (
+              <span className="text-[9px] text-amber-600">
+                {member.availableSlots[0].start}~{member.availableSlots[0].end}
+              </span>
             )}
           </div>
         ))}
