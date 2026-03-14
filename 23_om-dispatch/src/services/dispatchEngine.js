@@ -231,7 +231,31 @@ function filterAvailableMembers(members, job, calendarEvents) {
 }
 
 /**
+ * Try to rank teams for a specific date.
+ * @returns {{ teams: Array, excluded: Array }} or empty teams if no valid combos
+ */
+function rankTeamsForDate(members, job, jobType, conditions, settings, calendarEvents, targetDate) {
+  const { minPersonnel, maxPersonnel } = jobType;
+  const jobWithDate = { ...job, preferredDate: targetDate };
+
+  const { available, excluded } = filterAvailableMembers(members, jobWithDate, calendarEvents);
+  const combinations = generateTeamCombinations(available, minPersonnel, maxPersonnel);
+
+  const scoredTeams = combinations
+    .map(team => {
+      const result = scoreTeam(team, job, jobType, conditions, settings, calendarEvents, targetDate);
+      return { team, ...result };
+    })
+    .filter(t => !t.disqualified && t.score > 0);
+
+  scoredTeams.sort((a, b) => b.score - a.score);
+  return { teams: scoredTeams, excluded };
+}
+
+/**
  * Main entry: generate all combos, score each, sort desc, return top 5.
+ * If no valid teams found on the preferred date, searches nearby business days
+ * (both before and after) within a 10 business-day window.
  * @param {Array} members - All available members
  * @param {object} job - Job to dispatch for
  * @param {object} jobType - Job type configuration
@@ -241,22 +265,72 @@ function filterAvailableMembers(members, job, calendarEvents) {
  * @returns {Array} Top 5 ranked team recommendations
  */
 export function rankTeams(members, job, jobType, conditions, settings, calendarEvents = []) {
-  const { minPersonnel, maxPersonnel } = jobType;
+  const preferredDate = job.preferredDate || null;
 
-  const { available, excluded } = filterAvailableMembers(members, job, calendarEvents);
-  const combinations = generateTeamCombinations(available, minPersonnel, maxPersonnel);
+  // Try preferred date first
+  const primary = rankTeamsForDate(members, job, jobType, conditions, settings, calendarEvents, preferredDate);
+  if (primary.teams.length > 0) {
+    const result = primary.teams.slice(0, 5).map((t, i) => ({ ...t, rank: i + 1 }));
+    result._meta = { excludedMembers: primary.excluded.map(e => e.member), alternativeDate: null };
+    return result;
+  }
 
-  const jobDate = job.preferredDate || null;
-  const scoredTeams = combinations
-    .map(team => {
-      const result = scoreTeam(team, job, jobType, conditions, settings, calendarEvents, jobDate);
-      return { team, ...result };
-    })
-    .filter(t => !t.disqualified && t.score > 0);
+  // No valid teams on preferred date — search nearby business days (before and after)
+  if (!preferredDate) {
+    const result = [];
+    result._meta = { excludedMembers: primary.excluded.map(e => e.member), alternativeDate: null };
+    return result;
+  }
 
-  scoredTeams.sort((a, b) => b.score - a.score);
-  const result = scoredTeams.slice(0, 5).map((t, i) => ({ ...t, rank: i + 1 }));
-  result._meta = { excludedMembers: excluded.map(e => e.member) };
+  // Generate candidate dates: 3 business days before + 10 business days after
+  // (before is limited to 3 days due to procurement lead time constraints)
+  const candidateDates = [];
+  const baseDate = new Date(preferredDate);
+
+  // Search backward (up to 3 business days before — procurement lead time limit)
+  const beforeDate = new Date(baseDate);
+  beforeDate.setDate(beforeDate.getDate() - 1);
+  const beforeDates = [];
+  while (beforeDates.length < 3) {
+    const day = beforeDate.getDay();
+    if (day !== 0 && day !== 6) {
+      beforeDates.push(toISODate(beforeDate));
+    }
+    beforeDate.setDate(beforeDate.getDate() - 1);
+  }
+
+  // Search forward (up to 10 business days after)
+  const afterDates = generateBusinessDays(
+    new Date(baseDate.getTime() + 86400000), // day after preferred
+    10
+  );
+
+  // Interleave: nearest dates first (1 day after, 1 day before, 2 days after, 2 days before, ...)
+  let ai = 0, bi = 0;
+  while (ai < afterDates.length || bi < beforeDates.length) {
+    if (ai < afterDates.length) candidateDates.push(afterDates[ai++]);
+    if (bi < beforeDates.length) candidateDates.push(beforeDates[bi++]);
+  }
+
+  for (const altDate of candidateDates) {
+    const alt = rankTeamsForDate(members, job, jobType, conditions, settings, calendarEvents, altDate);
+    if (alt.teams.length > 0) {
+      const result = alt.teams.slice(0, 5).map((t, i) => ({
+        ...t,
+        rank: i + 1,
+        alternativeDate: altDate,
+      }));
+      result._meta = {
+        excludedMembers: primary.excluded.map(e => e.member),
+        alternativeDate: altDate,
+      };
+      return result;
+    }
+  }
+
+  // No teams found on any date
+  const result = [];
+  result._meta = { excludedMembers: primary.excluded.map(e => e.member), alternativeDate: null };
   return result;
 }
 

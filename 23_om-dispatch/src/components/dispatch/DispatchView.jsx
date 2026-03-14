@@ -6,6 +6,7 @@ import { calculateTravelInfo } from '../../services/travelService';
 import { createDispatchCalendarEvents } from '../../services/graphCalendarService';
 import { generateId } from '../../utils/idGenerator';
 import { STATUS_LABELS } from '../../utils/constants';
+import { formatDayLabel } from '../../utils/dateUtils';
 import RecommendationPanel from './RecommendationPanel';
 import MultiJobPlanPanel from './MultiJobPlanPanel';
 import StretchRiskPanel from './StretchRiskPanel';
@@ -33,6 +34,7 @@ export default function DispatchView({ onNavigate }) {
     dispatchMode,
     aiUsage,
     excludedMembers,
+    alternativeDate,
   } = useDispatchEngine();
   const hasApiKey = Boolean(localStorage.getItem('om-dispatch-claude-api-key'));
 
@@ -544,6 +546,25 @@ export default function DispatchView({ onNavigate }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <p className="text-sm font-medium">{error}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Alternative date notice */}
+      {alternativeDate && isSingleJobMode && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+          <div className="flex items-start gap-2 text-blue-700">
+            <svg className="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <div>
+              <p className="text-sm font-medium">
+                希望日にチーム編成不可のため、代替日 <span className="font-bold">{formatDayLabel(alternativeDate)}</span> で編成しました
+              </p>
+              <p className="text-xs text-blue-600 mt-0.5">
+                希望日には全メンバーに予定があるため、最も近い空き日程を自動検索しました
+              </p>
+            </div>
           </div>
         </div>
       )}

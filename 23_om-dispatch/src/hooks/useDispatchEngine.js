@@ -23,6 +23,7 @@ export function useDispatchEngine() {
   const [aiUsage, setAiUsage] = useState(null);
   const [aiModel, setAiModel] = useState(null);
   const [excludedMembers, setExcludedMembers] = useState([]);
+  const [alternativeDate, setAlternativeDate] = useState(null);
 
   const runDispatch = useCallback(async (jobId) => {
     setLoading(true);
@@ -33,6 +34,7 @@ export function useDispatchEngine() {
     setAiUsage(null);
     setAiModel(null);
     setExcludedMembers([]);
+    setAlternativeDate(null);
 
     try {
       // Find the job from state
@@ -115,9 +117,10 @@ export function useDispatchEngine() {
         state.settings,
         calendarEvents
       );
-      // Extract meta info about excluded members
+      // Extract meta info about excluded members and alternative date
       const meta = ranked._meta || {};
       setExcludedMembers(meta.excludedMembers || []);
+      setAlternativeDate(meta.alternativeDate || null);
 
       const formattedRecommendations = ranked.map((result) => ({
         rank: result.rank,
@@ -238,5 +241,6 @@ export function useDispatchEngine() {
     aiUsage,
     aiModel,
     excludedMembers,
+    alternativeDate,
   };
 }
