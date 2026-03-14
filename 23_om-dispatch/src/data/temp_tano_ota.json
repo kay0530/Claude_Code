@@ -4620,32 +4620,6 @@
     "attendees": null
   },
   {
-    "memberKey": "tano",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "休み",
-    "start": "2026-03-14",
-    "end": "2026-03-15",
-    "isAllDay": true,
-    "isBusy": false,
-    "location": null,
-    "organizerName": "田野　勇人",
-    "organizerEmail": "hayato.tano@altenergy.co.jp",
-    "attendees": null
-  },
-  {
-    "memberKey": "tano",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "休み",
-    "start": "2026-03-15",
-    "end": "2026-03-16",
-    "isAllDay": true,
-    "isBusy": false,
-    "location": null,
-    "organizerName": "田野　勇人",
-    "organizerEmail": "hayato.tano@altenergy.co.jp",
-    "attendees": []
-  },
-  {
     "memberKey": "ota",
     "memberEmail": "takahiro.ota@altenergy.co.jp",
     "title": "【SIM交換】桜川 16件（MIQ+トリプル）※和埜とペア",
@@ -4656,7 +4630,7 @@
     "location": "茨城県桜川市岩瀬",
     "organizerName": "太田 賢宏",
     "organizerEmail": "takahiro.ota@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "tano",
@@ -4689,7 +4663,7 @@
     "location": "茨城県・千葉県（日立・鋭田・鹿嶋・成田）",
     "organizerName": "太田 賢宏",
     "organizerEmail": "takahiro.ota@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "tano",
@@ -4742,7 +4716,7 @@
     "location": "栃木県（矢板市・さくら市）",
     "organizerName": "太田 賢宏",
     "organizerEmail": "takahiro.ota@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "tano",
@@ -4865,66 +4839,7 @@
     ]
   },
   {
-    "memberKey": "tano",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "休み",
-    "start": "2026-03-21",
-    "end": "2026-03-22",
-    "isAllDay": true,
-    "isBusy": false,
-    "location": null,
-    "organizerName": "田野　勇人",
-    "organizerEmail": "hayato.tano@altenergy.co.jp",
-    "attendees": null
-  },
-  {
-    "memberKey": "tano",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "休み",
-    "start": "2026-03-22",
-    "end": "2026-03-23",
-    "isAllDay": true,
-    "isBusy": false,
-    "location": null,
-    "organizerName": "田野　勇人",
-    "organizerEmail": "hayato.tano@altenergy.co.jp",
-    "attendees": null
-  },
-  {
-    "memberKey": "tano_h",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "休み",
-    "start": "2026-03-22",
-    "end": "2026-03-23",
-    "isAllDay": true,
-    "isBusy": false,
-    "location": "",
-    "organizerName": "田野　勇人",
-    "organizerEmail": "hayato.tano@altenergy.co.jp",
-    "attendees": []
-  },
-  {
-    "memberKey": "tano_h",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "葵精螺製作所　使用前自己確認検査（白須さん）",
-    "start": "2026-03-23T09:00:00",
-    "end": "2026-03-23T20:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "",
-    "organizerName": "田野　勇人",
-    "organizerEmail": "hayato.tano@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "田野　勇人",
-        "email": "hayato.tano@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      }
-    ]
-  },
-  {
-    "memberKey": "ota_t",
+    "memberKey": "ota",
     "memberEmail": "takahiro.ota@altenergy.co.jp",
     "title": "仮）パワまる工事：髙塩典夫（鹿沼市口粟野）パワまる単相",
     "start": "2026-03-23T09:00:00",
@@ -4962,7 +4877,7 @@
     ]
   },
   {
-    "memberKey": "tano_h",
+    "memberKey": "tano",
     "memberEmail": "hayato.tano@altenergy.co.jp",
     "title": "現調後MTG　つくばエキスポセンター",
     "start": "2026-03-23T13:00:00",
@@ -4980,15 +4895,39 @@
         "response": "none"
       },
       {
+        "name": "西原 勝章",
+        "email": "masaaki.nishihara@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      },
+      {
         "name": "田野　勇人",
         "email": "hayato.tano@altenergy.co.jp",
         "type": "required",
         "response": "accepted"
+      },
+      {
+        "name": "魚住 真美加",
+        "email": "mamika.uozumi@altenergy.co.jp",
+        "type": "required",
+        "response": "accepted"
+      },
+      {
+        "name": "田中 久也",
+        "email": "hisanari.tanaka@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      },
+      {
+        "name": "工藤 基徳",
+        "email": "motonori.kudo@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
       }
     ]
   },
   {
-    "memberKey": "ota_t",
+    "memberKey": "ota",
     "memberEmail": "takahiro.ota@altenergy.co.jp",
     "title": "【SIM交換】群馬 9件（髙橋元廣/K-グランド宮沢町A〜F/エスティ宮沢×4）",
     "start": "2026-03-24T07:30:00",
@@ -4998,30 +4937,10 @@
     "location": "群馬県（吉岡町・高崎市）",
     "organizerName": "太田 賢宏",
     "organizerEmail": "takahiro.ota@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
-    "memberKey": "tano_h",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "タカラレーベン　使用前自己確認検査（白須さん）",
-    "start": "2026-03-24T09:00:00",
-    "end": "2026-03-24T20:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "",
-    "organizerName": "田野　勇人",
-    "organizerEmail": "hayato.tano@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "田野　勇人",
-        "email": "hayato.tano@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      }
-    ]
-  },
-  {
-    "memberKey": "ota_t",
+    "memberKey": "ota",
     "memberEmail": "takahiro.ota@altenergy.co.jp",
     "title": "【SIM交換】長野 2件（長野ダイハツ飯田店/いちやまマート岡谷店）【G+Hペア】",
     "start": "2026-03-25T06:00:00",
@@ -5031,255 +4950,7 @@
     "location": "長野県（飯田市・岡谷市）",
     "organizerName": "太田 賢宏",
     "organizerEmail": "takahiro.ota@altenergy.co.jp",
-    "attendees": []
-  },
-  {
-    "memberKey": "tano_h",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "現調前MTG　トヨタカローラ千葉（木更津店・姉崎店）",
-    "start": "2026-03-25T10:00:00",
-    "end": "2026-03-25T11:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "ZOOM_sales; 立川1F Nashira(6名)",
-    "organizerName": "加藤 琴実",
-    "organizerEmail": "kotomi.kato@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "加藤 琴実",
-        "email": "kotomi.kato@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "田野　勇人",
-        "email": "hayato.tano@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      }
-    ]
-  },
-  {
-    "memberKey": "tano_h",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "トヨタカローラ千葉（木更津店）現地調査",
-    "start": "2026-03-26T11:00:00",
-    "end": "2026-03-26T12:30:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "",
-    "organizerName": "西原 勝章",
-    "organizerEmail": "masaaki.nishihara@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "西原 勝章",
-        "email": "masaaki.nishihara@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "田野　勇人",
-        "email": "hayato.tano@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      }
-    ]
-  },
-  {
-    "memberKey": "tano_h",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "トヨタカローラ千葉（木更津店）＿現調※二連梯子要",
-    "start": "2026-03-26T11:00:00",
-    "end": "2026-03-26T14:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "千葉県木更津市幸町３－２－１６",
-    "organizerName": "田野　勇人",
-    "organizerEmail": "hayato.tano@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "田野　勇人",
-        "email": "hayato.tano@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      }
-    ]
-  },
-  {
-    "memberKey": "tano_h",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "トヨタカローラ千葉（姉崎店）現地調査",
-    "start": "2026-03-26T14:00:00",
-    "end": "2026-03-26T15:30:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "",
-    "organizerName": "西原 勝章",
-    "organizerEmail": "masaaki.nishihara@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "西原 勝章",
-        "email": "masaaki.nishihara@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "田野　勇人",
-        "email": "hayato.tano@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      }
-    ]
-  },
-  {
-    "memberKey": "tano_h",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "トヨタカローラ千葉（姉崎店）＿現調",
-    "start": "2026-03-26T14:00:00",
-    "end": "2026-03-26T17:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "千葉県市原市青柳２－１６－６",
-    "organizerName": "田野　勇人",
-    "organizerEmail": "hayato.tano@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "田野　勇人",
-        "email": "hayato.tano@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      }
-    ]
-  },
-  {
-    "memberKey": "tano_h",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "第1回新任管理者研修",
-    "start": "2026-03-27T16:00:00",
-    "end": "2026-03-27T17:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "立川1F Nashira(6名)",
-    "organizerName": "菅 織",
-    "organizerEmail": "iori.suga@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "菅 織",
-        "email": "iori.suga@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "田野　勇人",
-        "email": "hayato.tano@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      }
-    ]
-  },
-  {
-    "memberKey": "tano",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "O&M MTG",
-    "start": "2026-03-27T17:00:00",
-    "end": "2026-03-27T18:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "立川1F Vega(10名); 銀座 Ignis(6名)",
-    "organizerName": "田中 圭亮",
-    "organizerEmail": "keisuke.tanaka@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "田中 圭亮",
-        "email": "keisuke.tanaka@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "立川1F Vega(10名)",
-        "email": "room1-3@altenergy.co.jp",
-        "type": "resource",
-        "response": "accepted"
-      },
-      {
-        "name": "田野　勇人",
-        "email": "hayato.tano@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      },
-      {
-        "name": "太田 賢宏",
-        "email": "takahiro.ota@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "山﨑 魁人",
-        "email": "kaito.yamazaki@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "廣木　憲文",
-        "email": "norifumi.hiroki@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      },
-      {
-        "name": "笹沼 和宏",
-        "email": "kazuhiro.sasanuma@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "BOLD JIGJIDSUREN",
-        "email": "jigjidsuren.bold@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "和埜 達斗",
-        "email": "tatsuto.wano@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "淀川　大地",
-        "email": "taichi.yodogawa@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      },
-      {
-        "name": "黒田　浩明",
-        "email": "hiroaki.kuroda@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "坪坂 聖子",
-        "email": "seiko.tsubosaka@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "田子 正一郎",
-        "email": "shoichiro.tago@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      },
-      {
-        "name": "大澤 奈央子",
-        "email": "naoko.osawa@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "銀座 Ignis(6名)",
-        "email": "ginza_kaigi_3@altenergy.co.jp",
-        "type": "resource",
-        "response": "accepted"
-      }
-    ]
+    "attendees": null
   },
   {
     "memberKey": "ota",
@@ -5300,12 +4971,6 @@
         "response": "none"
       },
       {
-        "name": "立川1F Vega(10名)",
-        "email": "room1-3@altenergy.co.jp",
-        "type": "resource",
-        "response": "accepted"
-      },
-      {
         "name": "田野　勇人",
         "email": "hayato.tano@altenergy.co.jp",
         "type": "required",
@@ -5376,114 +5041,82 @@
         "email": "naoko.osawa@altenergy.co.jp",
         "type": "required",
         "response": "none"
-      },
-      {
-        "name": "銀座 Ignis(6名)",
-        "email": "ginza_kaigi_3@altenergy.co.jp",
-        "type": "resource",
-        "response": "accepted"
       }
     ]
   },
   {
-    "memberKey": "tano_h",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "O&M MTG",
-    "start": "2026-03-27T17:00:00",
-    "end": "2026-03-27T18:00:00",
+    "memberKey": "ota",
+    "memberEmail": "takahiro.ota@altenergy.co.jp",
+    "title": "【現地調査】コシダカ（長野市高田）",
+    "start": "2026-04-03T09:00:00",
+    "end": "2026-04-03T18:00:00",
     "isAllDay": false,
     "isBusy": true,
-    "location": "立川1F Vega(10名); 銀座 Ignis(6名)",
-    "organizerName": "田中 圭亮",
-    "organizerEmail": "keisuke.tanaka@altenergy.co.jp",
+    "location": "長野県長野市高田１８８９－１",
+    "organizerName": "太田 賢宏",
+    "organizerEmail": "takahiro.ota@altenergy.co.jp",
     "attendees": [
       {
-        "name": "田中 圭亮",
-        "email": "keisuke.tanaka@altenergy.co.jp",
+        "name": "太田 賢宏",
+        "email": "takahiro.ota@altenergy.co.jp",
         "type": "required",
         "response": "none"
       },
       {
-        "name": "田野　勇人",
-        "email": "hayato.tano@altenergy.co.jp",
+        "name": "和埜 達斗",
+        "email": "tatsuto.wano@altenergy.co.jp",
         "type": "required",
-        "response": "accepted"
-      },
-      {
-        "name": "淀川　大地",
-        "email": "taichi.yodogawa@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
+        "response": "none"
       }
     ]
   },
   {
-    "memberKey": "ota_t",
+    "memberKey": "ota",
     "memberEmail": "takahiro.ota@altenergy.co.jp",
-    "title": "O&M MTG",
-    "start": "2026-03-27T17:00:00",
-    "end": "2026-03-27T18:00:00",
+    "title": "4月全体MTG",
+    "start": "2026-04-07T18:00:00",
+    "end": "2026-04-07T19:00:00",
     "isAllDay": false,
     "isBusy": true,
-    "location": "立川1F Vega(10名); 銀座 Ignis(6名)",
-    "organizerName": "田中 圭亮",
-    "organizerEmail": "keisuke.tanaka@altenergy.co.jp",
+    "location": null,
+    "organizerName": "佐藤 里彩",
+    "organizerEmail": "risa.sato@altenergy.co.jp",
     "attendees": [
       {
-        "name": "田中 圭亮",
-        "email": "keisuke.tanaka@altenergy.co.jp",
+        "name": "佐藤 里彩",
+        "email": "risa.sato@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      },
+      {
+        "name": "All_Member",
+        "email": "allmember@altenergyco.onmicrosoft.com",
+        "type": "required",
+        "response": "none"
+      }
+    ]
+  },
+  {
+    "memberKey": "ota",
+    "memberEmail": "takahiro.ota@altenergy.co.jp",
+    "title": "【キャリアコミュニケーション】太田 賢宏さま",
+    "start": "2026-04-17T11:00:00",
+    "end": "2026-04-17T12:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": "https://us06web.zoom.us/j/89886555248",
+    "organizerName": "千葉 智子",
+    "organizerEmail": "tomoko.chiba@altenergy.co.jp",
+    "attendees": [
+      {
+        "name": "千葉 智子",
+        "email": "tomoko.chiba@altenergy.co.jp",
         "type": "required",
         "response": "none"
       },
       {
         "name": "太田 賢宏",
         "email": "takahiro.ota@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      }
-    ]
-  },
-  {
-    "memberKey": "tano",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "休み",
-    "start": "2026-03-28",
-    "end": "2026-03-29",
-    "isAllDay": true,
-    "isBusy": false,
-    "location": null,
-    "organizerName": "田野　勇人",
-    "organizerEmail": "hayato.tano@altenergy.co.jp",
-    "attendees": null
-  },
-  {
-    "memberKey": "tano",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "休み",
-    "start": "2026-03-29",
-    "end": "2026-03-30",
-    "isAllDay": true,
-    "isBusy": false,
-    "location": null,
-    "organizerName": "田野　勇人",
-    "organizerEmail": "hayato.tano@altenergy.co.jp",
-    "attendees": null
-  },
-  {
-    "memberKey": "tano",
-    "memberEmail": "hayato.tano@altenergy.co.jp",
-    "title": "パークサイドYS（吉永様）_１回点検",
-    "start": "2026-03-31T09:00:00",
-    "end": "2026-03-31T12:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "東京都青梅市今井3-21-1",
-    "organizerName": "廣木　憲文",
-    "organizerEmail": "norifumi.hiroki@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "廣木　憲文",
-        "email": "norifumi.hiroki@altenergy.co.jp",
         "type": "required",
         "response": "none"
       }

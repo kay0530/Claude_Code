@@ -5515,7 +5515,7 @@
     "location": null,
     "organizerName": "山﨑 魁人",
     "organizerEmail": "kaito.yamazaki@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "wano",
@@ -5528,7 +5528,7 @@
     "location": "茨城県桜川市岩瀬",
     "organizerName": "和埜 達斗",
     "organizerEmail": "tatsuto.wano@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "yamazaki",
@@ -5541,7 +5541,7 @@
     "location": null,
     "organizerName": "山﨑 魁人",
     "organizerEmail": "kaito.yamazaki@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "wano",
@@ -5554,7 +5554,7 @@
     "location": "茨城県・千葉県（日立・鋭田・鹿嶋・成田）",
     "organizerName": "和埜 達斗",
     "organizerEmail": "tatsuto.wano@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "yamazaki",
@@ -5567,7 +5567,7 @@
     "location": null,
     "organizerName": "山﨑 魁人",
     "organizerEmail": "kaito.yamazaki@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "yamazaki",
@@ -5580,7 +5580,7 @@
     "location": "群馬県高崎市倉渕町権田",
     "organizerName": "山﨑 魁人",
     "organizerEmail": "kaito.yamazaki@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "wano",
@@ -5593,7 +5593,7 @@
     "location": "埼玉県さいたま市北区・岩槻区",
     "organizerName": "和埜 達斗",
     "organizerEmail": "tatsuto.wano@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "wano",
@@ -5620,8 +5620,38 @@
         "response": "accepted"
       },
       {
+        "name": "菅 織",
+        "email": "iori.suga@altenergy.co.jp",
+        "type": "required",
+        "response": "accepted"
+      },
+      {
+        "name": "山本 龍",
+        "email": "ryu.yamamoto@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      },
+      {
+        "name": "大島 拓丈",
+        "email": "takuto.oshima@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      },
+      {
+        "name": "山上 颯太",
+        "email": "sota.yamagami@altenergy.co.jp",
+        "type": "required",
+        "response": "accepted"
+      },
+      {
         "name": "和埜 達斗",
         "email": "tatsuto.wano@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      },
+      {
+        "name": "金子 友貴",
+        "email": "tomoki.kaneko@altenergy.co.jp",
         "type": "required",
         "response": "none"
       }
@@ -5638,7 +5668,7 @@
     "location": "群馬県（藤岡市・太田市・伊勢崎市・桐生市他）",
     "organizerName": "山﨑 魁人",
     "organizerEmail": "kaito.yamazaki@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "wano",
@@ -5651,7 +5681,7 @@
     "location": "埼玉県（三芳町）/東京都（東村山市）",
     "organizerName": "和埜 達斗",
     "organizerEmail": "tatsuto.wano@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "wano",
@@ -5672,10 +5702,22 @@
         "response": "none"
       },
       {
+        "name": "白須 浩章",
+        "email": "hiroaki.shirasu@altenergy.co.jp",
+        "type": "required",
+        "response": "notResponded"
+      },
+      {
         "name": "和埜 達斗",
         "email": "tatsuto.wano@altenergy.co.jp",
         "type": "required",
         "response": "notResponded"
+      },
+      {
+        "name": "宮川 美咲",
+        "email": "misaki.miyagawa@altenergy.co.jp",
+        "type": "required",
+        "response": "accepted"
       }
     ]
   },
@@ -5690,7 +5732,7 @@
     "location": null,
     "organizerName": "山﨑 魁人",
     "organizerEmail": "kaito.yamazaki@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "yamazaki",
@@ -5703,10 +5745,10 @@
     "location": "日本",
     "organizerName": "山﨑 魁人",
     "organizerEmail": "kaito.yamazaki@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
-    "memberKey": "yamazaki_k",
+    "memberKey": "yamazaki",
     "memberEmail": "kaito.yamazaki@altenergy.co.jp",
     "title": "仮）パワまる工事：髙塩典夫（大田原市北野上）パワまる単相",
     "start": "2026-03-23T09:00:00",
@@ -5738,7 +5780,7 @@
     ]
   },
   {
-    "memberKey": "wano_t",
+    "memberKey": "wano",
     "memberEmail": "tatsuto.wano@altenergy.co.jp",
     "title": "仮）パワまる工事：髙塩典夫（鹿沼市口粟野）パワまる単相",
     "start": "2026-03-23T09:00:00",
@@ -5776,7 +5818,7 @@
     ]
   },
   {
-    "memberKey": "yamazaki_k",
+    "memberKey": "yamazaki",
     "memberEmail": "kaito.yamazaki@altenergy.co.jp",
     "title": "仮）パワまる工事：髙塩典夫（大田原市宇田川）パワまる単相",
     "start": "2026-03-24T09:00:00",
@@ -5808,7 +5850,7 @@
     ]
   },
   {
-    "memberKey": "wano_t",
+    "memberKey": "wano",
     "memberEmail": "tatsuto.wano@altenergy.co.jp",
     "title": "【SIM交換】長野 2件（長野ダイハツ飯田店・いちやまマート岡谷店）",
     "start": "2026-03-25T06:00:00",
@@ -5818,10 +5860,10 @@
     "location": "長野県（飯田市・岡谷市）",
     "organizerName": "和埜 達斗",
     "organizerEmail": "tatsuto.wano@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
-    "memberKey": "yamazaki_k",
+    "memberKey": "yamazaki",
     "memberEmail": "kaito.yamazaki@altenergy.co.jp",
     "title": "仮）予備パワまる工事：髙塩典夫（大田原市宇田川）パワまる単相",
     "start": "2026-03-25T09:00:00",
@@ -5853,33 +5895,7 @@
     ]
   },
   {
-    "memberKey": "yamazaki_k",
-    "memberEmail": "kaito.yamazaki@altenergy.co.jp",
-    "title": "【SIM交換】那須塩原/大田原 24件（オルテナジー×20/ユイ/坂田/Y&S DANKE他）【B+D+F】",
-    "start": "2026-03-25T12:30:00",
-    "end": "2026-03-25T17:30:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "栃木県（那須塩原市・大田原市）",
-    "organizerName": "山﨑 魁人",
-    "organizerEmail": "kaito.yamazaki@altenergy.co.jp",
-    "attendees": []
-  },
-  {
-    "memberKey": "yamazaki_k",
-    "memberEmail": "kaito.yamazaki@altenergy.co.jp",
-    "title": "【PCS交換/SIM交換】那須塩原 20件（浅川商事・チャプタースリー・オルテナジー他）",
-    "start": "2026-03-26T06:00:00",
-    "end": "2026-03-26T15:20:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "栃木県那須塩原市（埼玉・青木・寺子）",
-    "organizerName": "山﨑 魁人",
-    "organizerEmail": "kaito.yamazaki@altenergy.co.jp",
-    "attendees": []
-  },
-  {
-    "memberKey": "wano_t",
+    "memberKey": "wano",
     "memberEmail": "tatsuto.wano@altenergy.co.jp",
     "title": "【PCS交換/SIM交換】那須塩原 20件（浅川商事・チャプタースリー・オルテナジー他）",
     "start": "2026-03-26T06:00:00",
@@ -5889,111 +5905,7 @@
     "location": "栃木県那須塩原市（埼玉・青木・寺子）",
     "organizerName": "和埜 達斗",
     "organizerEmail": "tatsuto.wano@altenergy.co.jp",
-    "attendees": []
-  },
-  {
-    "memberKey": "yamazaki",
-    "memberEmail": "kaito.yamazaki@altenergy.co.jp",
-    "title": "O&M MTG",
-    "start": "2026-03-27T17:00:00",
-    "end": "2026-03-27T18:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "立川1F Vega(10名); 銀座 Ignis(6名)",
-    "organizerName": "田中 圭亮",
-    "organizerEmail": "keisuke.tanaka@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "田中 圭亮",
-        "email": "keisuke.tanaka@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "立川1F Vega(10名)",
-        "email": "room1-3@altenergy.co.jp",
-        "type": "resource",
-        "response": "accepted"
-      },
-      {
-        "name": "田野　勇人",
-        "email": "hayato.tano@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      },
-      {
-        "name": "太田 賢宏",
-        "email": "takahiro.ota@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "山﨑 魁人",
-        "email": "kaito.yamazaki@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "廣木　憲文",
-        "email": "norifumi.hiroki@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      },
-      {
-        "name": "笹沼 和宏",
-        "email": "kazuhiro.sasanuma@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "BOLD JIGJIDSUREN",
-        "email": "jigjidsuren.bold@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "和埜 達斗",
-        "email": "tatsuto.wano@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "淀川　大地",
-        "email": "taichi.yodogawa@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      },
-      {
-        "name": "黒田　浩明",
-        "email": "hiroaki.kuroda@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "坪坂 聖子",
-        "email": "seiko.tsubosaka@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "田子 正一郎",
-        "email": "shoichiro.tago@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      },
-      {
-        "name": "大澤 奈央子",
-        "email": "naoko.osawa@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "銀座 Ignis(6名)",
-        "email": "ginza_kaigi_3@altenergy.co.jp",
-        "type": "resource",
-        "response": "accepted"
-      }
-    ]
+    "attendees": null
   },
   {
     "memberKey": "wano",
@@ -6014,12 +5926,6 @@
         "response": "none"
       },
       {
-        "name": "立川1F Vega(10名)",
-        "email": "room1-3@altenergy.co.jp",
-        "type": "resource",
-        "response": "accepted"
-      },
-      {
         "name": "田野　勇人",
         "email": "hayato.tano@altenergy.co.jp",
         "type": "required",
@@ -6088,104 +5994,6 @@
       {
         "name": "大澤 奈央子",
         "email": "naoko.osawa@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "銀座 Ignis(6名)",
-        "email": "ginza_kaigi_3@altenergy.co.jp",
-        "type": "resource",
-        "response": "accepted"
-      }
-    ]
-  },
-  {
-    "memberKey": "yamazaki_k",
-    "memberEmail": "kaito.yamazaki@altenergy.co.jp",
-    "title": "O&M MTG",
-    "start": "2026-03-27T17:00:00",
-    "end": "2026-03-27T18:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "立川1F Vega(10名); 銀座 Ignis(6名)",
-    "organizerName": "田中 圭亮",
-    "organizerEmail": "keisuke.tanaka@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "田中 圭亮",
-        "email": "keisuke.tanaka@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "山﨑 魁人",
-        "email": "kaito.yamazaki@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      }
-    ]
-  },
-  {
-    "memberKey": "wano_t",
-    "memberEmail": "tatsuto.wano@altenergy.co.jp",
-    "title": "O&M MTG",
-    "start": "2026-03-27T17:00:00",
-    "end": "2026-03-27T18:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "立川1F Vega(10名); 銀座 Ignis(6名)",
-    "organizerName": "田中 圭亮",
-    "organizerEmail": "keisuke.tanaka@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "田中 圭亮",
-        "email": "keisuke.tanaka@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "和埜 達斗",
-        "email": "tatsuto.wano@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      }
-    ]
-  },
-  {
-    "memberKey": "yamazaki",
-    "memberEmail": "kaito.yamazaki@altenergy.co.jp",
-    "title": "キャリアコミュニケーション",
-    "start": "2026-03-27T19:00:00",
-    "end": "2026-03-27T20:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": null,
-    "organizerName": "山﨑 魁人",
-    "organizerEmail": "kaito.yamazaki@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "山﨑 魁人",
-        "email": "kaito.yamazaki@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      }
-    ]
-  },
-  {
-    "memberKey": "yamazaki_k",
-    "memberEmail": "kaito.yamazaki@altenergy.co.jp",
-    "title": "キャリアコミュニケーション",
-    "start": "2026-03-27T19:00:00",
-    "end": "2026-03-27T20:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "",
-    "organizerName": "山﨑 魁人",
-    "organizerEmail": "kaito.yamazaki@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "山﨑 魁人",
-        "email": "kaito.yamazaki@altenergy.co.jp",
         "type": "required",
         "response": "none"
       }

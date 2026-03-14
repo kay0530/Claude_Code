@@ -7,7 +7,7 @@ const CalendarContext = createContext(null);
 const STORAGE_KEY = 'om-dispatch-calendar-events';
 
 // Bump this version whenever REAL_CALENDAR_EVENTS changes to invalidate stale cache
-const DATA_VERSION = 9;
+const DATA_VERSION = 10;
 
 // Load events from localStorage, falling back to real data when cache is stale
 function loadPersistedEvents() {

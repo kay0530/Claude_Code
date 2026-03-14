@@ -3423,7 +3423,7 @@
     "location": null,
     "organizerName": "淀川　大地",
     "organizerEmail": "taichi.yodogawa@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "hiroki",
@@ -3456,7 +3456,7 @@
     "location": null,
     "organizerName": "淀川　大地",
     "organizerEmail": "taichi.yodogawa@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "hiroki",
@@ -3495,7 +3495,7 @@
     "location": "群馬県高崎市倉渕町権田",
     "organizerName": "淀川　大地",
     "organizerEmail": "taichi.yodogawa@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "hiroki",
@@ -3528,7 +3528,7 @@
     "location": "群馬県（藤岡市・太田市・伊勢崎市・桐生市他）",
     "organizerName": "淀川　大地",
     "organizerEmail": "taichi.yodogawa@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "hiroki",
@@ -3541,7 +3541,7 @@
     "location": "山梨県（甲斐市・富士吉田市・北杜市・甲州市）",
     "organizerName": "廣木　憲文",
     "organizerEmail": "norifumi.hiroki@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
     "memberKey": "yodogawa",
@@ -3554,10 +3554,23 @@
     "location": null,
     "organizerName": "淀川　大地",
     "organizerEmail": "taichi.yodogawa@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
-    "memberKey": "hiroki_n",
+    "memberKey": "yodogawa",
+    "memberEmail": "taichi.yodogawa@altenergy.co.jp",
+    "title": "現場",
+    "start": "2026-03-22T09:00:00",
+    "end": "2026-03-22T17:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": null,
+    "organizerName": "淀川　大地",
+    "organizerEmail": "taichi.yodogawa@altenergy.co.jp",
+    "attendees": null
+  },
+  {
+    "memberKey": "hiroki",
     "memberEmail": "norifumi.hiroki@altenergy.co.jp",
     "title": "仮）パワまる工事：髙塩典夫（鹿沼市口粟野）パワまる単相",
     "start": "2026-03-23T09:00:00",
@@ -3595,7 +3608,7 @@
     ]
   },
   {
-    "memberKey": "yodogawa_t",
+    "memberKey": "yodogawa",
     "memberEmail": "taichi.yodogawa@altenergy.co.jp",
     "title": "仮）パワまる工事：髙塩典夫（大田原市北野上）パワまる単相",
     "start": "2026-03-23T09:00:00",
@@ -3627,7 +3640,7 @@
     ]
   },
   {
-    "memberKey": "hiroki_n",
+    "memberKey": "hiroki",
     "memberEmail": "norifumi.hiroki@altenergy.co.jp",
     "title": "【SIM交換】埼玉 3件（ユーユー財託×2/有村紙工FIT第1）",
     "start": "2026-03-24T08:00:00",
@@ -3637,10 +3650,10 @@
     "location": "埼玉県（和光市・川越市・三芳町）",
     "organizerName": "廣木　憲文",
     "organizerEmail": "norifumi.hiroki@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
-    "memberKey": "yodogawa_t",
+    "memberKey": "yodogawa",
     "memberEmail": "taichi.yodogawa@altenergy.co.jp",
     "title": "仮）パワまる工事：髙塩典夫（大田原市宇田川）パワまる単相",
     "start": "2026-03-24T09:00:00",
@@ -3672,7 +3685,7 @@
     ]
   },
   {
-    "memberKey": "hiroki_n",
+    "memberKey": "hiroki",
     "memberEmail": "norifumi.hiroki@altenergy.co.jp",
     "title": "【SIM交換】宮城/福島 5件（コスモ精機×2/久道/ホンダカーズ/齋藤）【A+Eペア】",
     "start": "2026-03-25T06:30:00",
@@ -3682,10 +3695,10 @@
     "location": "福島県（相馬市）/宮城県（涌谷町・石巻市）",
     "organizerName": "廣木　憲文",
     "organizerEmail": "norifumi.hiroki@altenergy.co.jp",
-    "attendees": []
+    "attendees": null
   },
   {
-    "memberKey": "yodogawa_t",
+    "memberKey": "yodogawa",
     "memberEmail": "taichi.yodogawa@altenergy.co.jp",
     "title": "仮）予備パワまる工事：髙塩典夫（大田原市宇田川）パワまる単相",
     "start": "2026-03-25T09:00:00",
@@ -3717,32 +3730,6 @@
     ]
   },
   {
-    "memberKey": "yodogawa_t",
-    "memberEmail": "taichi.yodogawa@altenergy.co.jp",
-    "title": "【SIM交換】那須塩原/大田原 24件（オルテナジー×20/ユイ/坂田/Y&S DANKE他）【B+D+F】",
-    "start": "2026-03-25T12:30:00",
-    "end": "2026-03-25T17:30:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "栃木県（那須塩原市・大田原市）",
-    "organizerName": "淀川　大地",
-    "organizerEmail": "taichi.yodogawa@altenergy.co.jp",
-    "attendees": []
-  },
-  {
-    "memberKey": "yodogawa_t",
-    "memberEmail": "taichi.yodogawa@altenergy.co.jp",
-    "title": "【SIM交換】栃木/茨城 4件（コユキ・黒田・野口・小林）",
-    "start": "2026-03-26T07:30:00",
-    "end": "2026-03-26T15:30:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "栃木県・茨城県（日光市・大子町・茂木町）",
-    "organizerName": "淀川　大地",
-    "organizerEmail": "taichi.yodogawa@altenergy.co.jp",
-    "attendees": []
-  },
-  {
     "memberKey": "hiroki",
     "memberEmail": "norifumi.hiroki@altenergy.co.jp",
     "title": "O&M MTG",
@@ -3755,215 +3742,82 @@
     "organizerEmail": "keisuke.tanaka@altenergy.co.jp",
     "attendees": [
       {
-        "email": "keisuke.tanaka@altenergy.co.jp",
         "name": "田中 圭亮",
-        "type": "required"
+        "email": "keisuke.tanaka@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
       },
       {
-        "email": "room1-3@altenergy.co.jp",
-        "name": "立川1F Vega(10名)",
-        "type": "resource"
-      },
-      {
-        "email": "hayato.tano@altenergy.co.jp",
         "name": "田野　勇人",
-        "type": "required"
+        "email": "hayato.tano@altenergy.co.jp",
+        "type": "required",
+        "response": "accepted"
       },
       {
-        "email": "takahiro.ota@altenergy.co.jp",
         "name": "太田 賢宏",
-        "type": "required"
+        "email": "takahiro.ota@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
       },
       {
-        "email": "kaito.yamazaki@altenergy.co.jp",
         "name": "山﨑 魁人",
-        "type": "required"
+        "email": "kaito.yamazaki@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
       },
       {
-        "email": "norifumi.hiroki@altenergy.co.jp",
         "name": "廣木　憲文",
-        "type": "required"
+        "email": "norifumi.hiroki@altenergy.co.jp",
+        "type": "required",
+        "response": "accepted"
       },
       {
-        "email": "kazuhiro.sasanuma@altenergy.co.jp",
         "name": "笹沼 和宏",
-        "type": "required"
+        "email": "kazuhiro.sasanuma@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
       },
       {
-        "email": "jigjidsuren.bold@altenergy.co.jp",
         "name": "BOLD JIGJIDSUREN",
-        "type": "required"
+        "email": "jigjidsuren.bold@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
       },
       {
-        "email": "tatsuto.wano@altenergy.co.jp",
         "name": "和埜 達斗",
-        "type": "required"
+        "email": "tatsuto.wano@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
       },
       {
-        "email": "taichi.yodogawa@altenergy.co.jp",
         "name": "淀川　大地",
-        "type": "required"
+        "email": "taichi.yodogawa@altenergy.co.jp",
+        "type": "required",
+        "response": "accepted"
       },
       {
-        "email": "hiroaki.kuroda@altenergy.co.jp",
         "name": "黒田　浩明",
-        "type": "required"
+        "email": "hiroaki.kuroda@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
       },
       {
-        "email": "seiko.tsubosaka@altenergy.co.jp",
         "name": "坪坂 聖子",
-        "type": "required"
+        "email": "seiko.tsubosaka@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
       },
       {
-        "email": "shoichiro.tago@altenergy.co.jp",
         "name": "田子 正一郎",
-        "type": "required"
+        "email": "shoichiro.tago@altenergy.co.jp",
+        "type": "required",
+        "response": "accepted"
       },
       {
-        "email": "naoko.osawa@altenergy.co.jp",
         "name": "大澤 奈央子",
-        "type": "required"
-      },
-      {
-        "email": "ginza_kaigi_3@altenergy.co.jp",
-        "name": "銀座 Ignis(6名)",
-        "type": "resource"
-      }
-    ]
-  },
-  {
-    "memberKey": "hiroki_n",
-    "memberEmail": "norifumi.hiroki@altenergy.co.jp",
-    "title": "O&M MTG",
-    "start": "2026-03-27T17:00:00",
-    "end": "2026-03-27T18:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "立川1F Vega(10名); 銀座 Ignis(6名)",
-    "organizerName": "田中 圭亮",
-    "organizerEmail": "keisuke.tanaka@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "田中 圭亮",
-        "email": "keisuke.tanaka@altenergy.co.jp",
+        "email": "naoko.osawa@altenergy.co.jp",
         "type": "required",
         "response": "none"
-      },
-      {
-        "name": "田野　勇人",
-        "email": "hayato.tano@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      },
-      {
-        "name": "太田 賢宏",
-        "email": "takahiro.ota@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "山﨑 魁人",
-        "email": "kaito.yamazaki@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "廣木　憲文",
-        "email": "norifumi.hiroki@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      },
-      {
-        "name": "笹沼 和宏",
-        "email": "kazuhiro.sasanuma@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "BOLD JIGJIDSUREN",
-        "email": "jigjidsuren.bold@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "和埜 達斗",
-        "email": "tatsuto.wano@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "淀川　大地",
-        "email": "taichi.yodogawa@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      }
-    ]
-  },
-  {
-    "memberKey": "yodogawa_t",
-    "memberEmail": "taichi.yodogawa@altenergy.co.jp",
-    "title": "O&M MTG",
-    "start": "2026-03-27T17:00:00",
-    "end": "2026-03-27T18:00:00",
-    "isAllDay": false,
-    "isBusy": true,
-    "location": "立川1F Vega(10名); 銀座 Ignis(6名)",
-    "organizerName": "田中 圭亮",
-    "organizerEmail": "keisuke.tanaka@altenergy.co.jp",
-    "attendees": [
-      {
-        "name": "田中 圭亮",
-        "email": "keisuke.tanaka@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "田野　勇人",
-        "email": "hayato.tano@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      },
-      {
-        "name": "太田 賢宏",
-        "email": "takahiro.ota@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "山﨑 魁人",
-        "email": "kaito.yamazaki@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "廣木　憲文",
-        "email": "norifumi.hiroki@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
-      },
-      {
-        "name": "笹沼 和宏",
-        "email": "kazuhiro.sasanuma@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "BOLD JIGJIDSUREN",
-        "email": "jigjidsuren.bold@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "和埜 達斗",
-        "email": "tatsuto.wano@altenergy.co.jp",
-        "type": "required",
-        "response": "none"
-      },
-      {
-        "name": "淀川　大地",
-        "email": "taichi.yodogawa@altenergy.co.jp",
-        "type": "required",
-        "response": "accepted"
       }
     ]
   },
@@ -3980,9 +3834,10 @@
     "organizerEmail": "norifumi.hiroki@altenergy.co.jp",
     "attendees": [
       {
-        "email": "norifumi.hiroki@altenergy.co.jp",
         "name": "廣木　憲文",
-        "type": "required"
+        "email": "norifumi.hiroki@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
       }
     ]
   }
