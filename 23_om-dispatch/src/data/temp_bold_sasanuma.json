@@ -4129,5 +4129,58 @@
         "response": "none"
       }
     ]
+  },
+  {
+    "memberKey": "bold",
+    "memberEmail": "jigjidsuren.bold@altenergy.co.jp",
+    "title": "いすゞ自動車（栃木第三工場）_年次点検",
+    "start": "2026-04-03T09:00:00",
+    "end": "2026-04-03T13:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": "栃木県栃木市大平町伯仲２６９１",
+    "organizerName": "廣木　憲文",
+    "organizerEmail": "norifumi.hiroki@altenergy.co.jp",
+    "attendees": [
+      {
+        "name": "廣木　憲文",
+        "email": "norifumi.hiroki@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      }
+    ]
+  },
+  {
+    "memberKey": "sasanuma",
+    "memberEmail": "kazuhiro.sasanuma@altenergy.co.jp",
+    "title": "いすゞ自動車（栃木第三工場）_年次点検",
+    "start": "2026-04-03T09:00:00",
+    "end": "2026-04-03T13:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": "栃木県栃木市大平町伯仲２６９１",
+    "organizerName": "廣木　憲文",
+    "organizerEmail": "norifumi.hiroki@altenergy.co.jp",
+    "attendees": [
+      {
+        "name": "廣木　憲文",
+        "email": "norifumi.hiroki@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      }
+    ]
+  },
+  {
+    "memberKey": "sasanuma",
+    "memberEmail": "kazuhiro.sasanuma@altenergy.co.jp",
+    "title": "4月全体MTG",
+    "start": "2026-04-07T18:00:00",
+    "end": "2026-04-07T19:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": null,
+    "organizerName": "佐藤 里彩",
+    "organizerEmail": "risa.sato@altenergy.co.jp",
+    "attendees": null
   }
 ]

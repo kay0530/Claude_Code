@@ -30,7 +30,7 @@ const MEMBER_ORDER = [
 
 export default function CalendarView() {
   const { events, loading, lastSynced } = useCalendar();
-  const { syncing, syncStatus, syncWeek, syncFromOutlook } = useCalendarSync();
+  const { syncing, syncStatus, loadRealCalendarData, syncFromOutlook } = useCalendarSync();
   const { isAuthenticated, getToken } = useAuth();
 
   // Selected event for detail modal
@@ -82,24 +82,14 @@ export default function CalendarView() {
     }
   }, []);
 
-  // Auto-sync calendar data for displayed week if no events exist
-  const autoGenerateRef = useRef(new Set());
+  // Auto-load real calendar data on first mount if events are empty
+  const autoLoadedRef = useRef(false);
   useEffect(() => {
-    const weekKey = toISODate(weekDates[0]);
-    if (autoGenerateRef.current.has(weekKey)) return;
-
-    const weekStart = toISODate(weekDates[0]);
-    const weekEnd = toISODate(weekDates[6]);
-    const hasEvents = events.some((e) => {
-      const d = e.start.substring(0, 10);
-      return d >= weekStart && d <= weekEnd;
-    });
-
-    if (!hasEvents && !syncing && !loading) {
-      autoGenerateRef.current.add(weekKey);
-      syncWeek(DEFAULT_MEMBERS, weekDates);
+    if (!autoLoadedRef.current && events.length === 0 && !syncing && !loading) {
+      autoLoadedRef.current = true;
+      loadRealCalendarData();
     }
-  }, [weekDates, events, syncing, loading, syncWeek]);
+  }, [events, syncing, loading, loadRealCalendarData]);
 
   // Navigate to previous week
   function goToPrevWeek() {
@@ -153,10 +143,10 @@ export default function CalendarView() {
 
   // Sync button handler (offline / static data fallback)
   function handleSync() {
-    syncWeek(DEFAULT_MEMBERS, weekDates);
+    loadRealCalendarData();
   }
 
-  // Live Outlook sync handler
+  // Live Outlook sync handler — fetches 2 months (today -2w to +6w)
   async function handleOutlookSync() {
     if (outlookSyncing) return;
     setOutlookSyncing(true);
@@ -164,8 +154,10 @@ export default function CalendarView() {
 
     try {
       const token = await getToken();
-      const startDate = weekDates[0];
-      const endDate = weekDates[weekDates.length - 1];
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 14);
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 42);
       const result = await syncFromOutlook(token, DEFAULT_MEMBERS, startDate, endDate);
 
       if (result.success) {

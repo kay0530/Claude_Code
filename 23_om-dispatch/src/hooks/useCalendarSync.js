@@ -16,7 +16,7 @@ import { REAL_CALENDAR_EVENTS } from '../data/realCalendarData';
  * - syncStatus: Object tracking sync progress
  */
 export function useCalendarSync() {
-  const { setEvents, addEvents, setLoading, setSyncError } =
+  const { setEvents, addEvents, mergeEvents, setLoading, setSyncError } =
     useCalendar();
   const [syncing, setSyncing] = useState(false);
   const [lastSync, setLastSync] = useState(null);
@@ -254,7 +254,7 @@ export function useCalendarSync() {
 
   /**
    * Sync calendar events from Outlook via Graph API (live data).
-   * Calls fetchAllMembersCalendarEvents and replaces current events on success.
+   * Merges fetched events with existing data (replaces events within the fetched date range).
    *
    * @param {string} accessToken - MS365 access token from AuthContext.getToken()
    * @param {Array<{outlookEmail: string}>} members - Member objects with outlookEmail
@@ -305,8 +305,9 @@ export function useCalendarSync() {
           endStr
         );
 
+        // Merge: keep events outside the synced range, replace events within it
         if (result.data.length > 0) {
-          setEvents(result.data);
+          mergeEvents(result.data, startStr, endStr);
         }
 
         const now = new Date().toISOString();
@@ -363,7 +364,7 @@ export function useCalendarSync() {
         syncInProgressRef.current = false;
       }
     },
-    [setEvents, setLoading, setSyncError]
+    [mergeEvents, setLoading, setSyncError]
   );
 
   return {

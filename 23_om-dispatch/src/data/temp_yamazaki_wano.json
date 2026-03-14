@@ -5998,5 +5998,177 @@
         "response": "none"
       }
     ]
+  },
+  {
+    "memberKey": "yamazaki",
+    "memberEmail": "kaito.yamazaki@altenergy.co.jp",
+    "title": "いすゞ自動車（栃木第三工場）_年次点検",
+    "start": "2026-04-03T09:00:00",
+    "end": "2026-04-03T13:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": "栃木県栃木市大平町伯仲２６９１",
+    "organizerName": "廣木　憲文",
+    "organizerEmail": "norifumi.hiroki@altenergy.co.jp",
+    "attendees": [
+      {
+        "name": "廣木　憲文",
+        "email": "norifumi.hiroki@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      }
+    ]
+  },
+  {
+    "memberKey": "wano",
+    "memberEmail": "tatsuto.wano@altenergy.co.jp",
+    "title": "【現地調査】コシダカ（長野市高田）",
+    "start": "2026-04-03T09:00:00",
+    "end": "2026-04-03T18:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": "長野県長野市高田１８８９－１",
+    "organizerName": "太田 賢宏",
+    "organizerEmail": "takahiro.ota@altenergy.co.jp",
+    "attendees": [
+      {
+        "name": "太田 賢宏",
+        "email": "takahiro.ota@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      },
+      {
+        "name": "和埜 達斗",
+        "email": "tatsuto.wano@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      }
+    ]
+  },
+  {
+    "memberKey": "yamazaki",
+    "memberEmail": "kaito.yamazaki@altenergy.co.jp",
+    "title": "4月全体MTG",
+    "start": "2026-04-07T18:00:00",
+    "end": "2026-04-07T19:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": null,
+    "organizerName": "佐藤 里彩",
+    "organizerEmail": "risa.sato@altenergy.co.jp",
+    "attendees": null
+  },
+  {
+    "memberKey": "wano",
+    "memberEmail": "tatsuto.wano@altenergy.co.jp",
+    "title": "4月全体MTG",
+    "start": "2026-04-07T18:00:00",
+    "end": "2026-04-07T19:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": null,
+    "organizerName": "佐藤 里彩",
+    "organizerEmail": "risa.sato@altenergy.co.jp",
+    "attendees": null
+  },
+  {
+    "memberKey": "yamazaki",
+    "memberEmail": "kaito.yamazaki@altenergy.co.jp",
+    "title": "NHジャパンフード（松戸営業部）_年次点検",
+    "start": "2026-04-11T08:00:00",
+    "end": "2026-04-11T11:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": "千葉県松戸市松戸新田字毛無山３０－３",
+    "organizerName": "山﨑 魁人",
+    "organizerEmail": "kaito.yamazaki@altenergy.co.jp",
+    "attendees": [
+      {
+        "name": "山﨑 魁人",
+        "email": "kaito.yamazaki@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      }
+    ]
+  },
+  {
+    "memberKey": "yamazaki",
+    "memberEmail": "kaito.yamazaki@altenergy.co.jp",
+    "title": "クリエイトエス・ディー（船橋藤原店）_年次点検（初）",
+    "start": "2026-04-11T13:00:00",
+    "end": "2026-04-11T15:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": "千葉県船橋市藤原４－１２－２１",
+    "organizerName": "廣木　憲文",
+    "organizerEmail": "norifumi.hiroki@altenergy.co.jp",
+    "attendees": [
+      {
+        "name": "廣木　憲文",
+        "email": "norifumi.hiroki@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      }
+    ]
+  },
+  {
+    "memberKey": "yamazaki",
+    "memberEmail": "kaito.yamazaki@altenergy.co.jp",
+    "title": "仮）秋田住友ベーク（レジン棟）_年次点検",
+    "start": "2026-04-14T09:00:00",
+    "end": "2026-04-14T12:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": "秋田県秋田市土崎港相染町中島下２７ー４",
+    "organizerName": "田野　勇人",
+    "organizerEmail": "hayato.tano@altenergy.co.jp",
+    "attendees": [
+      {
+        "name": "田野　勇人",
+        "email": "hayato.tano@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      }
+    ]
+  },
+  {
+    "memberKey": "yamazaki",
+    "memberEmail": "kaito.yamazaki@altenergy.co.jp",
+    "title": "仮）テラタ天王店_配線是正",
+    "start": "2026-04-14T13:00:00",
+    "end": "2026-04-14T15:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": "秋田県潟上市天王字御休下７－１",
+    "organizerName": "田野　勇人",
+    "organizerEmail": "hayato.tano@altenergy.co.jp",
+    "attendees": [
+      {
+        "name": "田野　勇人",
+        "email": "hayato.tano@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      }
+    ]
+  },
+  {
+    "memberKey": "yamazaki",
+    "memberEmail": "kaito.yamazaki@altenergy.co.jp",
+    "title": "仮）栗山米菓（新発田工場）_年次点検（目視のみ）",
+    "start": "2026-04-15T09:00:00",
+    "end": "2026-04-15T11:00:00",
+    "isAllDay": false,
+    "isBusy": true,
+    "location": "新潟県新発田市岡田１８２４－３",
+    "organizerName": "田野　勇人",
+    "organizerEmail": "hayato.tano@altenergy.co.jp",
+    "attendees": [
+      {
+        "name": "田野　勇人",
+        "email": "hayato.tano@altenergy.co.jp",
+        "type": "required",
+        "response": "none"
+      }
+    ]
   }
 ]

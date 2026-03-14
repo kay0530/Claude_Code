@@ -7,7 +7,7 @@ const CalendarContext = createContext(null);
 const STORAGE_KEY = 'om-dispatch-calendar-events';
 
 // Bump this version whenever REAL_CALENDAR_EVENTS changes to invalidate stale cache
-const DATA_VERSION = 10;
+const DATA_VERSION = 11;
 
 // Load events from localStorage, falling back to real data when cache is stale
 function loadPersistedEvents() {
@@ -68,6 +68,19 @@ export function CalendarProvider({ children }) {
     setSyncError(null);
   }, []);
 
+  // Merge events: replace events within a date range, keep events outside it
+  const mergeEvents = useCallback((newEvents, startDate, endDate) => {
+    setEventsState((prev) => {
+      const outsideRange = prev.filter((e) => {
+        const d = e.start.substring(0, 10);
+        return d < startDate || d > endDate;
+      });
+      return [...outsideRange, ...newEvents];
+    });
+    setLastSynced(new Date().toISOString());
+    setSyncError(null);
+  }, []);
+
   // Clear all events
   const clearEvents = useCallback(() => {
     setEventsState([]);
@@ -104,6 +117,7 @@ export function CalendarProvider({ children }) {
     syncError,
     setEvents,
     addEvents,
+    mergeEvents,
     clearEvents,
     getEventsForMember,
     getEventsForDate,
