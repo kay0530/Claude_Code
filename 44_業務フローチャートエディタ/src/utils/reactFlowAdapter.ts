@@ -168,11 +168,11 @@ function computeOffset(sourceX: number, sourceY: number, targetX: number, target
   if (dx < 20) return 0;
   // Nearly horizontally aligned - minimal offset for straight path
   if (dy < 20) return 0;
-  // Moderately aligned - small offset
-  if (dx < 50) return Math.min(5, dx / 4);
-  if (dy < 50) return Math.min(5, dy / 4);
-  // Far apart - standard offset
-  return Math.min(20, Math.min(dx, dy) / 4);
+  // Moderately aligned - small offset to avoid node overlap
+  if (dx < 50) return Math.max(10, Math.min(15, dx / 3));
+  if (dy < 50) return Math.max(10, Math.min(15, dy / 3));
+  // Far apart - standard offset (minimum 15 to route around nodes)
+  return Math.max(15, Math.min(25, Math.min(dx, dy) / 4));
 }
 
 /**

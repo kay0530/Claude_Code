@@ -44,11 +44,11 @@ function computeOffset(sourceX: number, sourceY: number, targetX: number, target
   if (dx < 20) return 0;
   // Nearly horizontally aligned - minimal offset for straight path
   if (dy < 20) return 0;
-  // Moderately aligned - small offset
-  if (dx < 50) return Math.min(5, dx / 4);
-  if (dy < 50) return Math.min(5, dy / 4);
-  // Far apart - standard offset
-  return Math.min(20, Math.min(dx, dy) / 4);
+  // Moderately aligned - small offset to avoid node overlap
+  if (dx < 50) return Math.max(10, Math.min(15, dx / 3));
+  if (dy < 50) return Math.max(10, Math.min(15, dy / 3));
+  // Far apart - standard offset (minimum 15 to route around nodes)
+  return Math.max(15, Math.min(25, Math.min(dx, dy) / 4));
 }
 
 /**
@@ -327,13 +327,8 @@ function buildPathWithJumps(
       lastY = afterY;
     }
 
-    // Finish to segment end
-    if (
-      Math.abs(seg.p2.x - lastX) > 0.1 ||
-      Math.abs(seg.p2.y - lastY) > 0.1
-    ) {
-      parts.push(`L ${seg.p2.x} ${seg.p2.y}`);
-    }
+    // Always finish with a line to segment end to ensure correct marker orientation
+    parts.push(`L ${seg.p2.x} ${seg.p2.y}`);
   }
 
   return parts.join(" ");
@@ -378,6 +373,7 @@ function JumpOverEdgeComponent({
   });
 
   const updateEdge = useFlowchartStore((s) => s.updateEdge);
+  const pushHistory = useFlowchartStore((s) => s.pushHistory);
   const { getZoom } = useReactFlow();
 
   // Drag handler for the bend point handle
@@ -390,14 +386,29 @@ function JumpOverEdgeComponent({
       const startOffset = dynamicOffset;
       const zoom = getZoom();
       const isVerticalConnection = Math.abs(sourceX - targetX) < Math.abs(sourceY - targetY);
+      let moved = false;
 
       const onMouseMove = (moveEvent: MouseEvent) => {
+        if (!moved) {
+          moved = true;
+          pushHistory();
+        }
+        // For vertical connections, drag vertically to move bend point
+        // For horizontal connections, drag horizontally
         const rawDelta = isVerticalConnection
-          ? moveEvent.clientX - startX
-          : moveEvent.clientY - startY;
+          ? moveEvent.clientY - startY
+          : moveEvent.clientX - startX;
         const delta = rawDelta / zoom;
         const newOffset = Math.max(0, Math.min(200, startOffset + delta));
-        updateEdge(id, { bendOffset: newOffset });
+        // Direct store update without pushHistory (already pushed once)
+        useFlowchartStore.setState((state) => ({
+          project: {
+            ...state.project,
+            edges: state.project.edges.map((edge) =>
+              edge.id === id ? { ...edge, bendOffset: newOffset } : edge,
+            ),
+          },
+        }));
       };
 
       const onMouseUp = () => {
@@ -408,7 +419,7 @@ function JumpOverEdgeComponent({
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onMouseUp);
     },
-    [dynamicOffset, sourceX, sourceY, targetX, targetY, updateEdge, id, getZoom],
+    [dynamicOffset, sourceX, sourceY, targetX, targetY, pushHistory, id, getZoom],
   );
 
   // Double-click to reset to auto
