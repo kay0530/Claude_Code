@@ -6,6 +6,7 @@ import type {
   Lane,
   Phase,
 } from "../types/flowchart";
+import type { JumpOverMode } from "../components/Edges/JumpOverEdge";
 import { DEFAULT_CANVAS_CONFIG, MAX_HISTORY_SIZE } from "../utils/constants";
 import { createInitialProject } from "../utils/initialData";
 import { nanoid } from "nanoid";
@@ -18,6 +19,7 @@ interface FlowchartState {
   future: FlowchartProject[];
   clipboard: FlowNode | null;
   jumpOverEnabled: boolean;
+  jumpOverMode: JumpOverMode;
   smoothEdges: boolean;
 
   // Project actions
@@ -48,6 +50,7 @@ interface FlowchartState {
 
   // Edge display toggles
   toggleJumpOver: () => void;
+  setJumpOverMode: (mode: JumpOverMode) => void;
   toggleSmoothEdges: () => void;
 
   // Selection actions
@@ -82,6 +85,7 @@ export const useFlowchartStore = create<FlowchartState>((set, get) => ({
   future: [],
   clipboard: null,
   jumpOverEnabled: true,
+  jumpOverMode: "later" as JumpOverMode,
   smoothEdges: false,
 
   // ── Internal: push current project to history ──────────────────
@@ -275,6 +279,9 @@ export const useFlowchartStore = create<FlowchartState>((set, get) => ({
   // ── Edge display toggles ─────────────────────────────────────
   toggleJumpOver: () => {
     set((state) => ({ jumpOverEnabled: !state.jumpOverEnabled }));
+  },
+  setJumpOverMode: (mode: JumpOverMode) => {
+    set({ jumpOverMode: mode });
   },
   toggleSmoothEdges: () => {
     set((state) => ({ smoothEdges: !state.smoothEdges }));

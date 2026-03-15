@@ -6,7 +6,7 @@ import {
   type Edge,
 } from "@xyflow/react";
 import type { FlowNode, FlowEdge } from "../types/flowchart";
-import type { JumpOverEdgeData } from "../components/Edges/JumpOverEdge";
+import type { JumpOverEdgeData, JumpOverMode } from "../components/Edges/JumpOverEdge";
 
 /**
  * Convert internal FlowNode array to React Flow Node array.
@@ -57,6 +57,7 @@ export function toReactFlowEdges(
   edgeType: "smoothstep" | "step" | "jumpOver" = "smoothstep",
   rfNodes?: Node[],
   smoothEdges?: boolean,
+  jumpOverMode?: JumpOverMode,
 ): Edge[] {
   // Pre-compute paths when using jumpOver
   let allEdgePaths: Array<{ id: string; path: string }> | undefined;
@@ -104,6 +105,7 @@ export function toReactFlowEdges(
           targetY,
           targetPosition: targetPos,
           borderRadius: smoothEdges ? 8 : 0,
+          offset: 20,
         });
 
         return { id: edge.id, path };
@@ -129,7 +131,7 @@ export function toReactFlowEdges(
       color: edge.color ?? "#333333",
     },
     data: edgeType === "jumpOver"
-      ? ({ allEdgePaths: allEdgePaths ?? [], smoothEdges: smoothEdges ?? false } satisfies JumpOverEdgeData)
+      ? ({ allEdgePaths: allEdgePaths ?? [], smoothEdges: smoothEdges ?? false, jumpOverMode: jumpOverMode ?? "later" } satisfies JumpOverEdgeData)
       : undefined,
   }));
 }

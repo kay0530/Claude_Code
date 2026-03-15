@@ -10,8 +10,10 @@ import {
   FileText,
   GitBranch,
   Spline,
+  ChevronDown,
 } from "lucide-react";
 import { useFlowchartStore } from "@/store/useFlowchartStore";
+import type { JumpOverMode } from "@/components/Edges/JumpOverEdge";
 import { useExport } from "@/hooks/useExport";
 import { Button } from "@/components/ui/button";
 import {
@@ -82,6 +84,8 @@ export function Toolbar() {
     setTitle,
     jumpOverEnabled,
     toggleJumpOver,
+    jumpOverMode,
+    setJumpOverMode,
     smoothEdges,
     toggleSmoothEdges,
   } = useFlowchartStore();
@@ -201,6 +205,29 @@ export function Toolbar() {
           label={jumpOverEnabled ? "飛び越し点: ON" : "飛び越し点: OFF"}
           onClick={toggleJumpOver}
         />
+
+        {/* Jump-over mode selector */}
+        {jumpOverEnabled && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="relative">
+                <select
+                  className="appearance-none text-xs bg-transparent border border-zinc-200 rounded px-2 py-1 pr-5 cursor-pointer hover:bg-zinc-50 focus:outline-none focus:border-blue-400"
+                  value={jumpOverMode}
+                  onChange={(e) => setJumpOverMode(e.target.value as JumpOverMode)}
+                >
+                  <option value="later">後から追加</option>
+                  <option value="horizontal">横が飛び越し</option>
+                  <option value="vertical">縦が飛び越し</option>
+                </select>
+                <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 h-3 w-3 pointer-events-none text-zinc-400" />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>飛び越しモード</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
 
         {/* Smooth edges toggle */}
         <ToolbarButton

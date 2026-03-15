@@ -99,6 +99,7 @@ function FlowCanvasInner() {
   const lanes = useFlowchartStore((s) => s.project.lanes);
   const phases = useFlowchartStore((s) => s.project.phases);
   const jumpOverEnabled = useFlowchartStore((s) => s.jumpOverEnabled);
+  const jumpOverMode = useFlowchartStore((s) => s.jumpOverMode);
   const smoothEdges = useFlowchartStore((s) => s.smoothEdges);
 
   // Invisible anchor nodes at corners of swimlane area so fitView includes the full background
@@ -127,7 +128,7 @@ function FlowCanvasInner() {
   // Local React Flow state, derived from store
   const [rfNodes, setRfNodes] = useState<Node[]>(() => computedNodes);
   const [rfEdges, setRfEdges] = useState<Edge[]>(() =>
-    toReactFlowEdges(storeEdges, edgeType, computedNodes, smoothEdges),
+    toReactFlowEdges(storeEdges, edgeType, computedNodes, smoothEdges, jumpOverMode),
   );
 
   // Sync from store when store state changes
@@ -136,8 +137,8 @@ function FlowCanvasInner() {
   }, [computedNodes]);
 
   useEffect(() => {
-    setRfEdges(toReactFlowEdges(storeEdges, edgeType, rfNodes, smoothEdges));
-  }, [storeEdges, edgeType, rfNodes]);
+    setRfEdges(toReactFlowEdges(storeEdges, edgeType, rfNodes, smoothEdges, jumpOverMode));
+  }, [storeEdges, edgeType, rfNodes, jumpOverMode]);
 
   // Handle node changes (drag, select, remove) locally
   const onNodesChange: OnNodesChange = useCallback((changes) => {
@@ -316,7 +317,10 @@ function FlowCanvasInner() {
         fitViewOptions={{ padding: 0.15, minZoom: 0.3 }}
         minZoom={0.2}
         maxZoom={2}
-        defaultEdgeOptions={{ type: edgeType }}
+        elevateEdgesOnSelect
+        edgesFocusable
+        edgesReconnectable
+        defaultEdgeOptions={{ type: edgeType, interactionWidth: 20 }}
       >
         <SwimlaneBg />
         <Controls position="bottom-right" />

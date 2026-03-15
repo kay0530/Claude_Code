@@ -8,11 +8,15 @@ import {
 
 // ---------- Types ----------
 
+export type JumpOverMode = "later" | "horizontal" | "vertical";
+
 export type JumpOverEdgeData = {
   /** Pre-computed SVG paths for every edge (including this one) */
   allEdgePaths: Array<{ id: string; path: string }>;
   /** Whether to use rounded corners (smoothstep) or straight right-angles */
   smoothEdges?: boolean;
+  /** Which edge should jump over: "later" (default), "horizontal", or "vertical" */
+  jumpOverMode?: JumpOverMode;
   [key: string]: unknown;
 };
 
@@ -169,19 +173,47 @@ function segLength(seg: Segment): number {
 }
 
 /**
+ * Check if a segment is approximately horizontal (dy ≈ 0).
+ */
+function isHorizontal(seg: Segment): boolean {
+  return Math.abs(seg.p2.y - seg.p1.y) < 1;
+}
+
+/**
+ * Check if a segment is approximately vertical (dx ≈ 0).
+ */
+function isVertical(seg: Segment): boolean {
+  return Math.abs(seg.p2.x - seg.p1.x) < 1;
+}
+
+/**
  * Compute all crossing points between `currentSegments` and
  * `otherSegments`, returning them grouped by current-segment index
  * and sorted by distance along the segment.
+ *
+ * When `mode` is provided, only crossings where the current segment
+ * should jump are included:
+ * - "horizontal": current must be horizontal and other must be vertical
+ * - "vertical": current must be vertical and other must be horizontal
+ * - "later" / undefined: include all crossings (filtering is done at caller level)
  */
 function findCrossings(
   currentSegments: Segment[],
   otherSegments: Segment[],
+  mode?: JumpOverMode,
 ): Map<number, { point: Point; dist: number }[]> {
   const map = new Map<number, { point: Point; dist: number }[]>();
 
   for (let i = 0; i < currentSegments.length; i++) {
     const seg = currentSegments[i];
     for (const other of otherSegments) {
+      // Direction-based filtering
+      if (mode === "horizontal") {
+        if (!isHorizontal(seg) || !isVertical(other)) continue;
+      } else if (mode === "vertical") {
+        if (!isVertical(seg) || !isHorizontal(other)) continue;
+      }
+
       const pt = segmentIntersection(seg, other);
       if (pt) {
         if (!map.has(i)) map.set(i, []);
@@ -315,9 +347,12 @@ function JumpOverEdgeComponent({
     targetY,
     targetPosition,
     borderRadius,
+    offset: 20,
   });
 
   // Build jump-over path
+  const jumpOverMode: JumpOverMode = edgeData?.jumpOverMode ?? "later";
+
   const finalPath = useMemo(() => {
     const allEdgePaths = edgeData?.allEdgePaths;
     if (!allEdgePaths || allEdgePaths.length <= 1) return basePath;
@@ -325,16 +360,29 @@ function JumpOverEdgeComponent({
     const currentSegments = pathToSegments(basePath);
     if (currentSegments.length === 0) return basePath;
 
+    // Find the index of the current edge in allEdgePaths
+    const currentIndex = allEdgePaths.findIndex((e) => e.id === id);
+
     // Gather all crossings from other edges
     const allCrossings = new Map<
       number,
       { point: Point; dist: number }[]
     >();
 
-    for (const other of allEdgePaths) {
+    for (let otherIdx = 0; otherIdx < allEdgePaths.length; otherIdx++) {
+      const other = allEdgePaths[otherIdx];
       if (other.id === id) continue;
+
+      // In "later" mode, only jump over edges that appear earlier (lower index)
+      if (jumpOverMode === "later" && otherIdx >= currentIndex) continue;
+
       const otherSegments = pathToSegments(other.path);
-      const crossings = findCrossings(currentSegments, otherSegments);
+      // For "horizontal" and "vertical" modes, pass the mode to filter by direction
+      const crossings = findCrossings(
+        currentSegments,
+        otherSegments,
+        jumpOverMode === "later" ? undefined : jumpOverMode,
+      );
 
       // Merge into allCrossings
       for (const [segIdx, hits] of crossings) {
@@ -361,7 +409,7 @@ function JumpOverEdgeComponent({
     }
 
     return buildPathWithJumps(currentSegments, allCrossings, JUMP_RADIUS);
-  }, [basePath, data, id]);
+  }, [basePath, data, id, jumpOverMode]);
 
   return (
     <>
