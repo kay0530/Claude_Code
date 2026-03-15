@@ -104,7 +104,7 @@ export function toReactFlowEdges(
         const targetX = targetCoords.x;
         const targetY = targetCoords.y;
 
-        const dynamicOffset = computeOffset(sourceX, sourceY, targetX, targetY);
+        const dynamicOffset = edge.bendOffset ?? computeOffset(sourceX, sourceY, targetX, targetY);
         const [path] = getSmoothStepPath({
           sourceX,
           sourceY,
@@ -150,8 +150,8 @@ export function toReactFlowEdges(
         ? { type: toMarkerType(markerEndStyle), color }
         : undefined,
       data: edgeType === "jumpOver"
-        ? ({ allEdgePaths: allEdgePaths ?? [], smoothEdges: smoothEdges ?? false, jumpOverMode: jumpOverMode ?? "later" } satisfies JumpOverEdgeData)
-        : undefined,
+        ? ({ allEdgePaths: allEdgePaths ?? [], smoothEdges: smoothEdges ?? false, jumpOverMode: jumpOverMode ?? "later", bendOffset: edge.bendOffset } satisfies JumpOverEdgeData)
+        : { bendOffset: edge.bendOffset },
     };
   });
 }
