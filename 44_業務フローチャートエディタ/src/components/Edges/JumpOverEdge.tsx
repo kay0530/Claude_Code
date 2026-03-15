@@ -1,12 +1,14 @@
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   getSmoothStepPath,
+  Position,
   BaseEdge,
   EdgeLabelRenderer,
   useReactFlow,
   type EdgeProps,
 } from "@xyflow/react";
 import { useFlowchartStore } from "../../store/useFlowchartStore";
+import { buildBendPath, computeOffset, isVerticalConnection } from "../../utils/edgePathUtils";
 
 // ---------- Types ----------
 
@@ -32,24 +34,7 @@ type Segment = { p1: Point; p2: Point };
 const JUMP_RADIUS = 6;
 const SMOOTH_STEP_BORDER_RADIUS = 8;
 
-/**
- * Compute a dynamic offset for getSmoothStepPath to avoid unnecessary
- * detours when source and target are nearly aligned.
- */
-function computeOffset(sourceX: number, sourceY: number, targetX: number, targetY: number): number {
-  const dx = Math.abs(sourceX - targetX);
-  const dy = Math.abs(sourceY - targetY);
-
-  // Nearly vertically aligned - minimal offset for straight path
-  if (dx < 20) return 0;
-  // Nearly horizontally aligned - minimal offset for straight path
-  if (dy < 20) return 0;
-  // Moderately aligned - small offset to avoid node overlap
-  if (dx < 50) return Math.max(10, Math.min(15, dx / 3));
-  if (dy < 50) return Math.max(10, Math.min(15, dy / 3));
-  // Far apart - standard offset (minimum 15 to route around nodes)
-  return Math.max(15, Math.min(25, Math.min(dx, dy) / 4));
-}
+// buildBendPath and computeOffset are imported from edgePathUtils
 
 /**
  * Parse an SVG path string (as produced by getSmoothStepPath) into
@@ -334,6 +319,70 @@ function buildPathWithJumps(
   return parts.join(" ");
 }
 
+/**
+ * Ensure both markerStart and markerEnd arrows point in the correct direction.
+ *
+ * SVG markers orient along the tangent of the path at the marker point.
+ * When buildPathWithJumps replaces curves with straight lines, or when
+ * getSmoothStepPath produces a path whose segment direction differs from
+ * the handle direction, the arrow can appear sideways.
+ *
+ * We fix this by:
+ * - Prepending a short "departure" segment at the source (for markerStart)
+ * - Appending a short "approach" segment at the target (for markerEnd)
+ * Each guide segment is 2px long and aligned with the handle direction.
+ */
+function ensureMarkerDirection(
+  path: string,
+  sourceX: number,
+  sourceY: number,
+  sourcePosition: Position,
+  targetX: number,
+  targetY: number,
+  targetPosition: Position,
+): string {
+  const D = 2; // guide segment length in px
+
+  // Departure point: slightly offset from source in the handle direction
+  let departX = sourceX;
+  let departY = sourceY;
+  switch (sourcePosition) {
+    case Position.Top:
+      departY = sourceY - D;
+      break;
+    case Position.Bottom:
+      departY = sourceY + D;
+      break;
+    case Position.Left:
+      departX = sourceX - D;
+      break;
+    case Position.Right:
+      departX = sourceX + D;
+      break;
+  }
+
+  // Approach point: slightly offset from target opposite to handle direction
+  let approachX = targetX;
+  let approachY = targetY;
+  switch (targetPosition) {
+    case Position.Top:
+      approachY = targetY - D;
+      break;
+    case Position.Bottom:
+      approachY = targetY + D;
+      break;
+    case Position.Left:
+      approachX = targetX - D;
+      break;
+    case Position.Right:
+      approachX = targetX + D;
+      break;
+  }
+
+  // Prepend source guide + append target guide
+  return `M ${sourceX} ${sourceY} L ${departX} ${departY} ${path.replace(/^M\s*[\d.e+-]+\s*[\d.e+-]+/, '')} L ${approachX} ${approachY} L ${targetX} ${targetY}`;
+}
+
 // ---------- Component ----------
 
 function JumpOverEdgeComponent({
@@ -360,73 +409,128 @@ function JumpOverEdgeComponent({
   const edgeData = data as JumpOverEdgeData | undefined;
   const borderRadius = edgeData?.smoothEdges ? SMOOTH_STEP_BORDER_RADIUS : 0;
   const autoOffset = computeOffset(sourceX, sourceY, targetX, targetY);
-  const dynamicOffset = edgeData?.bendOffset ?? autoOffset;
-  const [basePath, labelX, labelY] = getSmoothStepPath({
-    sourceX,
-    sourceY,
-    sourcePosition,
-    targetX,
-    targetY,
-    targetPosition,
-    borderRadius,
-    offset: dynamicOffset,
-  });
+  // autoOffset is used by getSmoothStepPath when no bend delta is set
+  void autoOffset;
+
+  // Local drag state: bendDelta is the pixel offset of the bend point from the
+  // natural midpoint. Positive = down/right, negative = up/left.
+  const [dragBendDelta, setDragBendDelta] = useState<number | null>(null);
+  const isDragging = useRef(false);
+  // bendOffset in store is now interpreted as a bend delta from midpoint
+  const storedBendDelta = edgeData?.bendOffset ?? 0;
+  const activeBendDelta = dragBendDelta ?? storedBendDelta;
+
+  // Use custom bend path when user has set a bend delta, otherwise use default getSmoothStepPath
+  const hasBend = activeBendDelta !== 0;
+  const [basePath, labelX, labelY] = hasBend
+    ? buildBendPath(sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, activeBendDelta, borderRadius)
+    : getSmoothStepPath({
+        sourceX, sourceY, sourcePosition,
+        targetX, targetY, targetPosition,
+        borderRadius,
+        offset: autoOffset,
+      });
 
   const updateEdge = useFlowchartStore((s) => s.updateEdge);
   const pushHistory = useFlowchartStore((s) => s.pushHistory);
-  const { getZoom } = useReactFlow();
+  const { getZoom, screenToFlowPosition } = useReactFlow();
 
-  // Drag handler for the bend point handle
-  const onBendHandleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
+  // Ref for the bend handle element - used to attach native event listeners
+  const bendHandleRef = useRef<SVGGElement>(null);
+
+  // Store current values in refs so the native listener closure always reads fresh values
+  const screenToFlowRef = useRef(screenToFlowPosition);
+  screenToFlowRef.current = screenToFlowPosition;
+  const sourceXRef = useRef(sourceX); sourceXRef.current = sourceX;
+  const sourceYRef = useRef(sourceY); sourceYRef.current = sourceY;
+  const targetXRef = useRef(targetX); targetXRef.current = targetX;
+  const targetYRef = useRef(targetY); targetYRef.current = targetY;
+  const sourcePosRef = useRef(sourcePosition); sourcePosRef.current = sourcePosition;
+  const targetPosRef = useRef(targetPosition); targetPosRef.current = targetPosition;
+
+  // Attach native pointerdown listener in capture phase via useEffect.
+  // Uses setPointerCapture for reliable drag tracking - all pointer events
+  // are sent to the capturing element even if the cursor leaves it.
+  useEffect(() => {
+    const el = bendHandleRef.current;
+    if (!el) return;
+
+    const handlePointerDown = (e: PointerEvent) => {
       e.stopPropagation();
+      e.stopImmediatePropagation();
       e.preventDefault();
-      const startY = e.clientY;
-      const startX = e.clientX;
-      const startOffset = dynamicOffset;
-      const zoom = getZoom();
-      const isVerticalConnection = Math.abs(sourceX - targetX) < Math.abs(sourceY - targetY);
-      let moved = false;
+      isDragging.current = false;
 
-      const onMouseMove = (moveEvent: MouseEvent) => {
-        if (!moved) {
-          moved = true;
+      // Capture pointer to this element for reliable drag tracking
+      el.setPointerCapture(e.pointerId);
+
+      const onPointerMove = (moveEvent: PointerEvent) => {
+        moveEvent.preventDefault();
+        moveEvent.stopPropagation();
+        if (!isDragging.current) {
+          isDragging.current = true;
           pushHistory();
         }
-        // For vertical connections, drag vertically to move bend point
-        // For horizontal connections, drag horizontally
-        const rawDelta = isVerticalConnection
-          ? moveEvent.clientY - startY
-          : moveEvent.clientX - startX;
-        const delta = rawDelta / zoom;
-        const newOffset = Math.max(0, Math.min(200, startOffset + delta));
-        // Direct store update without pushHistory (already pushed once)
-        useFlowchartStore.setState((state) => ({
-          project: {
-            ...state.project,
-            edges: state.project.edges.map((edge) =>
-              edge.id === id ? { ...edge, bendOffset: newOffset } : edge,
-            ),
-          },
-        }));
+
+        // Convert cursor to flow coordinates
+        const cursor = screenToFlowRef.current({ x: moveEvent.clientX, y: moveEvent.clientY });
+
+        // Determine connection orientation using shared utility
+        const isVerticalConn = isVerticalConnection(
+          sourceXRef.current, sourceYRef.current, sourcePosRef.current,
+          targetXRef.current, targetYRef.current, targetPosRef.current,
+        );
+
+        // Compute bendDelta: distance from natural midpoint to cursor
+        if (isVerticalConn) {
+          const midY = (sourceYRef.current + targetYRef.current) / 2;
+          setDragBendDelta(cursor.y - midY);
+        } else {
+          const midX = (sourceXRef.current + targetXRef.current) / 2;
+          setDragBendDelta(cursor.x - midX);
+        }
       };
 
-      const onMouseUp = () => {
-        document.removeEventListener("mousemove", onMouseMove);
-        document.removeEventListener("mouseup", onMouseUp);
+      const onPointerUp = (upEvent: PointerEvent) => {
+        el.releasePointerCapture(upEvent.pointerId);
+        el.removeEventListener("pointermove", onPointerMove);
+        el.removeEventListener("pointerup", onPointerUp);
+
+        if (isDragging.current) {
+          setDragBendDelta((finalDelta) => {
+            if (finalDelta !== null) {
+              useFlowchartStore.setState((state) => ({
+                project: {
+                  ...state.project,
+                  edges: state.project.edges.map((edge) =>
+                    edge.id === id ? { ...edge, bendOffset: finalDelta } : edge,
+                  ),
+                },
+              }));
+            }
+            return null;
+          });
+        }
+        isDragging.current = false;
       };
 
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onMouseUp);
-    },
-    [dynamicOffset, sourceX, sourceY, targetX, targetY, pushHistory, id, getZoom],
-  );
+      // With setPointerCapture, events are sent to the capturing element
+      el.addEventListener("pointermove", onPointerMove);
+      el.addEventListener("pointerup", onPointerUp);
+    };
+
+    // capture: true ensures this fires before any bubble-phase handlers
+    el.addEventListener("pointerdown", handlePointerDown, { capture: true });
+    return () => {
+      el.removeEventListener("pointerdown", handlePointerDown, { capture: true });
+    };
+  }, [id, pushHistory, getZoom]);
 
   // Double-click to reset to auto
   const onBendHandleDoubleClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      updateEdge(id, { bendOffset: undefined });
+      updateEdge(id, { bendOffset: 0 });
     },
     [updateEdge, id],
   );
@@ -492,30 +596,51 @@ function JumpOverEdgeComponent({
     return buildPathWithJumps(currentSegments, allCrossings, JUMP_RADIUS);
   }, [basePath, data, id, jumpOverMode]);
 
+  // Fix marker direction: prepend/append short guide segments so arrowheads
+  // always point in the direction matching the source/target handles.
+  const directedPath = useMemo(
+    () => ensureMarkerDirection(finalPath, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition),
+    [finalPath, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition],
+  );
+
   return (
     <>
-      <BaseEdge path={finalPath} markerStart={markerStart} markerEnd={markerEnd} style={style} />
+      <BaseEdge path={directedPath} markerStart={markerStart} markerEnd={markerEnd} style={style} />
+      {/* SVG bend handle - rendered directly in the edge SVG layer
+          to avoid EdgeLabelRenderer HTML layer event interception issues */}
+      <g
+        ref={bendHandleRef}
+        onDoubleClick={onBendHandleDoubleClick}
+        style={{
+          cursor: "move",
+          pointerEvents: (selected || dragBendDelta !== null) ? "all" : "none",
+          opacity: (selected || dragBendDelta !== null) ? 1 : 0,
+        }}
+        className="nodrag nopan"
+      >
+        {/* Larger invisible hit area for easier clicking */}
+        <rect
+          x={labelX - 14}
+          y={labelY - 14}
+          width={28}
+          height={28}
+          fill="transparent"
+          style={{ pointerEvents: (selected || dragBendDelta !== null) ? "all" : "none" }}
+        />
+        {/* Visible diamond shape */}
+        <rect
+          x={labelX - 6}
+          y={labelY - 6}
+          width={12}
+          height={12}
+          rx={1}
+          fill="#FFD700"
+          stroke="#B8860B"
+          strokeWidth={1}
+          transform={`rotate(45 ${labelX} ${labelY})`}
+        />
+      </g>
       <EdgeLabelRenderer>
-        {/* Yellow diamond bend handle - only visible when edge is selected */}
-        {selected && (
-          <div
-            style={{
-              position: "absolute",
-              transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px) rotate(45deg)`,
-              width: 10,
-              height: 10,
-              background: "#FFD700",
-              border: "1px solid #B8860B",
-              cursor: "move",
-              pointerEvents: "all",
-              zIndex: 10,
-            }}
-            className="nodrag nopan bend-handle"
-            onMouseDown={onBendHandleMouseDown}
-            onDoubleClick={onBendHandleDoubleClick}
-            title="ドラッグで曲がり位置を調整 / ダブルクリックで自動に戻す"
-          />
-        )}
         {/* Edge label */}
         {label && (
           <div

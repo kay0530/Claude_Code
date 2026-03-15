@@ -7,6 +7,7 @@ import {
 } from "@xyflow/react";
 import type { FlowNode, FlowEdge, MarkerStyle } from "../types/flowchart";
 import type { JumpOverEdgeData, JumpOverMode } from "../components/Edges/JumpOverEdge";
+import { buildBendPath, computeOffset } from "./edgePathUtils";
 
 /**
  * Convert internal FlowNode array to React Flow Node array.
@@ -104,17 +105,27 @@ export function toReactFlowEdges(
         const targetX = targetCoords.x;
         const targetY = targetCoords.y;
 
-        const dynamicOffset = edge.bendOffset ?? computeOffset(sourceX, sourceY, targetX, targetY);
-        const [path] = getSmoothStepPath({
-          sourceX,
-          sourceY,
-          sourcePosition: sourcePos,
-          targetX,
-          targetY,
-          targetPosition: targetPos,
-          borderRadius: smoothEdges ? 8 : 0,
-          offset: dynamicOffset,
-        });
+        let path: string;
+        if (edge.bendOffset != null && edge.bendOffset !== 0) {
+          [path] = buildBendPath(
+            sourceX, sourceY, sourcePos,
+            targetX, targetY, targetPos,
+            edge.bendOffset,
+            smoothEdges ? 8 : 0,
+          );
+        } else {
+          const dynamicOffset = computeOffset(sourceX, sourceY, targetX, targetY);
+          [path] = getSmoothStepPath({
+            sourceX,
+            sourceY,
+            sourcePosition: sourcePos,
+            targetX,
+            targetY,
+            targetPosition: targetPos,
+            borderRadius: smoothEdges ? 8 : 0,
+            offset: dynamicOffset,
+          });
+        }
 
         return { id: edge.id, path };
       })
@@ -154,25 +165,6 @@ export function toReactFlowEdges(
         : { bendOffset: edge.bendOffset },
     };
   });
-}
-
-/**
- * Compute a dynamic offset for getSmoothStepPath to avoid unnecessary
- * detours when source and target are nearly aligned.
- */
-function computeOffset(sourceX: number, sourceY: number, targetX: number, targetY: number): number {
-  const dx = Math.abs(sourceX - targetX);
-  const dy = Math.abs(sourceY - targetY);
-
-  // Nearly vertically aligned - minimal offset for straight path
-  if (dx < 20) return 0;
-  // Nearly horizontally aligned - minimal offset for straight path
-  if (dy < 20) return 0;
-  // Moderately aligned - small offset to avoid node overlap
-  if (dx < 50) return Math.max(10, Math.min(15, dx / 3));
-  if (dy < 50) return Math.max(10, Math.min(15, dy / 3));
-  // Far apart - standard offset (minimum 15 to route around nodes)
-  return Math.max(15, Math.min(25, Math.min(dx, dy) / 4));
 }
 
 /**
