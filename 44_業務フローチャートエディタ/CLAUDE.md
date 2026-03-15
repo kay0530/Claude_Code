@@ -179,9 +179,30 @@ src/
 - ワークツリー `cool-ritchie` の削除が必要（CWDがワークツリー内のためPermission denied）
 - 矢印の向きが一部おかしい可能性あり（ユーザー指摘、具体的なエッジ未特定）
 
+## Completed Fixes (Session 2025-03-15 #1)
+- **矢印の向き修正**: `ensureMarkerDirection()` 関数で2pxガイドセグメントを追加し、markerStart/markerEndが常にハンドル方向を向くようにした
+- **ベンドハンドル(◆)基本機能**: SVG `<g>` 要素で描画、native capture-phase pointerdownリスナーでReact Flowのイベントインターセプトを回避
+- **カスタムパス生成**: `buildBendPath()` 関数でユーザー指定のベンドポイントを通るステップパスを生成
+
+## Completed Fixes (Session 2025-03-15 #2)
+- **共有ユーティリティ抽出**: `src/utils/edgePathUtils.ts` に `buildBendPath`, `computeOffset`, `isVerticalConnection` を抽出
+- **ドラッグUX修正**: `mousemove`/`mouseup` → `pointermove`/`pointerup` + `setPointerCapture` でホールドドラッグの信頼性向上
+- **飛び越し点位置ズレ修正**: `reactFlowAdapter.ts` の `allEdgePaths` 事前計算で `bendOffset` 時に `buildBendPath` を使用（以前は `getSmoothStepPath` の `offset` パラメータとして誤用）
+- **方向判定改善**: `isVerticalConnection()` がハンドル位置だけでなくノードの実位置も考慮（Bottom→Top ハンドルでも横並びノードなら横方向ドラッグ）
+
 ## Pending / Future Work
-- 矢印の向き修正（ユーザーから具体的なエッジの指定待ち）
 - CrossingEdge.tsx は古い実装（DOM読み取り方式）→ JumpOverEdge.tsx に置き換え済み、削除可能
 
-## Detailed Plan
-詳細な実行プランは [plan-swimlane-flowchart.md](./plan-swimlane-flowchart.md) を参照
+## File Structure (Updated)
+```
+src/utils/
+├── edgePathUtils.ts       # 共有: buildBendPath, computeOffset, isVerticalConnection
+├── reactFlowAdapter.ts    # FlowNode/FlowEdge ↔ React Flow変換 (edgePathUtils使用)
+├── constants.ts           # Default values, style presets
+├── initialData.ts         # Sample data
+└── edgeRouting.ts         # Node avoidance routing
+```
+
+## Detailed Plans
+- 全体プラン: [plan-swimlane-flowchart.md](./plan-swimlane-flowchart.md)
+- ベンドハンドル修正: [plan-bend-handle-fix.md](./plan-bend-handle-fix.md) (完了)
