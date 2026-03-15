@@ -3,6 +3,7 @@ import {
   getSmoothStepPath,
   BaseEdge,
   EdgeLabelRenderer,
+  useReactFlow,
   type EdgeProps,
 } from "@xyflow/react";
 import { useFlowchartStore } from "../../store/useFlowchartStore";
@@ -349,7 +350,9 @@ function JumpOverEdgeComponent({
   sourcePosition,
   targetPosition,
   style = {},
+  markerStart,
   markerEnd,
+  selected,
   label,
   labelStyle,
   labelShowBg,
@@ -375,6 +378,7 @@ function JumpOverEdgeComponent({
   });
 
   const updateEdge = useFlowchartStore((s) => s.updateEdge);
+  const { getZoom } = useReactFlow();
 
   // Drag handler for the bend point handle
   const onBendHandleMouseDown = useCallback(
@@ -384,12 +388,14 @@ function JumpOverEdgeComponent({
       const startY = e.clientY;
       const startX = e.clientX;
       const startOffset = dynamicOffset;
+      const zoom = getZoom();
       const isVerticalConnection = Math.abs(sourceX - targetX) < Math.abs(sourceY - targetY);
 
       const onMouseMove = (moveEvent: MouseEvent) => {
-        const delta = isVerticalConnection
+        const rawDelta = isVerticalConnection
           ? moveEvent.clientX - startX
           : moveEvent.clientY - startY;
+        const delta = rawDelta / zoom;
         const newOffset = Math.max(0, Math.min(200, startOffset + delta));
         updateEdge(id, { bendOffset: newOffset });
       };
@@ -402,7 +408,7 @@ function JumpOverEdgeComponent({
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onMouseUp);
     },
-    [dynamicOffset, sourceX, sourceY, targetX, targetY, updateEdge, id],
+    [dynamicOffset, sourceX, sourceY, targetX, targetY, updateEdge, id, getZoom],
   );
 
   // Double-click to reset to auto
@@ -477,26 +483,28 @@ function JumpOverEdgeComponent({
 
   return (
     <>
-      <BaseEdge path={finalPath} markerEnd={markerEnd} style={style} />
+      <BaseEdge path={finalPath} markerStart={markerStart} markerEnd={markerEnd} style={style} />
       <EdgeLabelRenderer>
-        {/* Yellow diamond bend handle */}
-        <div
-          style={{
-            position: "absolute",
-            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px) rotate(45deg)`,
-            width: 10,
-            height: 10,
-            background: "#FFD700",
-            border: "1px solid #B8860B",
-            cursor: "move",
-            pointerEvents: "all",
-            zIndex: 10,
-          }}
-          className="nodrag nopan bend-handle"
-          onMouseDown={onBendHandleMouseDown}
-          onDoubleClick={onBendHandleDoubleClick}
-          title="ドラッグで曲がり位置を調整 / ダブルクリックで自動に戻す"
-        />
+        {/* Yellow diamond bend handle - only visible when edge is selected */}
+        {selected && (
+          <div
+            style={{
+              position: "absolute",
+              transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px) rotate(45deg)`,
+              width: 10,
+              height: 10,
+              background: "#FFD700",
+              border: "1px solid #B8860B",
+              cursor: "move",
+              pointerEvents: "all",
+              zIndex: 10,
+            }}
+            className="nodrag nopan bend-handle"
+            onMouseDown={onBendHandleMouseDown}
+            onDoubleClick={onBendHandleDoubleClick}
+            title="ドラッグで曲がり位置を調整 / ダブルクリックで自動に戻す"
+          />
+        )}
         {/* Edge label */}
         {label && (
           <div
