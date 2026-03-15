@@ -162,12 +162,25 @@ src/
 └── main.tsx
 ```
 
+## GitHub Pages Deployment
+- URL: https://kay0530.github.io/swimlane-flowchart-editor/
+- Repo: kay0530/swimlane-flowchart-editor (separate from Claude_Code monorepo)
+- Auto-deploy via GitHub Actions on push to main
+- Deploy workflow: `.github/workflows/deploy.yml` (in swimlane repo)
+- `vite.config.ts` の `base` は `GITHUB_ACTIONS` 環境変数で `/swimlane-flowchart-editor/` に切替
+- デプロイ手順: `44_業務フローチャートエディタ/` のソースを swimlane repo にコピー → push
+
+## Dev Server
+- ワークツリーの `dev.cjs` の `cwd` は `44_業務フローチャートエディタ` を指定（`業務フローチャートエディタ`ではなく `44_` 付きが正しい）
+- `npm run dev -- --host` → localhost:5173
+
 ## Known Issues
 - `@tailwindcss/vite` peer dependency conflict with Vite 8 → use `--legacy-peer-deps`
 - ワークツリー `cool-ritchie` の削除が必要（CWDがワークツリー内のためPermission denied）
+- 矢印の向きが一部おかしい可能性あり（ユーザー指摘、具体的なエッジ未特定）
 
 ## Pending / Future Work
-- GitHub Pages デプロイ（kay0530.github.io/swimlane-flowchart-editor/）への反映
+- 矢印の向き修正（ユーザーから具体的なエッジの指定待ち）
 - CrossingEdge.tsx は古い実装（DOM読み取り方式）→ JumpOverEdge.tsx に置き換え済み、削除可能
 
 ## Detailed Plan
