@@ -29,6 +29,19 @@ const JUMP_RADIUS = 6;
 const SMOOTH_STEP_BORDER_RADIUS = 8;
 
 /**
+ * Compute a dynamic offset for getSmoothStepPath to avoid unnecessary
+ * detours when source and target are nearly aligned.
+ */
+function computeOffset(sourceX: number, sourceY: number, targetX: number, targetY: number): number {
+  const dx = Math.abs(sourceX - targetX);
+  const dy = Math.abs(sourceY - targetY);
+  // If nearly aligned, use minimal offset to avoid detour
+  if (dx < 10) return Math.min(5, dy / 4);
+  if (dy < 10) return Math.min(5, dx / 4);
+  return 20;
+}
+
+/**
  * Parse an SVG path string (as produced by getSmoothStepPath) into
  * straight-line segments.  We only care about M, L, H, V, and ignore
  * curve commands (Q/C/A) – those are the rounded corners and we treat
@@ -339,6 +352,7 @@ function JumpOverEdgeComponent({
   // Compute the base path for this edge
   const edgeData = data as JumpOverEdgeData | undefined;
   const borderRadius = edgeData?.smoothEdges ? SMOOTH_STEP_BORDER_RADIUS : 0;
+  const dynamicOffset = computeOffset(sourceX, sourceY, targetX, targetY);
   const [basePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
     sourceY,
@@ -347,7 +361,7 @@ function JumpOverEdgeComponent({
     targetY,
     targetPosition,
     borderRadius,
-    offset: 20,
+    offset: dynamicOffset,
   });
 
   // Build jump-over path

@@ -19,6 +19,7 @@ import type {
   NodeShape,
   FlowNode,
   FlowEdge,
+  MarkerStyle,
 } from "@/types/flowchart";
 
 const NODE_TYPE_OPTIONS: { value: FlowNodeType; label: string }[] = [
@@ -39,6 +40,12 @@ const SHAPE_OPTIONS: { value: NodeShape; label: string }[] = [
   { value: "rectangle", label: "四角形" },
   { value: "diamond", label: "ひし形" },
   { value: "rounded", label: "角丸" },
+];
+
+const MARKER_OPTIONS: { value: MarkerStyle; label: string }[] = [
+  { value: "none", label: "なし" },
+  { value: "arrow", label: "矢印" },
+  { value: "arrowClosed", label: "閉じた矢印" },
 ];
 
 const TEXT_COLORS = [
@@ -287,6 +294,21 @@ function EdgeProperties({ edge }: { edge: FlowEdge }) {
         />
       </div>
 
+      {/* Stroke width */}
+      <div className="space-y-1">
+        <Label>線の太さ</Label>
+        <Input
+          type="number"
+          min={1}
+          max={5}
+          value={edge.strokeWidth ?? 1}
+          onChange={(e) => {
+            const v = Math.max(1, Math.min(5, Number(e.target.value) || 1));
+            handleUpdate({ strokeWidth: v });
+          }}
+        />
+      </div>
+
       {/* Line style */}
       <div className="space-y-1">
         <Label>線のスタイル</Label>
@@ -302,6 +324,50 @@ function EdgeProperties({ edge }: { edge: FlowEdge }) {
           <SelectContent>
             <SelectItem value="solid">実線</SelectItem>
             <SelectItem value="dashed">破線</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Start marker */}
+      <div className="space-y-1">
+        <Label>始点マーカー</Label>
+        <Select
+          value={edge.markerStart ?? "none"}
+          onValueChange={(v) =>
+            handleUpdate({ markerStart: v as MarkerStyle })
+          }
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {MARKER_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* End marker */}
+      <div className="space-y-1">
+        <Label>終点マーカー</Label>
+        <Select
+          value={edge.markerEnd ?? "arrowClosed"}
+          onValueChange={(v) =>
+            handleUpdate({ markerEnd: v as MarkerStyle })
+          }
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {MARKER_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

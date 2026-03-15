@@ -5,7 +5,7 @@ import {
   type Node,
   type Edge,
 } from "@xyflow/react";
-import type { FlowNode, FlowEdge } from "../types/flowchart";
+import type { FlowNode, FlowEdge, MarkerStyle } from "../types/flowchart";
 import type { JumpOverEdgeData, JumpOverMode } from "../components/Edges/JumpOverEdge";
 
 /**
@@ -40,6 +40,13 @@ function handleToPosition(handle?: string): Position {
     default:
       return Position.Bottom; // default source = bottom
   }
+}
+
+/**
+ * Convert a MarkerStyle string to a React Flow MarkerType.
+ */
+function toMarkerType(style: MarkerStyle): MarkerType {
+  return style === "arrow" ? MarkerType.Arrow : MarkerType.ArrowClosed;
 }
 
 /**
@@ -97,6 +104,7 @@ export function toReactFlowEdges(
         const targetX = targetCoords.x;
         const targetY = targetCoords.y;
 
+        const dynamicOffset = computeOffset(sourceX, sourceY, targetX, targetY);
         const [path] = getSmoothStepPath({
           sourceX,
           sourceY,
@@ -105,7 +113,7 @@ export function toReactFlowEdges(
           targetY,
           targetPosition: targetPos,
           borderRadius: smoothEdges ? 8 : 0,
-          offset: 20,
+          offset: dynamicOffset,
         });
 
         return { id: edge.id, path };
@@ -113,27 +121,52 @@ export function toReactFlowEdges(
       .filter(Boolean) as Array<{ id: string; path: string }>;
   }
 
-  return edges.map((edge) => ({
-    id: edge.id,
-    source: edge.source,
-    target: edge.target,
-    sourceHandle: edge.sourceHandle,
-    targetHandle: edge.targetHandle,
-    label: edge.label,
-    type: edgeType === "jumpOver" ? "jumpOver" : edgeType,
-    animated: edge.animated ?? false,
-    style: {
-      stroke: edge.color ?? "#333333",
-      strokeDasharray: edge.lineStyle === "dashed" ? "5,5" : undefined,
-    },
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: edge.color ?? "#333333",
-    },
-    data: edgeType === "jumpOver"
-      ? ({ allEdgePaths: allEdgePaths ?? [], smoothEdges: smoothEdges ?? false, jumpOverMode: jumpOverMode ?? "later" } satisfies JumpOverEdgeData)
-      : undefined,
-  }));
+  return edges.map((edge) => {
+    const color = edge.color ?? "#333333";
+    const markerStartStyle = edge.markerStart ?? "none";
+    const markerEndStyle = edge.markerEnd ?? "arrowClosed";
+
+    return {
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      sourceHandle: edge.sourceHandle,
+      targetHandle: edge.targetHandle,
+      label: edge.label,
+      type: edgeType === "jumpOver" ? "jumpOver" : edgeType,
+      animated: edge.animated ?? false,
+      style: {
+        stroke: color,
+        strokeWidth: edge.strokeWidth ?? 1,
+        strokeDasharray: edge.lineStyle === "dashed" ? "5,5" : undefined,
+      },
+      ...(markerStartStyle !== "none" && {
+        markerStart: {
+          type: toMarkerType(markerStartStyle),
+          color,
+        },
+      }),
+      markerEnd: markerEndStyle !== "none"
+        ? { type: toMarkerType(markerEndStyle), color }
+        : undefined,
+      data: edgeType === "jumpOver"
+        ? ({ allEdgePaths: allEdgePaths ?? [], smoothEdges: smoothEdges ?? false, jumpOverMode: jumpOverMode ?? "later" } satisfies JumpOverEdgeData)
+        : undefined,
+    };
+  });
+}
+
+/**
+ * Compute a dynamic offset for getSmoothStepPath to avoid unnecessary
+ * detours when source and target are nearly aligned.
+ */
+function computeOffset(sourceX: number, sourceY: number, targetX: number, targetY: number): number {
+  const dx = Math.abs(sourceX - targetX);
+  const dy = Math.abs(sourceY - targetY);
+  // If nearly aligned, use minimal offset to avoid detour
+  if (dx < 10) return Math.min(5, dy / 4);
+  if (dy < 10) return Math.min(5, dx / 4);
+  return 20;
 }
 
 /**

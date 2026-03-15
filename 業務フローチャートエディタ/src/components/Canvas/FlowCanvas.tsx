@@ -242,6 +242,20 @@ function FlowCanvasInner() {
     [selectEdge],
   );
 
+  // Edge double-click -> prompt for label editing
+  const onEdgeDoubleClick = useCallback(
+    (_: React.MouseEvent, edge: Edge) => {
+      selectEdge(edge.id);
+      const storeEdge = storeEdges.find((e) => e.id === edge.id);
+      const currentLabel = storeEdge?.label ?? "";
+      const newLabel = window.prompt("エッジラベルを入力", currentLabel);
+      if (newLabel !== null) {
+        updateEdge(edge.id, { label: newLabel || undefined });
+      }
+    },
+    [selectEdge, updateEdge, storeEdges],
+  );
+
   // Pane click -> clear selection
   const onPaneClick = useCallback(() => {
     clearSelection();
@@ -307,6 +321,7 @@ function FlowCanvasInner() {
         reconnectRadius={25}
         onNodeClick={onNodeClick}
         onEdgeClick={onEdgeClick}
+        onEdgeDoubleClick={onEdgeDoubleClick}
         onPaneClick={onPaneClick}
         onNodeDragStop={onNodeDragStop}
         onDrop={onDrop}

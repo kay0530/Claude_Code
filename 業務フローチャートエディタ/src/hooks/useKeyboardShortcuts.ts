@@ -6,6 +6,7 @@ import { useFlowchartStore } from "../store/useFlowchartStore";
  *
  * - Ctrl+Z: Undo
  * - Ctrl+Shift+Z / Ctrl+Y: Redo
+ * - Arrow keys: Move selected node by 1px (Shift = 20px grid step)
  * - Delete / Backspace: Delete selected node or edge
  * - Ctrl+C: Copy selected node
  * - Ctrl+V: Paste copied node
@@ -35,6 +36,37 @@ export function useKeyboardShortcuts() {
       if (ctrl && e.key === "y") {
         e.preventDefault();
         useFlowchartStore.getState().redo();
+        return;
+      }
+
+      // Arrow keys: move selected node
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+        const { selectedNodeId, project, pushHistory } = useFlowchartStore.getState();
+        if (!selectedNodeId) return;
+
+        const node = project.nodes.find((n) => n.id === selectedNodeId);
+        if (!node) return;
+
+        e.preventDefault();
+        const step = e.shiftKey ? 20 : 1; // Shift = grid-size step
+        let dx = 0,
+          dy = 0;
+        if (e.key === "ArrowUp") dy = -step;
+        if (e.key === "ArrowDown") dy = step;
+        if (e.key === "ArrowLeft") dx = -step;
+        if (e.key === "ArrowRight") dx = step;
+
+        pushHistory();
+        useFlowchartStore.setState((state) => ({
+          project: {
+            ...state.project,
+            nodes: state.project.nodes.map((n) =>
+              n.id === selectedNodeId
+                ? { ...n, position: { x: n.position.x + dx, y: n.position.y + dy } }
+                : n
+            ),
+          },
+        }));
         return;
       }
 

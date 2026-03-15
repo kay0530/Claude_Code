@@ -86,6 +86,8 @@ export interface NodeStyle {
   shape: NodeShape;
 }
 
+export type MarkerStyle = "none" | "arrow" | "arrowClosed";
+
 export interface FlowEdge {
   id: string;
   source: string;
@@ -96,4 +98,7 @@ export interface FlowEdge {
   lineStyle: "solid" | "dashed";
   animated?: boolean;
   color?: string;
+  strokeWidth?: number;
+  markerStart?: MarkerStyle;
+  markerEnd?: MarkerStyle;
 }
