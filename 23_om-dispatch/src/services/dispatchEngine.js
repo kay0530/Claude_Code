@@ -459,12 +459,23 @@ export function rankMultiJobPlans(members, jobsWithTypes, settings, calendarEven
   if (jobsWithTypes.length === 0) return [];
   if (jobsWithTypes.length === 1) {
     const { job, jobType, conditions } = jobsWithTypes[0];
-    const ranked = rankTeams(members, job, jobType, conditions, settings, calendarEvents);
-    return ranked.map(r => ({
+    // Use rankTeamsForDate (no alternative date search) so multi-day flow
+    // correctly treats "no teams on this date" as infeasible for this date.
+    // rankTeams (with alternative search) is only used for single-job dispatch.
+    const targetDate = job.preferredDate || null;
+    const { teams, excluded } = rankTeamsForDate(members, job, jobType, conditions, settings, calendarEvents, targetDate);
+    if (teams.length === 0) {
+      const result = [];
+      result._meta = { excludedMembers: excluded.map(e => ({ ...e.member, excludeReason: e.reason })) };
+      return result;
+    }
+    const result = teams.slice(0, 5).map((r, i) => ({
       planType: 'single-job',
       totalScore: r.score,
-      assignments: [{ ...r, job, jobType }],
+      assignments: [{ ...r, rank: i + 1, job, jobType }],
     }));
+    result._meta = { excludedMembers: excluded.map(e => ({ ...e.member, excludeReason: e.reason })) };
+    return result;
   }
 
   const plans = [];

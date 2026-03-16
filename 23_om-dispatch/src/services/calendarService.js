@@ -77,7 +77,7 @@ export function findAvailableSlots(memberEmail, events, date, workingHours) {
   // Filter busy events for this member on this date
   const busySlots = events
     .filter((e) => {
-      if (e.memberEmail !== memberEmail.toLowerCase()) return false;
+      if (e.memberEmail?.toLowerCase() !== memberEmail.toLowerCase()) return false;
       if (!e.isBusy) return false;
       const eventDate = e.start.substring(0, 10);
       return eventDate === dateStr;
