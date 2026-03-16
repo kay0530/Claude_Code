@@ -104,7 +104,27 @@ else {
     Write-Log "WARNING: No YouTube RSS data was fetched"
 }
 
+# --- Check OAuth token expiry ---
+$credFile = Join-Path $env:USERPROFILE ".claude\.credentials.json"
+if (Test-Path $credFile) {
+    try {
+        $creds = Get-Content $credFile -Raw | ConvertFrom-Json
+        $expiresAt = $creds.claudeAiOauth.expiresAt
+        $nowMs = [long]([DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds())
+        $expiresDate = [DateTimeOffset]::FromUnixTimeMilliseconds($expiresAt).LocalDateTime
+        if ($expiresAt -gt 0 -and $expiresAt -lt $nowMs) {
+            Write-Log "WARNING: OAuth token expired at $expiresDate - Claude CLI will attempt refresh"
+        } else {
+            Write-Log "OAuth token valid until $expiresDate"
+        }
+    }
+    catch {
+        Write-Log "WARNING: Could not read credentials file: $_"
+    }
+}
+
 # --- Run Claude Code ---
+$authError = $false
 Write-Log "Running Claude Code analysis..."
 try {
     # Pipe prompt via stdin (avoids command-line length limits and encoding issues)
@@ -116,13 +136,21 @@ try {
 
     if ($exitCode -ne 0) {
         Write-Log "WARNING: Claude Code exited with code $exitCode"
+        # Check if it's an auth error
+        $resultStr = ($result | Out-String)
+        if ($resultStr -match "OAuth|token|auth|expired|401") {
+            Write-Log "ERROR: Likely OAuth token expiration. Run 'claude /login' to re-authenticate."
+            $resultText = ":rotating_light: AIニュースボット: OAuthトークンが期限切れです。`nPCで ``claude /login`` を実行して再認証してください。"
+            $authError = $true
+        }
     }
 
-    $resultText = ($result | Out-String).Trim()
-
-    if ([string]::IsNullOrWhiteSpace($resultText)) {
-        Write-Log "ERROR: Claude Code returned empty output"
-        $resultText = "Claude Code analysis returned no output. Please check the logs."
+    if (-not $authError) {
+        $resultText = ($result | Out-String).Trim()
+        if ([string]::IsNullOrWhiteSpace($resultText)) {
+            Write-Log "ERROR: Claude Code returned empty output"
+            $resultText = "Claude Code analysis returned no output. Please check the logs."
+        }
     }
 }
 catch {
