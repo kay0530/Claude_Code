@@ -555,9 +555,27 @@ export function rankMultiDayPlans(members, jobsWithTypes, settings, calendarEven
     return result;
   }
 
-  // Multi-day mode
+  // Multi-day mode — search 3 business days before + 10 after earliest preferred date
   const earliestDate = getEarliestPreferredDate(jobsWithTypes);
-  const businessDays = generateBusinessDays(earliestDate, 10);
+  const baseDate = new Date(earliestDate);
+
+  // Generate 3 business days before earliest preferred date (procurement lead time limit)
+  const beforeDays = [];
+  const scanBefore = new Date(baseDate);
+  scanBefore.setDate(scanBefore.getDate() - 1);
+  while (beforeDays.length < 3) {
+    const dow = scanBefore.getDay();
+    if (dow !== 0 && dow !== 6) {
+      beforeDays.unshift(toISODate(scanBefore)); // unshift to keep ascending order
+    }
+    scanBefore.setDate(scanBefore.getDate() - 1);
+  }
+
+  // Generate 10 business days from earliest preferred date onward
+  const afterDays = generateBusinessDays(earliestDate, 10);
+
+  // Combine: before dates + after dates (ascending order)
+  const businessDays = [...beforeDays, ...afterDays];
   const totalTeamManpower = members.reduce((sum, m) => {
     const avgManpower = Object.values(m.manpowerByJobType || {}).reduce((s, v) => s + v, 0) /
       Math.max(Object.keys(m.manpowerByJobType || {}).length, 1);
@@ -618,8 +636,20 @@ function generateDayAssignments(jobsWithTypes, businessDays, jobIndex, currentPa
   const { job } = jobsWithTypes[jobIndex];
   const preferredDate = job.preferredDate || businessDays[0];
 
+  // Calculate earliest allowed date: 3 business days before preferred date
+  const prefDateObj = new Date(preferredDate);
+  const scanBack = new Date(prefDateObj);
+  scanBack.setDate(scanBack.getDate() - 1);
+  let beforeCount = 0;
+  while (beforeCount < 3) {
+    const dow = scanBack.getDay();
+    if (dow !== 0 && dow !== 6) beforeCount++;
+    if (beforeCount < 3) scanBack.setDate(scanBack.getDate() - 1);
+  }
+  const earliestAllowed = toISODate(scanBack);
+
   for (const day of businessDays) {
-    if (day < preferredDate) continue;
+    if (day < earliestAllowed) continue;
 
     // Check manpower limit for this day
     const dayJobs = currentPattern.filter(p => p.date === day);

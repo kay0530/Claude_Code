@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { generateId } from '../../utils/idGenerator';
 import { calculateRequiredManpower } from '../../utils/skillUtils';
 import ConditionSelector from './ConditionSelector';
 import TimeEstimator from './TimeEstimator';
+import opportunitiesData from '../../data/opportunities.json';
 
 const STEPS = ['種別選択', '条件設定', '場所・詳細', '確認'];
+const opportunities = Array.isArray(opportunitiesData) ? opportunitiesData : [];
 
 export default function JobCreateForm({ onNavigate }) {
   const { state, dispatch } = useApp();
@@ -15,11 +17,15 @@ export default function JobCreateForm({ onNavigate }) {
     jobTypeId: '',
     activeConditionIds: [],
     title: '',
-    locationName: '',
     locationAddress: '',
     preferredDate: '',
     notes: '',
+    sfOpportunityId: '',
   });
+
+  const [oppQuery, setOppQuery] = useState('');
+  const [showOppDropdown, setShowOppDropdown] = useState(false);
+  const blurTimeoutRef = useRef(null);
 
   const selectedType = jobTypes.find(jt => jt.id === form.jobTypeId);
   const activeConditions = conditions.filter(c => form.activeConditionIds.includes(c.id));
@@ -27,13 +33,46 @@ export default function JobCreateForm({ onNavigate }) {
     ? calculateRequiredManpower(selectedType.baseManpower, activeConditions)
     : 0;
 
+  const filteredOpportunities = oppQuery.length >= 1
+    ? opportunities.filter(o =>
+        o.name.toLowerCase().includes(oppQuery.toLowerCase())
+      ).slice(0, 8)
+    : [];
+
+  function handleSelectOpportunity(opp) {
+    setForm({
+      ...form,
+      title: opp.name,
+      locationAddress: opp.address || '',
+      sfOpportunityId: opp.id,
+    });
+    setOppQuery(opp.name);
+    setShowOppDropdown(false);
+  }
+
+  function handleOppInputChange(e) {
+    const val = e.target.value;
+    setOppQuery(val);
+    setForm({ ...form, title: val, sfOpportunityId: '' });
+    setShowOppDropdown(true);
+  }
+
+  function handleOppFocus() {
+    if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+    if (oppQuery.length >= 1) setShowOppDropdown(true);
+  }
+
+  function handleOppBlur() {
+    blurTimeoutRef.current = setTimeout(() => setShowOppDropdown(false), 200);
+  }
+
   function handleSubmit() {
     const job = {
       id: generateId('job'),
       jobTypeId: form.jobTypeId,
       title: form.title || (selectedType ? selectedType.nameJa : '新規案件'),
       status: 'estimated',
-      locationName: form.locationName,
+      locationName: '',
       locationAddress: form.locationAddress,
       latitude: null,
       longitude: null,
@@ -147,28 +186,43 @@ export default function JobCreateForm({ onNavigate }) {
         {step === 2 && (
           <div className="space-y-4">
             <h3 className="font-bold text-gray-700 mb-4">場所・詳細情報</h3>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">案件名</label>
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                案件名
+                {form.sfOpportunityId && (
+                  <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                    SF連携
+                  </span>
+                )}
+              </label>
               <input
                 type="text"
-                value={form.title}
-                onChange={e => setForm({ ...form, title: e.target.value })}
+                value={oppQuery}
+                onChange={handleOppInputChange}
+                onFocus={handleOppFocus}
+                onBlur={handleOppBlur}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="案件名を入力（空欄の場合は種別名を使用）"
+                placeholder="Salesforce商談名で検索、または直接入力"
               />
+              {showOppDropdown && filteredOpportunities.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                  {filteredOpportunities.map(opp => (
+                    <button
+                      key={opp.id}
+                      onMouseDown={() => handleSelectOpportunity(opp)}
+                      className="w-full text-left px-3 py-2 hover:bg-blue-50 border-b border-gray-100 last:border-0"
+                    >
+                      <p className="text-sm font-medium text-gray-800 truncate">{opp.name}</p>
+                      {opp.address && (
+                        <p className="text-xs text-gray-500 truncate">{opp.address}</p>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">現場名</label>
-              <input
-                type="text"
-                value={form.locationName}
-                onChange={e => setForm({ ...form, locationName: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="例：〇〇太陽光発電所"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">現場住所</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">住所</label>
               <input
                 type="text"
                 value={form.locationAddress}
@@ -218,11 +272,18 @@ export default function JobCreateForm({ onNavigate }) {
               </div>
               <div className="flex justify-between py-2 border-b">
                 <span className="text-gray-500">案件名</span>
-                <span className="font-medium">{form.title || selectedType?.nameJa}</span>
+                <span className="font-medium">
+                  {form.title || selectedType?.nameJa}
+                  {form.sfOpportunityId && (
+                    <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                      Salesforce連携済み
+                    </span>
+                  )}
+                </span>
               </div>
               <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-500">現場</span>
-                <span className="font-medium">{form.locationName || '未設定'}</span>
+                <span className="text-gray-500">住所</span>
+                <span className="font-medium">{form.locationAddress || '未設定'}</span>
               </div>
               <div className="flex justify-between py-2 border-b">
                 <span className="text-gray-500">条件</span>
