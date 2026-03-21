@@ -1106,41 +1106,6 @@ Manpower: 30%, TeamSize: 15%, Qualified: 15%, CalendarFit: 15%, Vehicle: 15%, St
 - devサーバー: port 5189、HMR動作確認済み
 - 推奨チーム: 全5件が3名チーム(2.4-2.7/3.0人工)に改善（以前は4名チーム3.3-3.5/2.5）
 
-### Session 22: Salesforce商談連携 + 現場名フィールド削除
-
-#### 完了した変更
-
-**1. SF CLI同期スクリプト (scripts/sync-sf.mjs)**
-- `npm run sync-sf` でSalesforce Opportunity 500件をJSON出力
-- 出力先: `src/data/opportunities.json`（`{ id, name, address, stage }` 形式）
-- SF CLIの認証済みユーザー: `new_keisuke.tanaka@altenergy.co.jp`
-
-**2. JobCreateForm.jsx — 現場名削除 + SF商談オートコンプリート**
-- `locationName` フィールドを削除
-- 案件名入力にSalesforce商談検索オートコンプリートを追加
-- 商談選択 → 案件名 + 住所を自動入力、`sfOpportunityId` を保持
-- SF連携バッジ（Step 2: 青、Step 3確認: 緑）
-
-**3. JobEditForm.jsx — 同様の修正**
-- `locationName` フィールドを削除
-- SF商談オートコンプリートを追加（JobCreateFormと同じロジック）
-- 確認画面で「住所」表示 + Salesforce連携済みバッジ
-
-**4. Salesforce MCP無効化の記録**
-- Salesforce MCPコネクタは `PreToolUse:Callback hook blocking error` で使用不可（Claude Desktopバグ）
-- 代替: SF CLI (`sf`) をBash経由で実行（グローバルCLAUDE.mdに記載済み）
-
-#### 変更ファイル
-- `scripts/sync-sf.mjs` — 新規（SF CLI同期スクリプト）
-- `src/data/opportunities.json` — 新規（500件の商談データ）
-- `package.json` — `"sync-sf"` スクリプト追加
-- `src/components/jobs/JobCreateForm.jsx` — 現場名削除、SF検索追加
-- `src/components/jobs/JobEditForm.jsx` — 現場名削除、SF検索追加
-
-#### デプロイ
-- monorepo (Claude_Code): コミット・プッシュ済み
-- OM_dispatch: 同期・プッシュ済み → GitHub Pagesデプロイ
-
 ## Known Issues & TODOs
 
 1. ~~Calendar data defaults to static JSON; live Outlook API available when Azure AD configured~~ — **Session 20で実装完了**

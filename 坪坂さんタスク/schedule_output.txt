@@ -1,0 +1,113 @@
+=== 経理年間・月間スケジュール.xlsx ===
+シート名: ['月間スケジュール', '年間スケジュール']
+
+--- シート: 月間スケジュール ---
+             Unnamed: 0                     Unnamed: 1 Unnamed: 2                                                                            Unnamed: 3 Unnamed: 4 Unnamed: 5 Unnamed: 6
+0                   NaN                             経理      ﾏﾆｭｱﾙ                                                                                   NaN         坪坂          唐         唐澤
+1                 第1営業日           [前月]完工確認_調達G/経理⇒売上確定          ✓                                                    調達Grと打合せ　※打合前に入金管理表で確認したい案件等を纏めておく          □          □          □
+2                   NaN                 [前月]PPA請求書作成準備          ✓                                                                                   NaN          〇          〇          ◎
+3                   NaN          [前月]PPA請求書作成（IKEA長久手）          ✓                                                                                   NaN          〇          〇          ◎
+4                   NaN              [前月]預金入出金まとめ、現金締切        NaN                                                                                   NaN          ◎        NaN        NaN
+5                 第2営業日                   [前月]PPA請求書発行          ✓                                                                                   NaN          〇          〇          ◎
+6                   NaN                   　　　バクラクによる送付          ✓                                                                                   NaN          〇          〇          ◎
+7                   NaN                            NaN          ✓                                                                                   NaN        NaN        NaN        NaN
+8                 第3営業日                    [前月]経費申請書〆切        NaN                                                                                   NaN          ー          ー          ー
+9                   NaN                      個人住民税納付予約        NaN                                                                                   NaN          ◉        NaN        NaN
+10                第4営業日                   [前月]営業経費精算集計        NaN                                                            集計し、振込用_経費精算と金額確認　→　弥生会計入力          〇          〇          ◎
+11                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+12                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+13                第5営業日                   [前月]経費精算振込手続        NaN                                                                                   NaN          ◉        NaN        NaN
+14                  NaN        PPA_SGｻｰﾋﾞｽ料金20日付口座振替予約        NaN                                                                                   NaN          ◉        NaN        NaN
+15                  NaN                AMEX,UPSIDER　集計        NaN                                                                                   NaN          〇          〇          ◎
+16                   8日                [前月]支払報告_調達G/経理        NaN                                                                                   NaN          □          □          □
+17                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+18                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+19                   9日         [前月]仕入確定、会計連携、FBﾃﾞｰﾀ作成        NaN                                                                                   NaN          ◎          〇          ◎
+20                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+21                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+22                5～10日               ・AMEX、UPSIDER、集計        NaN                                                                集計し、支払金額と一致確認　→　弥生会計入力          〇          〇          ◎
+23                  NaN           ・回収予定表どっと原価よりメンテ_1回目        NaN                                            集計日までの入金確定・催促依頼、当月回収予定追加　※PPA請求が終わったらすぐにやる        NaN        NaN          ◎
+24                  NaN         ・SGポータル・ソラグリPPH請求書発行準備        NaN                                          年次点検請求書と併せて送付の為早めにデータを作成。当月年次点検予定は以下アドレスより確認          〇          〇          ◎
+25                  NaN                            NaN        NaN  https://altenergy.app.box.com/folder/295949486204?s=8y0lowbeq5zh5cfuyrd1blrqvxouhbi7        NaN        NaN        NaN
+26                  NaN                            NaN        NaN                                        ※予定日不明については大澤さんへ確認。請求月に年次点検が終わらない・別月に対応分は郵送する。        NaN        NaN        NaN
+27                  10日                        源泉所得税納付        NaN                                                                                   NaN          ◉        NaN        NaN
+28                  NaN                      （個人住民税納付）        NaN                                                                                   NaN        NaN        NaN        NaN
+29                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+30                  14日                        15日振込予約        NaN                                                                                   NaN          ◉        NaN        NaN
+31                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+32                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+33                  15日         FIT_ﾒﾝﾃﾅﾝｽ料金27日付口座振替予約        NaN                                                                                   NaN          ◉        NaN        NaN
+34                  NaN                     月末支払リスト　作成          ✓                                                               電子帳簿保存法に則り、スキャン　→　PDF保存          〇          〇          ◎
+35                  NaN                        会計打ち合わせ          ✓                                                        目的：弥生会計入力等での不明点解消　→入力時、付箋つけて保存          □          □          □
+36                  NaN           ・回収予定表どっと原価よりメンテ_2回目          ✓                                                                    どっと原価の最新の情報へアップデート          〇        NaN          ◎
+37  第2木(11)\n-\n第3木(17)                   [前月]弥生会計入力完了        NaN                                                                                   NaN          〇          〇          ◎
+38                  NaN            [前月]原価報告（調達G/管理G経理）        NaN                                                                                   NaN          □          □          □
+39                  NaN                       　⇒財菅原価照合        NaN                                                                                   NaN          〇          〇          ◎
+40       第3月曜日\n(15-21)                     [前月]月次決算報告        NaN                                                                                   NaN          〇          〇          ◎
+41                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+42                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+43                  20日        （PPA_SGｻｰﾋﾞｽ料金口座振替ｍ-HC）        NaN                                                                                   NaN        NaN        NaN        NaN
+44                  NaN                        給与振込手続き        NaN                                                                                   NaN          ◉        NaN        NaN
+45                  NaN               ・20日〆、代理店、SGP　確認        NaN                                                                        取引先によっては20日〆あり          〇          〇          ◎
+46                  NaN              ・ｱｻﾋﾌｧｼﾘﾃｨｽﾞ向け請求書          ✓                                  BillOneにて送付※年次点検ある場合、1枚で請求書作成（ハマダ様（男性）080-2511-0957）          〇          〇          ◎
+47                  NaN                    （財務諸表、提出締め）        NaN                                                                 弥生会計から財務諸表作成、印刷、PDF保存          ◎          〇          〇
+48                  25日                         （給与振込）        NaN                                                                                   NaN        NaN        NaN        NaN
+49                  NaN           ・回収予定表どっと原価よりメンテ_3回目          ✓                                         月末のごたごた緩和のため、回収予定に漏れがないか発行済み請求書(電帳票)よりチェックする。          〇        NaN          ◎
+50                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+51                  27日         （FIT_ﾒﾝﾃﾅﾝｽ料金口座振替SMBC）        NaN                                                                                   NaN        NaN        NaN        NaN
+52                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+53                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+54                  末前日              月末総合振込（仕入･経費、パワー）        NaN                                                                                   NaN          ◉        NaN        NaN
+55                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+56                  NaN                            NaN        NaN                                                                                   NaN        NaN        NaN        NaN
+57                   末日                   （月末総振2件、パワー）        NaN                                                                                   NaN        NaN        NaN        NaN
+58                  NaN  Sun Station Hikari 請求書発行（ﾒｰﾙ）        NaN                                                           尼崎（ｱﾏｿﾞﾝｼﾞｬﾊﾟﾝ）保守点検月次、年次点検分        NaN        NaN        NaN
+59                  NaN                            NaN        NaN                                               ※友金電気設備管理からオルテナジー購入に受信される「運転状況確認表」ととともに        NaN        NaN        NaN
+60                  NaN                            NaN        NaN                                     ソネディクスジャパン小林様takashi.kobayashi@sonnedix.comにメール送信        NaN        NaN        NaN
+61                  NaN                            NaN        NaN                                                                                   NaN          〇          〇          ◎
+62                  その他                  口座振替のお知らせ等の保存        NaN                                月分が全て揃った状態で一括（連続）でスキャン、口座振替のお知らせと、領収書を兼ねているものは領収書日付を優先        NaN        NaN        NaN
+63                  NaN                 小口現金出納帳、領収証の保存        NaN                                                                  A４の状態で現金出納帳、領収証をスキャン        NaN        NaN        NaN
+
+--- シート: 年間スケジュール ---
+   Unnamed: 0                     労務業務         期日              経理業務       期日.1                            総務業務       期日.2                                                    Unnamed: 7                          Unnamed: 8
+0          １月                      NaN        NaT         建設業許可決算報告 2025-01-31                             NaN        NaT  https://altenergy.box.com/s/nknhzz994rhtaktkiat90x7fx13ktlpr                                 NaN
+1         NaN                      NaN        NaT      法定調書合計表、支払調書 2025-01-31                             NaN        NaT                                                           NaN                                 NaN
+2         NaN                      NaN        NaT           給与支払報告書 2025-01-31                             NaN        NaT                                                           NaN                                 NaN
+3         NaN                      NaN        NaT           償却資産税報告 2025-01-31                             NaN        NaT                                                           NaN                                 NaN
+4         NaN                      NaN        NaT         労働保険料3期納付 2025-01-31                             NaN        NaT                                                           NaN                                 NaN
+5          ２月                      NaN        NaT         固定資産税4期納税 2025-02-28  賠償責任保険更新（三井住友海上_ﾋﾞｼﾞﾈｽﾌﾟﾛﾃｸﾀｰ） 2022-02-09                                                           NaN                                 NaN
+6         NaN                      NaN        NaT     オルテナジー消費税中間納税 2025-02-28                             NaN        NaT                                                           NaN                                 NaN
+7         NaN                      NaN        NaT               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+8          ３月                      NaN        NaT     ｵﾙﾃﾅｼﾞｰﾊﾟﾜｰ決算 2025-03-31    事業活動総合保険（三井住友海上_ﾋﾞｼﾞﾈｽｷｰﾊﾟｰ） 2022-03-05                                                           NaN                                 NaN
+9         NaN                      NaN        NaT               NaN        NaT                 自動車保険更新（東京海上日動） 2022-03-08                                                           NaN               企財包_0.186％（2022.4.25）
+10        NaN                      NaN        NaT               NaN        NaT                             NaN        NaT                                                           NaN  組立保険_埼玉県_年間売上175,000千円→230千円0.132%
+11         ４月                   36協定届出        NaT               NaN        NaT         ｵﾙﾃﾅｼﾞｰﾊﾟﾜｰ火災保険（東京海上日動） 2022-04-25                                                           NaN                                 NaN
+12        NaN                      NaN        NaT               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+13        NaN                      NaN        NaT               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+14         ５月                      NaN        NaT  オルテナジーパワー確定申告、納税 2025-05-31                             NaN        NaT                                                           NaN                                 NaN
+15        NaN                      NaN        NaT        オルテナジー中間納税 2025-05-31                             NaN        NaT                                                           NaN                                 NaN
+16        NaN                      NaN        NaT            自動車税納付 2025-05-31                             NaN        NaT                                                           NaN                                 NaN
+17        NaN                      NaN        NaT               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+18        NaN                      NaN        NaT               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+19         ６月                 （夏期賞与支給）        NaT         固定資産税1期納税 2025-06-30                             NaN        NaT                                                           NaN                                 NaN
+20        NaN             賞与支払届（冬期賞与分）        NaT               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+21        NaN                   健康診断予約        NaT               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+22         ７月     算定基礎届の提出（4～6月分の給与支給） 2022-07-10         労働保険料1期納付 2025-07-10                             NaN        NaT                                                           NaN                                 NaN
+23        NaN  労働保険の年度更新（6/1～7/10の期間で） 2022-07-10               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+24        NaN          障害者・高年齢者の雇用状況報告 2022-07-15               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+25         ８月                      NaN        NaT     オルテナジー消費税中間納税 2025-08-31                             NaN        NaT                                                           NaN                                 NaN
+26        NaN                      NaN        NaT               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+27        NaN                      NaN        NaT               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+28         ９月                      NaN        NaT          オルテナジー決算 2025-09-30                             NaN        NaT                                                           NaN                                 NaN
+29        NaN                      NaN        NaT         固定資産税2期納税 2025-09-30                             NaN        NaT                                                           NaN                                 NaN
+30        NaN                      NaN        NaT               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+31        １０月           健康診断実施（10-11月）        NaT         労働保険料2期納付 2025-10-31                             NaN        NaT                                                           NaN                                 NaN
+32        NaN                      NaN        NaT               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+33        NaN                      NaN        NaT               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+34        １１月          年末調整準備（案内書類の配付） 2025-11-10        オルテナジー見込納税        NaT                             NaN        NaT                                                           NaN                                 NaN
+35        NaN                      NaN        NaT      オルテナジパワー中間納税        NaT                             NaN        NaT                                                           NaN                                 NaN
+36        NaN                      NaN        NaT               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+37        １２月                 （冬期賞与支給）        NaT        オルテナジー確定申告        NaT                      役員変更登記_奇数年 2025-12-20                                                           NaN                                 NaN
+38        NaN             賞与支払届（冬期賞与分）        NaT         固定資産税3期納税 2025-12-30                   年末年始準備（納会・初詣）        NaT                                                           NaN                                 NaN
+39        NaN                     年末調整 2025-12-10               NaN        NaT                             NaN        NaT                                                           NaN                                 NaN
+

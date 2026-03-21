@@ -1,0 +1,110 @@
+[
+  {
+    "vendor": "新明電材",
+    "total_rows": 170,
+    "total_amount": 4770027.0,
+    "order_count": 44,
+    "large_items_count": 9,
+    "negative_items_count": 0,
+    "duplicate_patterns": 20
+  },
+  {
+    "vendor": "丸紅",
+    "total_rows": 41,
+    "total_amount": 25519566.0,
+    "order_count": 14,
+    "large_items_count": 17,
+    "negative_items_count": 0,
+    "duplicate_patterns": 6
+  },
+  {
+    "vendor": "ｲｸﾞｱｽ",
+    "total_rows": 30,
+    "total_amount": 12352500.0,
+    "order_count": 20,
+    "large_items_count": 15,
+    "negative_items_count": 0,
+    "duplicate_patterns": 5
+  },
+  {
+    "vendor": "ﾕｱｻ商事",
+    "total_rows": 7,
+    "total_amount": 10557000.0,
+    "order_count": 4,
+    "large_items_count": 2,
+    "negative_items_count": 0,
+    "duplicate_patterns": 2
+  },
+  {
+    "vendor": "鶴田電機",
+    "total_rows": 12,
+    "total_amount": 9587000.0,
+    "order_count": 6,
+    "large_items_count": 7,
+    "negative_items_count": 0,
+    "duplicate_patterns": 1
+  },
+  {
+    "vendor": "ﾔﾏﾄ電機",
+    "total_rows": 134,
+    "total_amount": 5481857.0,
+    "order_count": 39,
+    "large_items_count": 11,
+    "negative_items_count": 0,
+    "duplicate_patterns": 16
+  },
+  {
+    "vendor": "ﾐｭｰﾃｸﾉ",
+    "total_rows": 253,
+    "total_amount": 5009987.0,
+    "order_count": 49,
+    "large_items_count": 10,
+    "negative_items_count": 0,
+    "duplicate_patterns": 26
+  },
+  {
+    "vendor": "木谷電器",
+    "total_rows": 41,
+    "total_amount": 4634672.0,
+    "order_count": 16,
+    "large_items_count": 9,
+    "negative_items_count": 0,
+    "duplicate_patterns": 10
+  },
+  {
+    "vendor": "東洋ﾍﾞｰｽ",
+    "total_rows": 16,
+    "total_amount": 336302.0,
+    "order_count": 8,
+    "large_items_count": 0,
+    "negative_items_count": 0,
+    "duplicate_patterns": 1
+  },
+  {
+    "vendor": "A-ｽﾀｲﾙ",
+    "total_rows": 1,
+    "total_amount": 3658800.0,
+    "order_count": 1,
+    "large_items_count": 1,
+    "negative_items_count": 0,
+    "duplicate_patterns": 0
+  },
+  {
+    "vendor": "ｶﾅﾒ",
+    "total_rows": 17,
+    "total_amount": 2893290.0,
+    "order_count": 6,
+    "large_items_count": 5,
+    "negative_items_count": 0,
+    "duplicate_patterns": 0
+  },
+  {
+    "vendor": "DMEGC",
+    "total_rows": 1,
+    "total_amount": 2365536.0,
+    "order_count": 1,
+    "large_items_count": 1,
+    "negative_items_count": 0,
+    "duplicate_patterns": 0
+  }
+]
