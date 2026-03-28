@@ -152,10 +152,14 @@ slide_catalog:
   PP2:  {title: "PPAモデルとは",             type: ppa, category: 背景}
   PP3:  {title: "導入メリット",              type: ppa, category: 背景}
   PP4:  {title: "現状電気代分析",            type: ppa, category: 分析}
+  PP4A: {title: "なぜオルテナジーが選ばれるのか", type: ppa, category: 背景}
   PP5:  {title: "システム概要",              type: ppa, category: 仕様}
+  PP5A: {title: "効果シミュレーション（区切り）", type: ppa, category: 区切り}
   PP6:  {title: "発電シミュレーション",       type: ppa, category: 試算}
+  PP6A: {title: "事業スキーム",              type: ppa, category: 説明}
   PP7:  {title: "ご利用料金に関して",         type: ppa, category: 料金}
   PP8:  {title: "経済効果試算",              type: ppa, category: 試算}
+  PP8A: {title: "ご契約条件サマリー",         type: ppa, category: 契約}
   PP9:  {title: "デマンドカット試算",         type: ppa, category: 試算}
   PP10: {title: "補助金活用",                type: ppa, category: 補助金}
   PP11: {title: "導入スケジュール",           type: ppa, category: 運用}
