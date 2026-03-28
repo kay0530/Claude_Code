@@ -37,6 +37,12 @@ st.set_page_config(
 
 BASE_DIR = Path(__file__).parent
 PROFILES_PATH = BASE_DIR / "composition_profiles.yaml"
+
+_SORTABLE_STYLE = (
+    ".sortable-item { text-align: left !important; "
+    "max-width: 55% !important; padding: 5px 12px !important; "
+    "font-size: 0.85rem !important; }"
+)
 EXCEL_PATH = BASE_DIR.parent / "ＰＬ_補ありなしPPAEPC_260317_XXXX様_v3.3.1.xlsm"
 SAVE_DIR = BASE_DIR / "saved_cases"
 SAVE_DIR.mkdir(exist_ok=True)
@@ -1360,6 +1366,7 @@ with tab3:
                     for sid in checked_slides
                 ],
                 direction="vertical",
+                custom_style=_SORTABLE_STYLE,
                 key=_sort_key,
             )
             final_slides = [item.split("  ─  ")[0].strip() for item in sorted_slides]
