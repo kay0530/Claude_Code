@@ -6,22 +6,48 @@
 # optional: 含めるかどうかをユーザーが選択できるスライド
 
 profiles:
-  稟議書対応:
-    description: "設備担当者が稟議書に添付することを想定した構成。技術仕様・投資回収・補助金を重視。"
+  標準PPA:
+    description: "PDF実物と同じ14ページ構成。初回提案のフルセット。"
     proposal_type: ppa
     slides:
       - PP0         # 表紙
-      - NEW_ff      # FF振り返り（ヒアリング結果）
-      - PP4         # 現状電気代分析
-      - PP5         # システム概要・仕様
-      - PP6         # 発電シミュレーション
-      - PP7         # 収益シミュレーション
-      - PP8         # 投資回収・IRR
+      - PP1         # なぜ今オンサイトPPAなのか
+      - PP2         # PPAモデルとは
+      - PP3         # 導入メリット
+      - PP4A        # なぜオルテナジーが選ばれるのか
+      - PP5A        # 【効果シミュレーション】区切り
+      - PP6A        # 事業スキーム
+      - PP5         # 設備レイアウト
+      - PP6         # 供給電力量・発電シミュレーション
+      - PP9         # デマンド削減効果
+      - PP7         # ご利用料金に関して
+      - PP8         # 経済効果試算（20年表）
+      - PP8A        # ご契約条件サマリー
+      - PP11        # 導入までの流れ
+    optional:
       - PP10        # 補助金活用
+      - PP12        # 実績・事例
+      - PP13        # FAQ
+      - NEW_env     # 環境訴求
+
+  稟議書対応:
+    description: "設備担当者が稟議書に添付する構成。仕様・経済効果・補助金を重視。"
+    proposal_type: ppa
+    slides:
+      - PP0         # 表紙
+      - NEW_ff      # FF振り返り
+      - PP5A        # 【効果シミュレーション】区切り
+      - PP5         # 設備レイアウト
+      - PP6         # 発電シミュレーション
+      - PP9         # デマンド削減効果
+      - PP7         # ご利用料金
+      - PP8         # 経済効果試算
+      - PP10        # 補助金活用
+      - PP8A        # 契約条件サマリー
       - PP11        # スケジュール
       - NEW_summary # まとめ
     optional:
-      - PP9         # デマンドカット
+      - PP4A        # なぜオルテナジー
       - PP12        # 実績・事例
       - PP13        # FAQ
 
@@ -31,33 +57,34 @@ profiles:
     slides:
       - PP0         # 表紙
       - NEW_ff      # FF振り返り
-      - PP4         # 現状電気代分析
-      - PP8         # 投資回収・IRR（経済効果一覧）
+      - PP5A        # 【効果シミュレーション】区切り
       - PP6         # 発電シミュレーション
-      - NEW_env     # 環境訴求（CO₂削減・SDGs）
-      - PP10        # 補助金活用
+      - PP8         # 経済効果試算
+      - PP7         # ご利用料金
+      - NEW_env     # 環境訴求
       - NEW_summary # まとめ
     optional:
       - PP9         # デマンドカット
+      - PP10        # 補助金活用
       - NEW_urgency # 緊急性訴求
-      - PP12        # 実績・事例
 
   環境重視:
     description: "ESG担当者向け。CO₂削減・環境価値・SDGs対応を前面に出した構成。"
     proposal_type: ppa
     slides:
       - PP0           # 表紙
-      - PP1           # なぜ今オンサイトPPAなのか（脱炭素背景）
+      - PP1           # なぜ今PPA
       - PP2           # PPAモデルとは
       - PP3           # 導入メリット
-      - NEW_env       # 環境訴求（CO₂削減・SDGs）
+      - NEW_env       # 環境訴求
       - PP6           # 発電シミュレーション
-      - PP4           # 現状電気代分析
-      - PP10          # 補助金活用
+      - PP8           # 経済効果試算
+      - PP7           # ご利用料金
       - NEW_summary   # まとめ
     optional:
+      - PP4A          # なぜオルテナジー
       - NEW_competitor # 他社比較表
-      - PP12           # 実績・事例
+      - PP10          # 補助金活用
 
   比較検討中:
     description: "他社との比較検討中、またはPPA vs EPC比較が必要な場合の構成。"
@@ -65,19 +92,19 @@ profiles:
     slides:
       - PP0                 # 表紙
       - NEW_ff              # FF振り返り
-      - PP4                 # 現状電気代分析
+      - PP4A                # なぜオルテナジー
       - NEW_ppa_epc_compare # PPA vs EPC 比較
       - NEW_competitor      # 他社比較表
       - PP6                 # 発電シミュレーション
-      - PP8                 # 投資回収・IRR
-      - PP10                # 補助金活用
+      - PP8                 # 経済効果試算
+      - PP7                 # ご利用料金
       - NEW_urgency         # 緊急性訴求
       - NEW_summary         # まとめ
     optional:
       - PP9                 # デマンドカット
-      - NEW_building_compare # A棟/B棟 経済効果比較
-      - PP11                # スケジュール
-      - PP12                # 実績・事例
+      - NEW_building_compare # A棟/B棟 比較
+      - PP10                # 補助金活用
+      - PP8A                # 契約条件サマリー
 
   稟議書対応（EPC）:
     description: "EPC（販売）向け。投資回収・仕様重視の稟議書対応構成。"
