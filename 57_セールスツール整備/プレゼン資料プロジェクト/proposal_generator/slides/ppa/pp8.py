@@ -13,7 +13,8 @@ from pptx.enum.text import PP_ALIGN
 from pptx.util import Inches, Pt
 from proposal_generator.utils import (
     CONTENT_TOP, C_DARK, C_LIGHT_ORANGE, C_ORANGE, C_SUB, C_WHITE,
-    C_LIGHT_GRAY, FONT_BLACK, FONT_BODY, HEADER_H, MARGIN, SLIDE_H, SLIDE_W,
+    C_LIGHT_GRAY, C_NAVY, C_LIGHT_CYAN, C_RED,
+    FONT_BLACK, FONT_BODY, HEADER_H, MARGIN, SLIDE_H, SLIDE_W,
     add_footer, add_header_bar, add_rect, add_rounded_rect, add_textbox,
     add_section_header, add_table, add_kpi_card, fmt_yen, fmt_num,
 )

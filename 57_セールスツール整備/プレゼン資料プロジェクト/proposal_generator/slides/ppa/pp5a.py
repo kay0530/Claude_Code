@@ -41,9 +41,12 @@ def generate(slide, data: dict, logo_path: Path = None) -> None:
     # Customer name
     company = data.get("company_name", "")
     office = data.get("office_name", "")
-    customer_text = f"{company}様" if company else ""
     if office:
-        customer_text += f"\n{office}のケース"
+        customer_text = f"{company}様\n{office}のケース"
+    elif company:
+        customer_text = f"{company}様"
+    else:
+        customer_text = ""
 
     add_textbox(slide, MARGIN, Inches(3.8), SLIDE_W - MARGIN * 2, Inches(1.0),
                 customer_text,

@@ -14,7 +14,8 @@ from pptx.enum.text import PP_ALIGN
 from pptx.util import Inches
 from proposal_generator.utils import (
     CONTENT_TOP, C_DARK, C_LIGHT_ORANGE, C_ORANGE, C_SUB, C_WHITE,
-    C_LIGHT_GRAY, FONT_BLACK, FONT_BODY, HEADER_H, MARGIN, SLIDE_H, SLIDE_W,
+    C_LIGHT_GRAY, C_NAVY, C_LIGHT_TEAL,
+    FONT_BLACK, FONT_BODY, HEADER_H, MARGIN, SLIDE_H, SLIDE_W,
     add_footer, add_header_bar, add_rect, add_rounded_rect, add_textbox,
     add_section_header, fmt_yen, fmt_num,
 )
@@ -29,7 +30,7 @@ def generate(slide, data: dict, logo_path: Path = None) -> None:
     y = CONTENT_TOP + Inches(0.05)
     tax_display = data.get("tax_display", "税抜")
     ppa_price = data.get("ppa_unit_price", 0)
-    years = data.get("contract_years", 20)
+    years = int(data.get("contract_years", 20) or 20)
 
     # ---- PPA explanation ----
     add_textbox(slide, MARGIN, y, SLIDE_W - MARGIN * 2, Inches(0.22),
@@ -56,35 +57,33 @@ def generate(slide, data: dict, logo_path: Path = None) -> None:
     kpi_w = (SLIDE_W - MARGIN * 2 - kpi_gap) / 2
     kpi_h = Inches(1.8)
 
-    # Left: 初期ご負担金額
-    add_rounded_rect(slide, MARGIN, y, kpi_w, kpi_h, C_LIGHT_ORANGE)
-    add_rect(slide, MARGIN, y, kpi_w, Inches(0.06), C_ORANGE)
-    add_textbox(slide, MARGIN, y + Inches(0.15), kpi_w, Inches(0.28),
+    # Left: 初期ご負担金額 (navy background, white text)
+    add_rounded_rect(slide, MARGIN, y, kpi_w, kpi_h, C_NAVY)
+    add_textbox(slide, MARGIN, y + Inches(0.20), kpi_w, Inches(0.28),
                 "初期ご負担金額",
-                font_name=FONT_BODY, font_size_pt=12,
-                font_color=C_DARK, bold=True, align=PP_ALIGN.CENTER)
-    add_textbox(slide, MARGIN, y + Inches(0.55), kpi_w, Inches(0.80),
+                font_name=FONT_BODY, font_size_pt=14,
+                font_color=C_WHITE, bold=True, align=PP_ALIGN.CENTER)
+    add_textbox(slide, MARGIN, y + Inches(0.60), kpi_w, Inches(0.80),
                 "¥0.-",
-                font_name=FONT_BLACK, font_size_pt=48,
-                font_color=C_ORANGE, bold=True, align=PP_ALIGN.CENTER)
+                font_name=FONT_BLACK, font_size_pt=36,
+                font_color=C_WHITE, bold=True, align=PP_ALIGN.CENTER)
 
-    # Right: 一律単価
+    # Right: 一律単価 (teal background, white text - wider)
     rx = MARGIN + kpi_w + kpi_gap
-    add_rounded_rect(slide, rx, y, kpi_w, kpi_h, C_LIGHT_ORANGE)
-    add_rect(slide, rx, y, kpi_w, Inches(0.06), C_ORANGE)
-    add_textbox(slide, rx, y + Inches(0.15), kpi_w, Inches(0.28),
+    add_rounded_rect(slide, rx, y, kpi_w, kpi_h, C_LIGHT_TEAL)
+    add_textbox(slide, rx, y + Inches(0.20), kpi_w, Inches(0.28),
                 f"{years}年目までの一律単価",
-                font_name=FONT_BODY, font_size_pt=12,
-                font_color=C_DARK, bold=True, align=PP_ALIGN.CENTER)
+                font_name=FONT_BODY, font_size_pt=16,
+                font_color=C_WHITE, bold=True, align=PP_ALIGN.CENTER)
     price_str = f"¥{ppa_price:.2f}" if ppa_price else "—"
-    add_textbox(slide, rx, y + Inches(0.50), kpi_w, Inches(0.80),
+    add_textbox(slide, rx, y + Inches(0.55), kpi_w, Inches(0.80),
                 price_str,
-                font_name=FONT_BLACK, font_size_pt=48,
-                font_color=C_ORANGE, bold=True, align=PP_ALIGN.CENTER)
+                font_name=FONT_BLACK, font_size_pt=36,
+                font_color=C_WHITE, bold=True, align=PP_ALIGN.CENTER)
     add_textbox(slide, rx, y + Inches(1.30), kpi_w, Inches(0.28),
                 "/kWh",
-                font_name=FONT_BODY, font_size_pt=14,
-                font_color=C_SUB, align=PP_ALIGN.CENTER)
+                font_name=FONT_BODY, font_size_pt=26,
+                font_color=C_WHITE, align=PP_ALIGN.CENTER)
 
     y += kpi_h + Inches(0.25)
 
