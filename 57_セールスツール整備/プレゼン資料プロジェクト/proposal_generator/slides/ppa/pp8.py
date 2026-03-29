@@ -56,18 +56,16 @@ def generate(slide, data: dict, logo_path: Path = None) -> None:
     elec_rate = max(avg_unit_price - surcharge, 0) if avg_unit_price > 0 else 0
     total_unit = elec_rate + surcharge if avg_unit_price > 0 else 0
 
-    # Basic charge for demand reduction
-    # Default: use basic rate from contract master if available
-    basic_rate_kw = 0
-    if annual_cost and contract_kw > 0 and annual_kwh > 0:
-        # Estimate basic charge per kW from total cost
+    # Basic charge for demand reduction - prefer explicit value from electricity master
+    basic_rate_kw = float(data.get("basic_rate_kw", 0) or 0)
+    if basic_rate_kw <= 0 and annual_cost and contract_kw > 0 and annual_kwh > 0:
+        # Fallback: estimate from total cost
         usage_cost = avg_unit_price * annual_kwh
         basic_annual = float(annual_cost) - usage_cost
         if basic_annual > 0:
             basic_rate_kw = basic_annual / contract_kw / 12
-    # Fallback to typical value
     if basic_rate_kw <= 0:
-        basic_rate_kw = 1500.0  # typical high-voltage basic rate
+        basic_rate_kw = 1500.0  # last resort typical high-voltage basic rate
 
     # ---- Trial conditions box ----
     cond_h = Inches(0.65)

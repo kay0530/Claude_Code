@@ -892,12 +892,16 @@ with tab2:
 
     # ----- Contract Terms -----
     with st.expander("📋 契約条件", expanded=True):
+        _auto_demand_cut = st.session_state.get("ipals_data", {}).get("demand_cut_kw", 0.0) or 0.0
         if is_epc:
             ct_col1, ct_col2 = st.columns(2)
             with ct_col1:
                 contract_years = st.number_input("契約期間 (年)", min_value=1, max_value=30, value=20)
             with ct_col2:
-                demand_reduction = st.number_input("削減デマンド (kW)", min_value=0.0, step=1.0)
+                demand_reduction = st.number_input(
+                    "削減デマンド (kW)", min_value=0.0, step=1.0, value=_auto_demand_cut,
+                    help="iPals CSVアップロード時は自動算出されます",
+                )
             ppa_unit_price = 0.0
             surplus_price = 0.0
         else:
@@ -914,7 +918,10 @@ with tab2:
             with ct_col3:
                 surplus_price = st.number_input("余剰売電単価 (円/kWh)", min_value=0.0, step=0.5)
             with ct_col4:
-                demand_reduction = st.number_input("削減デマンド (kW)", min_value=0.0, step=1.0)
+                demand_reduction = st.number_input(
+                    "削減デマンド (kW)", min_value=0.0, step=1.0, value=_auto_demand_cut,
+                    help="iPals CSVアップロード時は自動算出されます",
+                )
 
         # ----- Current Electricity Cost (contract master based) -----
         st.markdown("**現在の電気料金**")
@@ -941,11 +948,16 @@ with tab2:
                         with _ec3:
                             st.metric("その他季単価", f"¥{_sel['other'] or 0:.2f}/kWh")
 
-                        _ep1, _ep2 = st.columns(2)
+                        st.session_state["_basic_rate_kw"] = float(_sel["basic"])
+
+                        _ep1, _ep2, _ep3 = st.columns([2, 2, 1])
                         with _ep1:
                             _contract_kw = st.number_input("契約電力 (kW)", min_value=0.0, step=1.0, key="contract_kw")
                         with _ep2:
                             _annual_kwh = st.number_input("年間使用電力量 (kWh)", min_value=0, step=1000, key="annual_kwh")
+                        with _ep3:
+                            st.number_input("力率 (%)", min_value=50, max_value=100, value=85, step=5, key="power_factor_pct",
+                                            help="一般的な高圧受電は85%です")
 
                         # Calculate annual cost
                         _basic_annual = float(_sel["basic"]) * _contract_kw * 12
@@ -1220,12 +1232,15 @@ with tab2:
             _total_surplus = 0.0
             _total_self_consume = 0.0
             _monthly_gen = [0.0] * 12
+            _hourly_rows = []  # raw hourly data for demand calc / charts
             _row_count = 0
             for _row in _reader:
                 if len(_row) < 8:
                     continue
                 try:
                     _month = int(_row[0])
+                    _day = int(_row[1])
+                    _hour = int(_row[2])
                     _gen = float(_row[3]) if _row[3] and _row[3] != "-" else 0.0
                     _demand = float(_row[4]) if _row[4] and _row[4] != "-" else 0.0
                     _surplus = float(_row[6]) if _row[6] and _row[6] != "-" else 0.0
@@ -1238,6 +1253,11 @@ with tab2:
                 _total_self_consume += _self_c
                 if 1 <= _month <= 12:
                     _monthly_gen[_month - 1] += _gen
+                _hourly_rows.append({
+                    "month": _month, "day": _day, "hour": _hour,
+                    "demand_kw": _demand, "gen_kw": _gen,
+                    "self_consumption_kw": _self_c, "surplus_kw": _surplus,
+                })
                 _row_count += 1
 
             if _row_count > 0:
@@ -1255,6 +1275,19 @@ with tab2:
                 with _ic4:
                     st.metric("余剰電力量", f"{_total_surplus:,.0f} kWh")
 
+                # Peak demand detection
+                _peak_before = max((r["demand_kw"] for r in _hourly_rows), default=0)
+                _peak_after = max((r["demand_kw"] - r["self_consumption_kw"] for r in _hourly_rows), default=0)
+                _demand_cut = _peak_before - _peak_after
+
+                _dc1, _dc2, _dc3 = st.columns(3)
+                with _dc1:
+                    st.metric("ピークデマンド（導入前）", f"{_peak_before:,.0f} kW")
+                with _dc2:
+                    st.metric("ピークデマンド（導入後）", f"{_peak_after:,.0f} kW")
+                with _dc3:
+                    st.metric("▲デマンド削減", f"{_demand_cut:,.0f} kW")
+
                 # Store in session state for slides
                 st.session_state["ipals_data"] = {
                     "annual_gen_kwh": round(_total_gen),
@@ -1264,6 +1297,10 @@ with tab2:
                     "surplus_kwh": round(_total_surplus),
                     "co2_annual_t": round(_co2_t, 1),
                     "monthly_gen_kwh": [round(m) for m in _monthly_gen],
+                    "hourly_rows": _hourly_rows,
+                    "peak_demand_before_kw": round(_peak_before, 1),
+                    "peak_demand_after_kw": round(_peak_after, 1),
+                    "demand_cut_kw": round(_demand_cut, 1),
                 }
             else:
                 st.error("CSVのパースに失敗しました。iPals出力形式を確認してください。")
@@ -1473,6 +1510,9 @@ with tab2:
         "elec_contract": st.session_state.get("elec_contract", ""),
         "contract_kw": st.session_state.get("contract_kw", 0),
         "annual_kwh": st.session_state.get("annual_kwh", 0),
+        # Demand cut data
+        "basic_rate_kw": st.session_state.get("_basic_rate_kw", 0),
+        "power_factor_pct": st.session_state.get("power_factor_pct", 85),
         # PPA calc results (if auto-calculated)
         "annual_lease_payment": st.session_state.get("ppa_calc_result", {}).get("annual_lease_payment", 0),
         "ppa_effective_rate_pct": st.session_state.get("ppa_calc_result", {}).get("effective_rate_pct", 0.0),
@@ -1498,6 +1538,10 @@ with tab2:
             "surplus_kwh": _ipals.get("surplus_kwh"),
             "co2_annual_t": _ipals.get("co2_annual_t"),
             "monthly_gen_kwh": _ipals.get("monthly_gen_kwh"),
+            "hourly_rows": _ipals.get("hourly_rows"),
+            "peak_demand_before_kw": _ipals.get("peak_demand_before_kw"),
+            "peak_demand_after_kw": _ipals.get("peak_demand_after_kw"),
+            "demand_cut_kw": _ipals.get("demand_cut_kw"),
         })
 
     # Compute annual_saving for PP7/PP8/new_summary
