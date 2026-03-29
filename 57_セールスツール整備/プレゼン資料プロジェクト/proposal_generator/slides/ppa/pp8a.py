@@ -102,6 +102,7 @@ def generate(slide, data: dict, logo_path: Path = None) -> None:
 
     capacity = data.get("system_capacity_kw", 0)
     selling_price = data.get("selling_price", 0)
+    proposal_type = data.get("proposal_type", "ppa")
     depreciation_years = years
 
     add_section_header(slide, MARGIN, table_y, SLIDE_W - MARGIN * 2,
@@ -110,9 +111,10 @@ def generate(slide, data: dict, logo_path: Path = None) -> None:
 
     # Info line
     depr_limit = int(selling_price / depreciation_years) if depreciation_years > 0 else 0
+    equip_label = "設備価額（PPA事業者負担）" if proposal_type == "ppa" else "設備価額"
     info = (
         f"設備容量: {capacity:.2f}kW　"
-        f"設備価額: {fmt_yen(selling_price)}　"
+        f"{equip_label}: {fmt_yen(selling_price)}　"
         f"償却年数: {depreciation_years}年　"
         f"償却限度額: {fmt_yen(depr_limit)}"
     )
@@ -136,5 +138,12 @@ def generate(slide, data: dict, logo_path: Path = None) -> None:
         col_widths = [col_w_each] * len(header)
         add_table(slide, MARGIN, table_y, table_w, [header, values],
                   col_widths, font_size_pt=7)
+        table_y += Inches(0.45)
+
+    # PPA note below penalty table
+    if proposal_type == "ppa":
+        add_textbox(slide, MARGIN, table_y, SLIDE_W - MARGIN * 2, Inches(0.18),
+                    "※ 上記は設備の残存簿価に基づく概算違約金です",
+                    font_name=FONT_BODY, font_size_pt=7, font_color=C_SUB)
 
     add_footer(slide)

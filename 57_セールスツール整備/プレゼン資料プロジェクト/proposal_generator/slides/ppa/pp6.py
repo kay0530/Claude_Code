@@ -9,13 +9,16 @@ Layout: A4 landscape
 """
 from __future__ import annotations
 from pathlib import Path
+from pptx.chart.data import CategoryChartData
+from pptx.dml.color import RGBColor
+from pptx.enum.chart import XL_CHART_TYPE
 from pptx.enum.text import PP_ALIGN
-from pptx.util import Inches
+from pptx.util import Inches, Pt
 from proposal_generator.utils import (
     CONTENT_TOP, C_DARK, C_LIGHT_ORANGE, C_ORANGE, C_SUB, C_WHITE,
     C_LIGHT_GRAY, FONT_BLACK, FONT_BODY, HEADER_H, MARGIN, SLIDE_H, SLIDE_W,
     add_footer, add_header_bar, add_rect, add_rounded_rect, add_textbox,
-    add_section_header, add_table, fmt_num,
+    add_section_header, fmt_num,
 )
 
 TITLE = "発電シミュレーション"
@@ -77,36 +80,56 @@ def generate(slide, data: dict, logo_path: Path = None) -> None:
 
     y += card_h + Inches(0.2)
 
-    # ---- Monthly generation table ----
+    # ---- Monthly generation bar chart ----
     add_section_header(slide, MARGIN, y, SLIDE_W - MARGIN * 2,
                        "月別発電量（推定）", font_size_pt=12)
     y += Inches(0.35)
 
     # Build monthly values
-    monthly_kwh = []
-    if annual_gen:
+    monthly_kwh: list[float] = []
+    raw_monthly = data.get("monthly_gen_kwh")
+    if raw_monthly and len(raw_monthly) == 12:
+        monthly_kwh = [float(v) for v in raw_monthly]
+    elif annual_gen:
         for pct in MONTHLY_PCT:
-            monthly_kwh.append(int(float(annual_gen) * pct / 100))
-    else:
-        monthly_kwh = ["—"] * 12
+            monthly_kwh.append(float(annual_gen) * pct / 100)
 
-    # Table: 2 rows of 6 months each for readability
-    row1_header = MONTH_NAMES[:6]
-    row1_values = [fmt_num(v, 0) if isinstance(v, (int, float)) else v for v in monthly_kwh[:6]]
-    row2_header = MONTH_NAMES[6:]
-    row2_values = [fmt_num(v, 0) if isinstance(v, (int, float)) else v for v in monthly_kwh[6:]]
+    chart_w = SLIDE_W - MARGIN * 2
+    chart_h = Inches(2.8)
 
-    table_w = SLIDE_W - MARGIN * 2
-    col_w = table_w / 6
-    col_widths = [col_w] * 6
+    if monthly_kwh:
+        chart_data = CategoryChartData()
+        chart_data.categories = MONTH_NAMES
+        chart_data.add_series("月間発電量 (kWh)", monthly_kwh)
 
-    rows_top = [row1_header, row1_values]
-    add_table(slide, MARGIN, y, table_w, rows_top, col_widths, font_size_pt=9)
-    y += Inches(0.28) * 2 + Inches(0.08)
+        chart_frame = slide.shapes.add_chart(
+            XL_CHART_TYPE.COLUMN_CLUSTERED,
+            MARGIN, y, chart_w, chart_h,
+            chart_data,
+        )
+        chart = chart_frame.chart
+        chart.has_legend = False
 
-    rows_bottom = [row2_header, row2_values]
-    add_table(slide, MARGIN, y, table_w, rows_bottom, col_widths, font_size_pt=9)
-    y += Inches(0.28) * 2 + Inches(0.2)
+        # Style bars with C_ORANGE
+        series = chart.series[0]
+        series.format.fill.solid()
+        series.format.fill.fore_color.rgb = RGBColor(0xE8, 0x49, 0x0F)
+
+        # Value axis: light gray gridlines, no title
+        value_axis = chart.value_axis
+        value_axis.has_title = False
+        value_axis.major_gridlines.format.line.color.rgb = RGBColor(0xD0, 0xD0, 0xD0)
+        value_axis.tick_labels.font.size = Pt(7)
+
+        # Category axis: 7pt font
+        category_axis = chart.category_axis
+        category_axis.has_major_gridlines = False
+        category_axis.tick_labels.font.size = Pt(7)
+
+        # Minimal chart style
+        chart.chart_style = 2
+
+    y += chart_h + Inches(0.15)
 
     # ---- Surplus electricity ----
     if surplus_kwh:
