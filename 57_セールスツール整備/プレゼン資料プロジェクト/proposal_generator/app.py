@@ -1061,7 +1061,9 @@ with tab2:
                 help="見積書から取得" if _q_raw > 0 else f"kW原価 × パネル合計kW",
             )
             st.metric("粗利", f"¥{gross_profit:,.0f}")
-            st.metric("販売価格", f"¥{selling_price:,.0f}")
+            _kw_sell = int(selling_price / total_panel_kw) if selling_price and total_panel_kw > 0 else 0
+            st.metric("販売価格", f"¥{selling_price:,.0f}",
+                      delta=f"¥{_kw_sell:,}/kW" if _kw_sell else None, delta_color="off")
             if commission_amount > 0:
                 st.metric(
                     f"販売手数料（{sales_commission_pct:.1f}%）",
@@ -1502,16 +1504,31 @@ with tab2:
     _cd = st.session_state["customer_data"]
     _annual_cost = _cd.get("annual_cost")
     _self_kwh = _cd.get("self_consumption_kwh")
-    _ppa_price = _cd.get("ppa_unit_price")
-    if _annual_cost and _self_kwh and _ppa_price:
-        _ppa_annual_cost = float(_self_kwh) * float(_ppa_price)
-        _annual_saving = float(_annual_cost) - _ppa_annual_cost
-        _cd["annual_saving"] = _annual_saving
-        _cd["annual_cost_saving"] = _annual_saving  # alias for new_summary
-        # Simple payback period (investment recovery)
-        _sell_price = _cd.get("selling_price", 0)
-        if _annual_saving > 0 and _sell_price > 0:
-            _cd["investment_recovery_yr"] = round(float(_sell_price) / _annual_saving, 1)
+    _ppa_price = _cd.get("ppa_unit_price", 0) or 0
+    _annual_kwh = _cd.get("annual_kwh", 0) or 0
+    _is_epc_calc = _cd.get("proposal_type") == "epc"
+
+    if _annual_cost and _self_kwh:
+        if _is_epc_calc:
+            # EPC: annual saving = self-consumption × average electricity rate
+            _avg_rate = float(_annual_cost) / float(_annual_kwh) if _annual_kwh > 0 else 0
+            _annual_saving = float(_self_kwh) * _avg_rate
+        elif float(_ppa_price) > 0:
+            # PPA: annual saving = current cost for self-consumed portion - PPA cost
+            _avg_rate = float(_annual_cost) / float(_annual_kwh) if _annual_kwh > 0 else 0
+            _current_cost = float(_self_kwh) * _avg_rate
+            _ppa_annual_cost = float(_self_kwh) * float(_ppa_price)
+            _annual_saving = _current_cost - _ppa_annual_cost
+        else:
+            _annual_saving = 0
+
+        if _annual_saving > 0:
+            _cd["annual_saving"] = _annual_saving
+            _cd["annual_cost_saving"] = _annual_saving
+            # Simple payback period
+            _sell_price = _cd.get("selling_price", 0)
+            if _sell_price > 0:
+                _cd["investment_recovery_yr"] = round(float(_sell_price) / _annual_saving, 1)
 
 # =========================================================================
 # Tab 3: Slide Composition
@@ -1613,7 +1630,10 @@ with tab4:
     with sum_col4:
         if _is_epc_tab4:
             sp = customer_data.get("selling_price", 0)
-            st.metric("販売価格", f"¥{sp:,.0f}" if sp else "—")
+            cap = customer_data.get("system_capacity_kw", 0)
+            kw_price = int(sp / cap) if sp and cap else 0
+            st.metric("販売価格", f"¥{sp:,.0f}" if sp else "—",
+                      delta=f"¥{kw_price:,}/kW" if kw_price else None, delta_color="off")
         else:
             st.metric("PPA単価", f"{customer_data.get('ppa_unit_price', 0):.1f} 円/kWh")
     with sum_col5:
@@ -1627,7 +1647,8 @@ with tab4:
         st.write(f"- 取引先名: {customer_data.get('company_name') or '（未選択）'}")
         st.write(f"- 商談: {customer_data.get('office_name') or '—'}")
         st.write(f"- 所在地: {customer_data.get('address') or '—'}")
-        st.write(f"- 契約期間: {customer_data.get('contract_years', 20)} 年")
+        if not _is_epc_tab4:
+            st.write(f"- 契約期間: {customer_data.get('contract_years', 20)} 年")
 
     with col_b:
         # Equipment summary
