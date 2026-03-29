@@ -294,6 +294,44 @@ def load_electricity_master() -> list[dict]:
         return []
 
 
+@st.cache_data(ttl=3600)
+def load_co2_factors() -> list[dict]:
+    """Load CO2 emission factors from Excel CO2計算 sheet.
+
+    Returns list of dicts with keys: name, real, adj.
+    - name: 電気事業者名
+    - real: 実排出係数 [tCO2/kWh] (col E)
+    - adj:  調整後排出係数 [tCO2/kWh] (col J)
+    """
+    try:
+        import openpyxl
+        wb = openpyxl.load_workbook(EXCEL_PATH, data_only=True, read_only=True)
+        co2_sheet = None
+        for sn in wb.sheetnames:
+            if "CO2" in sn and len(sn) < 10:
+                co2_sheet = sn
+                break
+        if not co2_sheet:
+            wb.close()
+            return []
+        ws = wb[co2_sheet]
+        records = []
+        for row in ws.iter_rows(min_row=7, max_col=13, values_only=False):
+            name = row[0].value  # col A
+            real_factor = row[4].value  # col E
+            adj_factor = row[9].value   # col J
+            if name and isinstance(real_factor, (int, float)):
+                records.append({
+                    "name": str(name).strip(),
+                    "real": real_factor,
+                    "adj": adj_factor if isinstance(adj_factor, (int, float)) else real_factor,
+                })
+        wb.close()
+        return records
+    except Exception:
+        return []
+
+
 def load_equipment_master() -> tuple[dict[str, list[dict]], str]:
     """Load active equipment records from Salesforce, grouped by MachineType__c.
 
@@ -926,6 +964,8 @@ with tab2:
         # ----- Current Electricity Cost (contract master based) -----
         st.markdown("**現在の電気料金**")
         _elec_master = load_electricity_master()
+        _co2_factors = load_co2_factors()
+        _co2_factor_val = 0.000453  # default: national average
         if _elec_master:
             _companies = sorted(set(r["company"] for r in _elec_master))
             _companies_with_manual = _companies + ["その他（新電力・手入力）"]
@@ -939,16 +979,29 @@ with tab2:
                 if _elec_contract:
                     _sel = next((r for r in _contracts if r["contract"] == _elec_contract), None)
                     if _sel:
-                        _ec1, _ec2, _ec3 = st.columns(3)
-                        with _ec1:
-                            st.metric("基本料金", f"¥{_sel['basic']:,.1f}/kW")
-                        with _ec2:
-                            _avg_rate = _sel["summer"] or _sel["other"] or 0
-                            st.metric("夏季単価", f"¥{_sel['summer'] or 0:.2f}/kWh")
-                        with _ec3:
-                            st.metric("その他季単価", f"¥{_sel['other'] or 0:.2f}/kWh")
+                        # Editable fee inputs with master defaults
+                        _master_basic = float(_sel["basic"])
+                        _master_summer = float(_sel["summer"] or _sel["other"] or 0)
+                        _master_other = float(_sel["other"] or _sel["summer"] or 0)
 
-                        st.session_state["_basic_rate_kw"] = float(_sel["basic"])
+                        _fc1, _fc2, _fc3 = st.columns(3)
+                        with _fc1:
+                            _basic_rate = st.number_input(
+                                "基本料金単価 (円/kW)", min_value=0.0, step=10.0,
+                                value=_master_basic, key="elec_basic_rate",
+                                help=f"マスタ値: ¥{_master_basic:,.1f}/kW")
+                        with _fc2:
+                            _summer_rate = st.number_input(
+                                "夏季従量単価 (円/kWh)", min_value=0.0, step=0.5,
+                                value=_master_summer, key="elec_summer_rate",
+                                help=f"マスタ値: ¥{_master_summer:.2f}/kWh")
+                        with _fc3:
+                            _other_rate = st.number_input(
+                                "その他季従量単価 (円/kWh)", min_value=0.0, step=0.5,
+                                value=_master_other, key="elec_other_rate",
+                                help=f"マスタ値: ¥{_master_other:.2f}/kWh")
+
+                        st.session_state["_basic_rate_kw"] = _basic_rate
 
                         _ep1, _ep2, _ep3 = st.columns([2, 2, 1])
                         with _ep1:
@@ -960,10 +1013,7 @@ with tab2:
                                             help="一般的な高圧受電は85%です")
 
                         # Calculate annual cost
-                        _basic_annual = float(_sel["basic"]) * _contract_kw * 12
-                        # Weighted average: summer 4 months, other 8 months
-                        _summer_rate = float(_sel["summer"] or _sel["other"] or 0)
-                        _other_rate = float(_sel["other"] or _sel["summer"] or 0)
+                        _basic_annual = _basic_rate * _contract_kw * 12
                         _avg_unit = (_summer_rate * 4 + _other_rate * 8) / 12
                         _usage_annual = _avg_unit * _annual_kwh
                         annual_elec_cost = int(_basic_annual + _usage_annual)
@@ -972,6 +1022,12 @@ with tab2:
                             f"（基本: ¥{_basic_annual:,.0f} + 従量: ¥{_usage_annual:,.0f}　"
                             f"加重平均単価: ¥{_avg_unit:.2f}/kWh）"
                         )
+
+                        # CO2 emission factor: auto-match from CO2計算 sheet
+                        _co2_match = next((f for f in _co2_factors if f["name"] == _elec_company), None)
+                        if _co2_match:
+                            _co2_factor_val = _co2_match["adj"]
+                            st.caption(f"CO₂排出係数（調整後）: **{_co2_factor_val:.6f}** tCO₂/kWh — {_elec_company}")
                     else:
                         annual_elec_cost = 0
                 else:
@@ -979,17 +1035,43 @@ with tab2:
             elif _elec_company == "その他（新電力・手入力）":
                 _mc1, _mc2, _mc3 = st.columns(3)
                 with _mc1:
-                    _manual_basic = st.number_input("基本料金 (円/kW)", min_value=0.0, step=100.0, key="manual_basic")
+                    _manual_basic = st.number_input("基本料金単価 (円/kW)", min_value=0.0, step=100.0, key="manual_basic")
                 with _mc2:
                     _manual_rate = st.number_input("従量単価 (円/kWh)", min_value=0.0, step=0.5, key="manual_rate")
                 with _mc3:
                     _manual_kw = st.number_input("契約電力 (kW)", min_value=0.0, step=1.0, key="manual_contract_kw")
-                _manual_kwh = st.number_input("年間使用電力量 (kWh)", min_value=0, step=1000, key="manual_annual_kwh")
+
+                _mr1, _mr2 = st.columns(2)
+                with _mr1:
+                    _manual_kwh = st.number_input("年間使用電力量 (kWh)", min_value=0, step=1000, key="manual_annual_kwh")
+                with _mr2:
+                    st.number_input("力率 (%)", min_value=50, max_value=100, value=85, step=5, key="power_factor_pct",
+                                    help="一般的な高圧受電は85%です")
+
+                st.session_state["_basic_rate_kw"] = _manual_basic
+
                 _basic_annual = _manual_basic * _manual_kw * 12
                 _usage_annual = _manual_rate * _manual_kwh
                 annual_elec_cost = int(_basic_annual + _usage_annual)
                 if annual_elec_cost > 0:
-                    st.caption(f"年間電気代（概算）: **¥{annual_elec_cost:,.0f}**")
+                    st.caption(
+                        f"年間電気代（概算）: **¥{annual_elec_cost:,.0f}**　"
+                        f"（基本: ¥{_basic_annual:,.0f} + 従量: ¥{_usage_annual:,.0f}）"
+                    )
+
+                # CO2 emission factor: select from CO2計算 sheet
+                if _co2_factors:
+                    _co2_names = [""] + [f["name"] for f in _co2_factors]
+                    _co2_selected = st.selectbox(
+                        "CO₂排出係数 — 電気事業者", _co2_names,
+                        key="co2_company",
+                        help="CO2計算シートから事業者を選択（調整後排出係数を使用）",
+                    )
+                    if _co2_selected:
+                        _co2_match = next((f for f in _co2_factors if f["name"] == _co2_selected), None)
+                        if _co2_match:
+                            _co2_factor_val = _co2_match["adj"]
+                            st.caption(f"調整後排出係数: **{_co2_factor_val:.6f}** tCO₂/kWh")
             else:
                 annual_elec_cost = 0
         else:
@@ -998,6 +1080,9 @@ with tab2:
                 "現在の年間電気代 (円)", min_value=0, step=100000, value=0,
                 help="PP7・PP8の電気代削減額試算に使用します",
             )
+
+        # Store CO2 emission factor in session state
+        st.session_state["_co2_emission_factor"] = _co2_factor_val
 
     # ----- Pricing -----
     with st.expander("💰 価格情報", expanded=False):
@@ -1262,7 +1347,8 @@ with tab2:
 
             if _row_count > 0:
                 _self_rate = (_total_self_consume / _total_gen * 100) if _total_gen > 0 else 0.0
-                _co2_t = _total_gen * 0.000453  # t-CO2/kWh (2023 grid emission factor)
+                _co2_ef = st.session_state.get("_co2_emission_factor", 0.000453)
+                _co2_t = _total_gen * _co2_ef
 
                 st.success(f"読み込み完了: {_row_count:,}行（{_row_count // 24}日分）")
                 _ic1, _ic2, _ic3, _ic4 = st.columns(4)
@@ -1513,6 +1599,8 @@ with tab2:
         # Demand cut data
         "basic_rate_kw": st.session_state.get("_basic_rate_kw", 0),
         "power_factor_pct": st.session_state.get("power_factor_pct", 85),
+        # CO2 emission factor
+        "co2_emission_factor": st.session_state.get("_co2_emission_factor", 0.000453),
         # PPA calc results (if auto-calculated)
         "annual_lease_payment": st.session_state.get("ppa_calc_result", {}).get("annual_lease_payment", 0),
         "ppa_effective_rate_pct": st.session_state.get("ppa_calc_result", {}).get("effective_rate_pct", 0.0),
