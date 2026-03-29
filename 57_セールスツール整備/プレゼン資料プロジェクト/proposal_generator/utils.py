@@ -222,13 +222,58 @@ def add_line(slide, x1, y1, x2, y2, color: RGBColor, width_pt: float = 1.0):
 # Composite components
 # ---------------------------------------------------------------------------
 
+def _add_gradient_rect(slide, x, y, w, h, color_top: RGBColor, color_bottom: RGBColor, angle: int = 90):
+    """Add a rectangle with linear gradient fill (top→bottom by default)."""
+    from lxml import etree
+
+    shape = slide.shapes.add_shape(
+        1,  # MSO_SHAPE.RECTANGLE
+        int(x), int(y), int(w), int(h),
+    )
+    shape.line.fill.background()  # no border
+
+    # Access spPr and insert gradFill right after prstGeom (before a:ln)
+    sp_pr = shape._element.find(qn("p:spPr"))
+    if sp_pr is None:
+        sp_pr = shape._element.find(qn("a:spPr"))
+    if sp_pr is None:
+        sp_pr = etree.SubElement(shape._element, qn("p:spPr"))
+
+    # Remove existing fills
+    for tag in ("a:solidFill", "a:noFill", "a:gradFill"):
+        for child in list(sp_pr.findall(qn(tag))):
+            sp_pr.remove(child)
+
+    # Build gradFill element
+    gf = etree.Element(qn("a:gradFill"))
+    gsl = etree.SubElement(gf, qn("a:gsLst"))
+    gs1 = etree.SubElement(gsl, qn("a:gs"), attrib={"pos": "0"})
+    etree.SubElement(gs1, qn("a:srgbClr"), attrib={"val": str(color_top)})
+    gs2 = etree.SubElement(gsl, qn("a:gs"), attrib={"pos": "100000"})
+    etree.SubElement(gs2, qn("a:srgbClr"), attrib={"val": str(color_bottom)})
+    etree.SubElement(gf, qn("a:lin"), attrib={"ang": str(angle * 60000), "scaled": "1"})
+
+    # Insert gradFill after prstGeom (correct OOXML element order)
+    prst_geom = sp_pr.find(qn("a:prstGeom"))
+    if prst_geom is not None:
+        idx = list(sp_pr).index(prst_geom) + 1
+        sp_pr.insert(idx, gf)
+    else:
+        sp_pr.insert(0, gf)
+
+    # Remove theme style override (p:style) which can override our fill
+    for style_el in list(shape._element.findall(qn("p:style"))):
+        shape._element.remove(style_el)
+
+
 def add_header_bar(slide, title: str, logo_path: Optional[Path] = None):
     """
-    Orange header bar with white title text and optional logo.
-    Matches the template's header style.
+    Orange gradient header bar (dark at top → light at bottom) with white title.
+    Single shape with gradient fill.
     """
-    # Orange background bar
-    add_rect(slide, 0, 0, SLIDE_W, HEADER_H, C_ORANGE)
+    # Gradient: #E8490F (top) → #F0935A (bottom) - stays warm enough for white text
+    _add_gradient_rect(slide, 0, 0, SLIDE_W, HEADER_H,
+                       C_ORANGE, RGBColor(0xF0, 0x93, 0x5A), angle=90)
 
     # Logo (left side)
     if logo_path and logo_path.exists():
