@@ -201,6 +201,65 @@ def _parse_quote_excel(uploaded_file) -> dict:
     return result
 
 
+def _apply_quote_to_session(q: dict) -> None:
+    """Write parsed quote data into session_state so form fields pick it up."""
+    import re as _re_mod
+
+    # Panel data → manual input mode
+    panels = q.get("panels", [])
+    if panels:
+        st.session_state["panel_types"] = len(panels)
+        st.session_state["panel_input_mode_0"] = "手動入力"
+        p = panels[0]
+        # Extract watt from output string like "460W"
+        w_match = _re_mod.search(r"(\d+)", str(p.get("output", "")))
+        watt = float(w_match.group(1)) if w_match else 0
+        maker_model = f"{p['maker']} {p['model']}".strip()
+        st.session_state["panel_model_0"] = maker_model
+        st.session_state["panel_output_0"] = watt
+        st.session_state["panel_count_0"] = p["count"]
+        if len(panels) > 1:
+            st.session_state["panel_input_mode_1"] = "手動入力"
+            p2 = panels[1]
+            w2 = _re_mod.search(r"(\d+)", str(p2.get("output", "")))
+            st.session_state["panel_model_1"] = f"{p2['maker']} {p2['model']}".strip()
+            st.session_state["panel_output_1"] = float(w2.group(1)) if w2 else 0
+            st.session_state["panel_count_1"] = p2["count"]
+
+    # PCS data
+    pcs_list = q.get("pcs_list", [])
+    if pcs_list:
+        st.session_state["pcs_types"] = len(pcs_list)
+        st.session_state["pcs_input_mode_0"] = "手動入力"
+        pc = pcs_list[0]
+        kw_match = _re_mod.search(r"(\d+)", str(pc.get("output", "")))
+        kw = float(kw_match.group(1)) if kw_match else 0
+        st.session_state["pcs_model_0"] = f"{pc['maker']} {pc['model']}".strip()
+        st.session_state["pcs_output_0"] = kw
+        st.session_state["pcs_count_0"] = pc["count"]
+
+    # Battery data
+    bats = q.get("batteries", [])
+    if bats:
+        st.session_state["bat_types"] = len(bats)
+        st.session_state["bat_input_mode_0"] = "手動入力"
+        b = bats[0]
+        st.session_state["bat_model_0"] = f"{b['maker']} {b['model']}".strip()
+        st.session_state["bat_output_0"] = b["kwh"]
+        st.session_state["bat_count_0"] = 1
+
+    # Pricing data
+    kw_cost = q.get("kw_unit_cost", 0)
+    if kw_cost:
+        st.session_state["kw_unit_cost"] = int(round(kw_cost))
+    margin = q.get("gross_margin_pct", 0)
+    if margin:
+        st.session_state["gross_margin_pct"] = round(margin, 1)
+    commission = q.get("commission_rate", 0)
+    if commission:
+        st.session_state["sales_commission_pct"] = round(commission, 1)
+
+
 def load_electricity_master() -> list[dict]:
     """Load contract electricity rates from Excel 契約電力マスタ sheet.
 
@@ -754,6 +813,30 @@ with tab2:
         horizontal=True,
     )
     is_epc = proposal_type.startswith("EPC")
+
+    # ----- Quote Import (top of Tab 2) -----
+    with st.expander("📄 見積書から一括読み込み", expanded=False):
+        _quote_file = st.file_uploader(
+            "見積書Excelをアップロード（.xlsm / .xlsx）",
+            type=["xlsm", "xlsx", "xls"],
+            key="quote_file",
+            help="当社標準テンプレートの見積書から機器・価格情報を自動入力",
+        )
+        if _quote_file is not None:
+            try:
+                _q = _parse_quote_excel(_quote_file)
+                if _q:
+                    st.session_state["quote_data"] = _q
+                    st.success(f"読み込み完了: パネル{_q.get('panel_count', 0):,}枚 / PCS{_q.get('pcs_count', 0):,}台")
+                    with st.expander("読み込み内容を確認", expanded=False):
+                        st.json(_q)
+                    if st.button("📥 この内容をフォームに反映する", key="apply_quote", type="primary"):
+                        _apply_quote_to_session(_q)
+                        st.success("反映しました。各項目を確認してください。")
+                        st.rerun()
+            except Exception as e:
+                st.error(f"読み込みエラー: {e}")
+
     st.divider()
 
     # ----- Panel -----
@@ -895,26 +978,6 @@ with tab2:
 
     # ----- Pricing -----
     with st.expander("💰 価格情報", expanded=False):
-        with st.expander("📄 見積書から読み込み", expanded=False):
-            _quote_file = st.file_uploader(
-                "見積書Excelをアップロード（.xlsm / .xlsx）",
-                type=["xlsm", "xlsx", "xls"],
-                key="quote_file",
-                help="当社標準テンプレートの見積書を読み込み、機器・価格情報を自動入力します",
-            )
-            if _quote_file is not None:
-                try:
-                    _q = _parse_quote_excel(_quote_file)
-                    if _q:
-                        st.session_state["quote_data"] = _q
-                        st.success(f"見積書を読み込みました: パネル{_q.get('panel_count', 0):,}枚 / PCS{_q.get('pcs_count', 0):,}台")
-                        if st.button("この内容を反映する", key="apply_quote"):
-                            st.session_state["quote_applied"] = True
-                            st.rerun()
-                        with st.expander("読み込み内容を確認", expanded=False):
-                            st.json(_q)
-                except Exception as e:
-                    st.error(f"見積書の読み込みエラー: {e}")
 
         price_col1, price_col2 = st.columns(2)
         with price_col1:
