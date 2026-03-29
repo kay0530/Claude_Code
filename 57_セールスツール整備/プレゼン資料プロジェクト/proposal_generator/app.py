@@ -165,8 +165,16 @@ def _parse_quote_excel(uploaded_file) -> dict:
         result["pcs_count"] = sum(p["count"] for p in pcs_list)
 
         # Battery (row 89 = industrial, row 86 = residential)
+        # Only include if J column (quantity) has a value > 0
         batteries = []
         for r in [89, 86]:
+            qty = ws2.cell(r, 10).value  # J = quantity
+            try:
+                qty_i = int(qty) if qty is not None else 0
+            except (ValueError, TypeError):
+                qty_i = 0
+            if qty_i <= 0:
+                continue
             cap = ws2.cell(r, 7).value  # G = capacity (kWh)
             try:
                 cap_f = float(cap) if cap is not None else 0
@@ -246,11 +254,13 @@ def _apply_quote_to_session(q: dict) -> None:
             st.session_state[f"bat_manual_output_{i}"] = b["kwh"]
             st.session_state[f"bat_manual_count_{i}"] = 1
 
-    # Pricing data — remove default value conflict by not using widget keys
-    # Instead, store in separate keys and read them as defaults in the widget
+    # Pricing data
     st.session_state["_quote_kw_unit_cost"] = int(round(q.get("kw_unit_cost", 0)))
     st.session_state["_quote_gross_margin_pct"] = round(q.get("gross_margin_pct", 0), 1)
     st.session_state["_quote_commission_rate"] = round(q.get("commission_rate", 0), 1)
+    # Store exact selling price from quote to avoid rounding differences
+    st.session_state["_quote_selling_price"] = int(q.get("selling_price", 0))
+    st.session_state["_quote_raw_cost"] = int(q.get("raw_cost", 0))
 
 
 def load_electricity_master() -> list[dict]:
@@ -1018,16 +1028,26 @@ with tab2:
 
         with price_col2:
             st.markdown("**自動算出**")
-            raw_cost = kw_unit_cost * total_panel_kw
+            # If quote data has exact prices, use those
+            _q_sell = st.session_state.get("_quote_selling_price", 0)
+            _q_raw = st.session_state.get("_quote_raw_cost", 0)
 
-            margin_rate = gross_margin_pct / 100.0
-            if margin_rate > 0 and margin_rate < 1 and raw_cost > 0:
-                gross_profit = raw_cost * margin_rate / (1 - margin_rate)
-                selling_price_raw = raw_cost + gross_profit
-                selling_price = _round_100(selling_price_raw)
+            if _q_raw > 0 and _q_sell > 0:
+                # Use exact values from quote
+                raw_cost = _q_raw
+                selling_price = _q_sell
+                gross_profit = selling_price - raw_cost
             else:
-                gross_profit = 0.0
-                selling_price = 0
+                # Calculate from kW unit cost and margin
+                raw_cost = kw_unit_cost * total_panel_kw
+                margin_rate = gross_margin_pct / 100.0
+                if margin_rate > 0 and margin_rate < 1 and raw_cost > 0:
+                    gross_profit = raw_cost * margin_rate / (1 - margin_rate)
+                    selling_price_raw = raw_cost + gross_profit
+                    selling_price = _round_100(selling_price_raw)
+                else:
+                    gross_profit = 0.0
+                    selling_price = 0
 
             commission_amount = (
                 selling_price * sales_commission_pct / 100.0
@@ -1038,10 +1058,10 @@ with tab2:
             st.metric(
                 "原価",
                 f"¥{raw_cost:,.0f}",
-                help=f"kW原価 × パネル合計kW = {kw_unit_cost:,.0f} × {total_panel_kw:.2f}",
+                help="見積書から取得" if _q_raw > 0 else f"kW原価 × パネル合計kW",
             )
             st.metric("粗利", f"¥{gross_profit:,.0f}")
-            st.metric("販売価格（100円単位）", f"¥{selling_price:,.0f}")
+            st.metric("販売価格", f"¥{selling_price:,.0f}")
             if commission_amount > 0:
                 st.metric(
                     f"販売手数料（{sales_commission_pct:.1f}%）",
