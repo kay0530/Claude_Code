@@ -202,62 +202,55 @@ def _parse_quote_excel(uploaded_file) -> dict:
 
 
 def _apply_quote_to_session(q: dict) -> None:
-    """Write parsed quote data into session_state so form fields pick it up."""
+    """Write parsed quote data into session_state so form fields pick it up.
+
+    Key naming convention for _equipment_selector manual mode:
+      - {prefix}_input_mode_{i} = "手動入力"
+      - {prefix}_model_{i}       = model text
+      - {prefix}_manual_output_{i} = output value (W/kW/kWh)
+      - {prefix}_manual_count_{i}  = count
+    """
     import re as _re_mod
 
     # Panel data → manual input mode
     panels = q.get("panels", [])
     if panels:
         st.session_state["panel_types"] = len(panels)
-        st.session_state["panel_input_mode_0"] = "手動入力"
-        p = panels[0]
-        # Extract watt from output string like "460W"
-        w_match = _re_mod.search(r"(\d+)", str(p.get("output", "")))
-        watt = float(w_match.group(1)) if w_match else 0
-        maker_model = f"{p['maker']} {p['model']}".strip()
-        st.session_state["panel_model_0"] = maker_model
-        st.session_state["panel_output_0"] = watt
-        st.session_state["panel_count_0"] = p["count"]
-        if len(panels) > 1:
-            st.session_state["panel_input_mode_1"] = "手動入力"
-            p2 = panels[1]
-            w2 = _re_mod.search(r"(\d+)", str(p2.get("output", "")))
-            st.session_state["panel_model_1"] = f"{p2['maker']} {p2['model']}".strip()
-            st.session_state["panel_output_1"] = float(w2.group(1)) if w2 else 0
-            st.session_state["panel_count_1"] = p2["count"]
+        for i, p in enumerate(panels):
+            st.session_state[f"panel_input_mode_{i}"] = "手動入力"
+            w_match = _re_mod.search(r"(\d+)", str(p.get("output", "")))
+            watt = float(w_match.group(1)) if w_match else 0
+            st.session_state[f"panel_model_{i}"] = f"{p['maker']} {p['model']}".strip()
+            st.session_state[f"panel_manual_output_{i}"] = watt
+            st.session_state[f"panel_manual_count_{i}"] = p["count"]
 
     # PCS data
     pcs_list = q.get("pcs_list", [])
     if pcs_list:
         st.session_state["pcs_types"] = len(pcs_list)
-        st.session_state["pcs_input_mode_0"] = "手動入力"
-        pc = pcs_list[0]
-        kw_match = _re_mod.search(r"(\d+)", str(pc.get("output", "")))
-        kw = float(kw_match.group(1)) if kw_match else 0
-        st.session_state["pcs_model_0"] = f"{pc['maker']} {pc['model']}".strip()
-        st.session_state["pcs_output_0"] = kw
-        st.session_state["pcs_count_0"] = pc["count"]
+        for i, pc in enumerate(pcs_list):
+            st.session_state[f"pcs_input_mode_{i}"] = "手動入力"
+            kw_match = _re_mod.search(r"(\d+)", str(pc.get("output", "")))
+            kw = float(kw_match.group(1)) if kw_match else 0
+            st.session_state[f"pcs_model_{i}"] = f"{pc['maker']} {pc['model']}".strip()
+            st.session_state[f"pcs_manual_output_{i}"] = kw
+            st.session_state[f"pcs_manual_count_{i}"] = pc["count"]
 
     # Battery data
     bats = q.get("batteries", [])
     if bats:
         st.session_state["bat_types"] = len(bats)
-        st.session_state["bat_input_mode_0"] = "手動入力"
-        b = bats[0]
-        st.session_state["bat_model_0"] = f"{b['maker']} {b['model']}".strip()
-        st.session_state["bat_output_0"] = b["kwh"]
-        st.session_state["bat_count_0"] = 1
+        for i, b in enumerate(bats):
+            st.session_state[f"bat_input_mode_{i}"] = "手動入力"
+            st.session_state[f"bat_model_{i}"] = f"{b['maker']} {b['model']}".strip()
+            st.session_state[f"bat_manual_output_{i}"] = b["kwh"]
+            st.session_state[f"bat_manual_count_{i}"] = 1
 
-    # Pricing data
-    kw_cost = q.get("kw_unit_cost", 0)
-    if kw_cost:
-        st.session_state["kw_unit_cost"] = int(round(kw_cost))
-    margin = q.get("gross_margin_pct", 0)
-    if margin:
-        st.session_state["gross_margin_pct"] = round(margin, 1)
-    commission = q.get("commission_rate", 0)
-    if commission:
-        st.session_state["sales_commission_pct"] = round(commission, 1)
+    # Pricing data — remove default value conflict by not using widget keys
+    # Instead, store in separate keys and read them as defaults in the widget
+    st.session_state["_quote_kw_unit_cost"] = int(round(q.get("kw_unit_cost", 0)))
+    st.session_state["_quote_gross_margin_pct"] = round(q.get("gross_margin_pct", 0), 1)
+    st.session_state["_quote_commission_rate"] = round(q.get("commission_rate", 0), 1)
 
 
 def load_electricity_master() -> list[dict]:
@@ -470,10 +463,13 @@ def _equipment_selector(
                     st.metric(_col3_label, "—")
                 unit_val = auto_output
             with c4:
+                _sf_cnt_key = f"{key_prefix}_count_{i}"
+                if _sf_cnt_key not in st.session_state:
+                    st.session_state[_sf_cnt_key] = 0
                 count = st.number_input(
                     "枚数" if unit_label == "W" else "台数",
-                    min_value=0, step=1, value=0,
-                    key=f"{key_prefix}_count_{i}",
+                    min_value=0, step=1,
+                    key=_sf_cnt_key,
                 )
             with c5:
                 if unit_label == "W":
@@ -503,18 +499,23 @@ def _equipment_selector(
                     key=f"{key_prefix}_model_{i}",
                 )
             with c2:
+                _out_key = f"{key_prefix}_manual_output_{i}"
+                if _out_key not in st.session_state:
+                    st.session_state[_out_key] = 400.0 if unit_label == "W" else 0.0
                 unit_val = st.number_input(
                     f"1枚あたり出力 ({unit_label})" if unit_label == "W"
                     else f"1台あたり{'容量' if unit_label == 'kWh' else '出力'} ({unit_label})",
                     min_value=0.0, step=10.0 if unit_label == "W" else 0.5,
-                    value=400.0 if unit_label == "W" else 0.0,
-                    key=f"{key_prefix}_manual_output_{i}",
+                    key=_out_key,
                 )
             with c3:
+                _cnt_key = f"{key_prefix}_manual_count_{i}"
+                if _cnt_key not in st.session_state:
+                    st.session_state[_cnt_key] = 0
                 count = st.number_input(
                     "枚数" if unit_label == "W" else "台数",
-                    min_value=0, step=1, value=0,
-                    key=f"{key_prefix}_manual_count_{i}",
+                    min_value=0, step=1,
+                    key=_cnt_key,
                 )
             with c4:
                 if unit_label == "W":
@@ -982,18 +983,36 @@ with tab2:
         price_col1, price_col2 = st.columns(2)
         with price_col1:
             st.markdown("**入力項目**")
+            # Use quote data as defaults if available
+            if "_quote_kw_unit_cost" in st.session_state and "kw_unit_cost_input" not in st.session_state:
+                st.session_state["kw_unit_cost_input"] = st.session_state["_quote_kw_unit_cost"]
+            if "_quote_gross_margin_pct" in st.session_state and "gross_margin_input" not in st.session_state:
+                st.session_state["gross_margin_input"] = st.session_state["_quote_gross_margin_pct"]
+            if "_quote_commission_rate" in st.session_state and "commission_input" not in st.session_state:
+                st.session_state["commission_input"] = st.session_state["_quote_commission_rate"]
+
+            if "kw_unit_cost_input" not in st.session_state:
+                st.session_state["kw_unit_cost_input"] = 0
+            if "gross_margin_input" not in st.session_state:
+                st.session_state["gross_margin_input"] = 0.0
+            if "commission_input" not in st.session_state:
+                st.session_state["commission_input"] = 0.0
+
             kw_unit_cost = st.number_input(
                 "kW原価 (円/kW)",
-                min_value=0, step=1000, value=0,
+                min_value=0, step=1000,
+                key="kw_unit_cost_input",
                 help="設備1kWあたりの原価",
             )
             gross_margin_pct = st.number_input(
                 "粗利率 (%)",
-                min_value=0.0, max_value=99.9, step=0.5, value=0.0,
+                min_value=0.0, max_value=99.9, step=0.5,
+                key="gross_margin_input",
             )
             sales_commission_pct = st.number_input(
                 "販売手数料 (%)",
-                min_value=0.0, max_value=100.0, step=0.5, value=0.0,
+                min_value=0.0, max_value=100.0, step=0.5,
+                key="commission_input",
                 help="例：販売価格の3%を手数料として支払う場合",
             )
 
