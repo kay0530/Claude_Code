@@ -8,6 +8,7 @@ Run:
 from __future__ import annotations
 
 import json
+import math
 import os
 import re as _re
 import subprocess
@@ -1257,32 +1258,42 @@ with tab2:
                 subsidy_amount = 0
                 st.info("パネル・PCS情報を入力すると自動試算します")
 
-    # ----- Lease (PPA only) -----
+    # ----- Lease / Loan (PPA only) -----
     if not is_epc:
         with st.expander("📋 リース情報", expanded=False):
-            _lease_companies = [
-                "シーエナジー",
-                "みずほリース",
-                "NTTファイナンス",
-                "オリックス",
-                "三井住友ファイナンス&リース",
-                "その他",
-            ]
-            lease_company = st.selectbox("リース会社", _lease_companies, key="lease_company")
+            _finance_companies = ["シーエナジー", "みずほリース", "群馬銀行"]
+            lease_company = st.selectbox("調達先", _finance_companies, key="lease_company")
 
-            # Show fixed-rate notice for known companies
-            from proposal_generator.ppa_calc import LEASE_RATE_MAP
-            _known_rate = LEASE_RATE_MAP.get(lease_company)
-            if _known_rate is not None:
-                st.info(
-                    f"**{lease_company}** の適用金利: **{_known_rate*100:.2f}%**"
-                    + (" (CE IRR目標)" if lease_company == "シーエナジー" else " (固定)")
-                )
-                lease_rate = _known_rate * 100  # store as % for display
-            else:
-                lease_rate = st.number_input("リース金利 (%)", min_value=0.0, step=0.1, value=6.0, key="lease_rate_input")
+            _is_bank_loan = (lease_company == "群馬銀行")
 
-            lease_years = st.number_input("リース期間 (年)", min_value=1, max_value=30, value=20, key="lease_years_input")
+            # Default rates and terms per company
+            _finance_defaults = {
+                "シーエナジー": {"rate": 3.10, "term": 20},
+                "みずほリース": {"rate": 5.50, "term": 10},
+                "群馬銀行": {"rate": 1.80, "term": 20},
+            }
+            _defaults = _finance_defaults[lease_company]
+
+            # Labels switch based on finance type
+            _company_label = "銀行" if _is_bank_loan else "リース会社"
+            _term_label = "借入期間(年数)" if _is_bank_loan else "リース利用期間"
+            _rate_label = "調達金利(年利)" if _is_bank_loan else "リース金利(年利)"
+
+            st.info(f"**{_company_label}**: {lease_company}　／　デフォルト金利: **{_defaults['rate']:.2f}%**")
+
+            lease_rate = st.number_input(
+                _rate_label + " (%)", min_value=0.0, step=0.1,
+                value=_defaults["rate"], key="lease_rate_input",
+            )
+            lease_years = st.number_input(
+                _term_label, min_value=1, max_value=30,
+                value=_defaults["term"], key="lease_years_input",
+            )
+
+            # Bank loan additional cost info
+            if _is_bank_loan and selling_price > 0:
+                _fire_insurance = math.ceil(selling_price / 1_000_000 * 3107 / 1000) * 1000
+                st.caption(f"火災保険料: ¥{_fire_insurance:,.0f}/年　償却資産税率: 1.4%")
     else:
         lease_company = ""
         lease_rate = 0.0
@@ -1473,9 +1484,11 @@ with tab2:
                 for _w in _warns:
                     st.warning(_w)
 
+                _is_loan_result = _calc_res.get("finance_type") == "loan"
                 _r1, _r2, _r3, _r4, _r5 = st.columns(5)
                 with _r1:
-                    st.metric("リース年額", f"¥{_calc_res['annual_lease_payment']:,.0f}")
+                    _pay_label = "年間元金返済額" if _is_loan_result else "リース年額"
+                    st.metric(_pay_label, f"¥{_calc_res['annual_lease_payment']:,.0f}")
                 with _r2:
                     st.metric("O&M年額", f"¥{_calc_res.get('annual_om_cost', 0):,.0f}")
                 with _r3:
@@ -1485,6 +1498,18 @@ with tab2:
                 with _r5:
                     _md = _calc_res.get("min_dscr")
                     st.metric("最小DSCR（最終年）", f"{_md:.3f}" if _md else "—")
+
+                # Bank loan additional cost breakdown
+                if _is_loan_result:
+                    _lr1, _lr2, _lr3, _lr4 = st.columns(4)
+                    with _lr1:
+                        st.metric("年間元金返済額", f"¥{_calc_res.get('annual_principal', 0):,.0f}")
+                    with _lr2:
+                        st.metric("初年度利息", f"¥{_calc_res.get('annual_interest_y1', 0):,.0f}")
+                    with _lr3:
+                        st.metric("火災保険料(年額)", f"¥{_calc_res.get('fire_insurance_annual', 0):,.0f}")
+                    with _lr4:
+                        st.metric("償却資産税(初年度)", f"¥{_calc_res.get('depreciation_tax_y1', 0):,.0f}")
 
                 # Apply button
                 if st.button(
