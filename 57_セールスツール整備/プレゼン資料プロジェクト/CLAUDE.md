@@ -3,12 +3,14 @@
 ## プロジェクト概要
 PPA/EPC太陽光発電提案書のStreamlit + python-pptx自動生成ツール。
 Salesforce連携、機器マスタ参照、補助金自動計算、PPA単価自動試算機能を搭載。
+Excelスライドシート(PP0-PP13, EP0-EP8)が出力するPDF提案書を忠実に再現することが目標。
 
 ## Tech Stack
-- Python 3.14 / Streamlit
+- Python 3.14 / Streamlit 1.52
 - python-pptx (PPTX生成)
 - Salesforce CLI (`sf`) for data access
-- openpyxl (Excel読み取り)
+- openpyxl (Excel読み取り — 契約電力マスタ等)
+- requests (Box REST API連携)
 
 ## 実行方法
 ```bash
@@ -20,89 +22,130 @@ streamlit run proposal_generator/app.py --server.port 8510
 ```
 プレゼン資料プロジェクト/
 ├── proposal_generator/
-│   ├── app.py                    # Streamlit メインアプリ (~1100行)
-│   ├── generator.py              # PPTX生成エンジン
-│   ├── utils.py                  # 共通ユーティリティ (A4横: 11.69"x8.27")
+│   ├── app.py                    # Streamlit メインアプリ (~1500行)
+│   ├── generator.py              # PPTX生成エンジン (ダイナミックインポート)
+│   ├── utils.py                  # 共通ユーティリティ (A4横, グラデーション, 色定数)
 │   ├── subsidy_calc.py           # 補助金自動計算エンジン (7プログラム)
 │   ├── ppa_calc.py               # PPA単価自動試算エンジン (DSCR≥1.30)
 │   ├── box_client.py             # Box REST API連携 (商談フォルダ検索・アップロード)
-│   ├── composition_profiles.yaml # ペルソナ別スライド構成 (PPA x4 + EPC x4)
+│   ├── composition_profiles.yaml # ペルソナ別スライド構成 (PPA x5 + EPC x4)
 │   ├── logo.png                  # altenergyロゴ
 │   ├── saved_cases/              # 案件JSON保存先
 │   ├── slides/
-│   │   ├── ppa/                  # PP0-PP13 (14枚) 全実装
-│   │   ├── epc/                  # EP0-EP8 (9枚) 全実装
-│   │   └── new/                  # NEW_* (7枚) 全実装
+│   │   ├── ppa/                  # PP0-PP13 + PP4A,PP5A,PP6A,PP8A (18枚)
+│   │   ├── epc/                  # EP0-EP8 (9枚)
+│   │   └── new/                  # NEW_* (7枚)
 │   └── excel_runner.py           # Excel連携 (未実装)
 ├── ＰＬ_補ありなしPPAEPC_260317_XXXX様_v3.3.1.xlsm
 └── セールスツールテンプレート（白抜き）.pptx
 ```
 
-## 実装済み機能 (全て動作確認済み)
+## Session 24 (2026-03-29) 実装内容
 
-### Streamlit UI (app.py)
-- **Tab 1**: 顧客情報 (SF商談検索、案件保存・読込・JSONダウンロード/アップロード、Box連携)
+### 1. 試算結果のPPTX反映
+- `ppa_calc_result`の全キー(annual_om_cost, min_ppa_price, cashflow_table等)をcustomer_dataに接続
+- 「現在の年間電気代」入力 → 契約電力マスタベース(12電力会社184契約)のカスケード選択に進化
+- `annual_saving` = 現在の電気代 - PPA電気代 → PP7/PP8/new_summaryに自動反映
+- `investment_recovery_yr` = 販売価格 / annual_saving（簡易回収年数）
+
+### 2. Box連携
+- `box_client.py`新規作成: Box REST API (requests) でフォルダ検索・アップロード・ダウンロード
+- Tab 1: Boxフォルダ検索→ファイル一覧→JSON読込→JSON保存
+- Tab 4: PPTX生成後にBoxアップロードボタン
+- Box商談フォルダ構造: `Salesforce Altenergy Sync / 案件進捗 / {商談名} / 03_提案資料`
+- `box_config.json`にaccess_tokenを設定すると有効化
+
+### 3. スライドPDF実物忠実化（主要作業）
+参照PDF: `ＰＬ_補なしPPA_260319_伊藤忠丸紅特殊鋼株式会社（特殊鋼本部）様.pdf` (14p)
+
+#### 書き直したスライド
+| スライド | 変更内容 |
+|---------|---------|
+| **PP0 表紙** | スプリットデザイン（左38%オレンジパネル+右62%白パネル）に完全リライト |
+| **PP7 ご利用料金** | PPA単価+4メリット構成。価格ボックスはネイビー(#002060)+ティール(#76C5D8)背景に白文字 |
+| **PP8 経済効果試算** | 20年シミュレーション表(1-10年/11-20年の2段組)に完全リライト。試算条件・5KPIカード付き |
+
+#### 新規作成したスライド
+| スライド | 内容 |
+|---------|------|
+| **PP4A** | なぜオルテナジーが選ばれるのか（3つの強みカード） |
+| **PP5A** | 効果シミュレーション（セクション区切りページ、ダーク背景） |
+| **PP6A** | 事業スキーム（顧客↔オルテナジー↔リース会社のフロー図解） |
+| **PP8A** | ご契約条件サマリー（2段組条件テキスト+違約金テーブル） |
+
+#### 標準PPAプロファイル（PDF実物と同じ14ページ構成）
+```
+PP0→PP1→PP2→PP3→PP4A→PP5A→PP6A→PP5→PP6→PP9→PP7→PP8→PP8A→PP11
+```
+
+### 4. デザイン改善
+- ヘッダーバー: 単色→**グラデーション**（1オブジェクト、gradFill XML直接生成）
+  - 上: #E8490F → 下: #F0935A
+  - `p:style`テーマスタイル削除で色の上書き防止
+- 色パレット追加: C_NAVY(#002060), C_TEAL(#46AAC5), C_LIGHT_TEAL(#76C5D8), C_LIGHT_CYAN(#CCFFFF), C_RED(#FF0000)
+- PP2: ステップボックス内テキスト 黒→白（オレンジ背景での視認性改善）
+- 日付フォーマット: `2026-03-28 00:00:00` → `2026年3月28日`
+- 年数表示: `20.0年` → `20年`（int化）
+- PP6 CO2カード: 非数値テキストの安全ガード
+- ソータブルアイテム: 左寄せ・幅55%（custom_style）
+- アンカーリンクアイコン・Fullscreenボタン: CSS非表示
+- 数値の桁区切り: 小計kW、パネル合計枚数・kW等
+
+### 5. その他UI改善
+- 保安管理業務委託費: 自社(¥120,000)/先方負担(¥0)/他社委託(手入力)の3択ラジオ
+- 垂直積雪量: m(float) → cm(int)に変更
+- sys.path修正: 任意CWDからStreamlit起動可能
+
+## 実装済み機能
+
+### Streamlit UI (app.py ~1500行)
+- **Tab 1**: 顧客情報 (SF商談検索、案件保存・読込・JSON DL/UL、Box連携)
 - **Tab 2**: 案件詳細
   - PPA/EPC切替ラジオ
-  - パネル/PCS/蓄電池: SF機器マスタ連携カスケード選択 (EquipmentMaster__c, 262件)
-  - 契約条件 (EPC時はPPA単価・余剰売電非表示) + 現在の年間電気代入力
+  - パネル/PCS/蓄電池: SF機器マスタ連携カスケード選択 (EquipmentMaster__c)
+  - 契約条件 + **契約電力マスタベース年間電気代計算**
   - 価格情報 (原価→粗利→販売価格→手数料→実質粗利 自動計算)
   - 補助金 (7プログラム自動試算 + 手動入力)
-  - リース情報 (PPA専用: 6社選択, CE=3.10%/みずほ=5.5%固定)
+  - リース情報 (PPA専用: 6社選択)
   - iPals CSVアップロード → 年間KPI自動計算
-  - 💹 PPA単価自動試算 (DSCR≥1.30, O&M込み, 20年CF表示, 単価自動適用ボタン)
+  - PPA単価自動試算 (DSCR≥1.30, O&M込み, 20年CF表示)
+  - O&M費用設定（保守費 + 保安管理業務委託費3択）
   - FF振り返り入力
 - **Tab 3**: スライド構成 (ペルソナ選択→チェックボックス→ドラッグ並替)
 - **Tab 4**: PPTX生成・ダウンロード + Box直接アップロード
 
-### スライドジェネレーター (全30枚)
+### スライドジェネレーター
 | カテゴリ | スライド | 状態 |
 |---------|---------|------|
-| PPA | PP0-PP13 (14枚) | 全実装 |
+| PPA | PP0-PP13 + PP4A,PP5A,PP6A,PP8A (18枚) | 全実装 |
 | EPC | EP0-EP8 (9枚) | 全実装 |
-| NEW共通 | NEW_ff, NEW_summary, NEW_competitor, NEW_urgency, NEW_ppa_epc_compare, NEW_building_compare, NEW_env (7枚) | 全実装 |
+| NEW共通 | NEW_ff, NEW_summary等 (7枚) | 全実装 |
 
-### PPA単価自動試算エンジン (ppa_calc.py) — Excelと等価実装
-- **DSCR = 収入 / (リース料 + O&M費用) ≥ 1.30**（Excelと同じ分母）
-- 発電量・自家消費量は年▲0.5%低減（Excelで確認済み）
-- O&M費用: 保守費1,200円/kW/年 + 保険120,000円/年（PPAリースシートR50, R62より）
-- リース会社別金利（CEシート数式 `IRR(D55:X55)` から等価実装）:
-  - シーエナジー: IRR = 3.10%（ギリギリ目標値 = CEシートN61より確認）
-  - みずほリース: 5.50%（固定）
-  - その他: 手動入力
-- 20年間キャッシュフロー表（リース料・O&M・DSCR各年表示）
-- 「この単価を適用」ボタン → ppa_price_inputキーに書き込みrerun
-
-### Excelシート構造（解析完了）
-| シート | 役割 | 確認済み内容 |
-|--------|------|------|
-| PPAリース | 20年P&L計算 | 収入/費用/DSCR構造, O&Mコスト |
-| CE | シーエナジーIRR計算 | `IRR(D55:X55)`, 目標3.10% |
-| 補助金 | 補助金条件 | 実装済み(subsidy_calc.py) |
-| PalsDATA | iPals貼付 | 自家消費量/余剰電力 |
-| PVTグラフA/B | デマンドカット | 未連携(低優先) |
+### PDF実物との対応表（PPA 14ページ）
+| PDF Page | スライドID | タイトル | 状態 |
+|----------|----------|---------|------|
+| P1 | PP0 | 表紙 | ✅ リライト済 |
+| P2 | PP1 | なぜ今オンサイトPPA | ✅ |
+| P3 | PP2 | PPAモデルとは | ✅ 白文字修正済 |
+| P4 | PP3 | 導入メリット | ✅ |
+| P5 | PP4A | なぜオルテナジー | ✅ 新規 |
+| P6 | PP5A | 効果シミュレーション区切り | ✅ 新規 |
+| P7 | PP6A | 事業スキーム | ✅ 新規 |
+| P8 | PP5 | 設備レイアウト | ✅ |
+| P9 | PP6 | 供給電力量・発電シミュレーション | ✅ |
+| P10 | PP9 | デマンド削減効果 | ✅ |
+| P11 | PP7 | ご利用料金 | ✅ リライト済 |
+| P12 | PP8 | 経済効果試算（20年表） | ✅ リライト済 |
+| P13 | PP8A | ご契約条件サマリー | ✅ 新規 |
+| P14 | PP11 | 導入までの流れ | ✅ |
 
 ## 未実装・今後のタスク
 
-### 高優先（次セッション着手）— スライドPDF実物忠実化
-参照PDF: `ＰＬ_補なしPPA_260319_伊藤忠丸紅特殊鋼株式会社（特殊鋼本部）様.pdf` (PPA 14p)、同EPC版 (9p)
-これらはExcelスライドシート(PP0-PP13, EP0-EP8)の出力。python-pptx実装をこれに忠実に合わせる。
-
-**最重要: 経済効果試算スライド (PPA=Page12, EPC=Page7,9)**
-- 現状PP7/PP8はKPIカード+バーチャートだが、PDF実物は20年シミュレーション表
-- 構造: (A)供給電力量 × {(B)従量単価-(C)PPA単価} = 従量料金削減 + 基本料金削減
-- 1-10年目・11-20年目の2段組テーブル
-- 試算条件: 電力会社・契約種別・契約電力（契約電力マスタ連携済み）
-- 初期費用/保守/償却資産税のKPIカード
-
-**各スライドのレイアウト調整（PDF実物と比較）**
-| PDF実物 | 現在のスライド | 要対応 |
-|--------|------------|--------|
-| ご利用料金（PPA単価+4メリット） | PP10 | レイアウト比較 |
-| 供給電力量（棒グラフ+月次テーブル） | PP6 | グラフ実装確認 |
-| デマンド削減（2週間折れ線×2） | PP9 | iPalsデータ連携 |
-| 事業スキーム（図解） | PP6相当 | 図解再現 |
-| ご契約条件サマリー（違約金表） | PP12 | テーブル確認 |
+### 高優先
+- **実データでの全スライド目視レビュー** — 実案件データでPPTX生成し、PowerPointで各ページ確認
+- **PP6 供給電力量の棒グラフ** — PDF実物には月次棒グラフがある（現在はテーブルのみ）
+- **PP9 デマンド削減の折れ線グラフ** — PDF実物には2週間折れ線×2がある（iPalsデータ連携必要）
+- **EPC版スライドのPDF忠実化** — PPA版と同様にEPCの9ページも調整
 
 ### 中優先
 - Box認証設定 — `box_config.json`にaccess_token設定
@@ -131,6 +174,21 @@ streamlit run proposal_generator/app.py --server.port 8510
 - 年間電気代計算: 基本料金(円/kW)×契約電力×12 + 加重平均従量単価×年間kWh (夏季4ヶ月/他8ヶ月)
 - 保安管理業務委託費: 自社(¥120,000)/先方負担(¥0)/他社委託(手入力)の3択
 - 垂直積雪量: cm単位（整数、step=10）
+- ヘッダーグラデーション: python-pptx XML直接操作 (`a:gradFill`, `p:style`削除)
+- 色パレット: オレンジ(#E8490F)ベース + ネイビー(#002060)/ティール(#76C5D8)をPP7料金ボックスに使用
+- スライドID命名: PP4A/PP5A/PP6A/PP8A = 既存番号の間に挿入（generatorのダイナミックインポートが`PP4A→pp4a.py`で解決）
+
+## コミット履歴（Session 24）
+| Hash | 内容 |
+|------|------|
+| `0d4b69b` | feat: PPA calc PPTX integration, Box API client, electricity cost calculator |
+| `1a3de18` | feat: rewrite PP7/PP8 slides to match actual PDF proposal format |
+| `7ba56e4` | feat: add 4 missing PPA slides (PP4A, PP5A, PP6A, PP8A) |
+| `241bff3` | feat: add 標準PPA profile matching actual 14-page PDF layout |
+| `835cab4` | style: left-align and compact sortable slide items in Tab 3 |
+| `419b241` | fix: align slide design with PDF reference, fix formatting bugs |
+| `dd72b54` | fix: gradient header as single shape, orange cover, white text on PP2 |
 
 ## 関連プランファイル
 - `C:\Users\田中　圭亮\.claude\plans\compiled-coalescing-puffin.md` - 全体実行プラン
+- `C:\Users\田中　圭亮\.claude\plans\virtual-herding-anchor.md` - Session 24 実行プラン

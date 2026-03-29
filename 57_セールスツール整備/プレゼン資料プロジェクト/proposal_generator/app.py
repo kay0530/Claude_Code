@@ -43,6 +43,16 @@ _SORTABLE_STYLE = (
     "max-width: 55% !important; padding: 5px 12px !important; "
     "font-size: 0.85rem !important; }"
 )
+
+# Hide anchor link icons on headings and fullscreen buttons on images
+st.markdown("""
+<style>
+a.headerlink, .stMainBlockContainer [data-testid="StyledFullScreenButton"],
+h1 a, h2 a, h3 a, .stMarkdown a[href^="#"] {
+    display: none !important;
+}
+</style>
+""", unsafe_allow_html=True)
 EXCEL_PATH = BASE_DIR.parent / "ＰＬ_補ありなしPPAEPC_260317_XXXX様_v3.3.1.xlsm"
 SAVE_DIR = BASE_DIR / "saved_cases"
 SAVE_DIR.mkdir(exist_ok=True)
@@ -317,13 +327,13 @@ def _equipment_selector(
             with c5:
                 if unit_label == "W":
                     total = unit_val * count / 1000.0
-                    st.metric("小計 (kW)", f"{total:.2f}")
+                    st.metric("小計 (kW)", f"{total:,.2f}")
                 elif unit_label == "kWh":
                     total = unit_val * count
-                    st.metric("小計 (kWh)", f"{total:.1f}")
+                    st.metric("小計 (kWh)", f"{total:,.1f}")
                 else:
                     total = unit_val * count
-                    st.metric("小計 (kW)", f"{total:.2f}")
+                    st.metric("小計 (kW)", f"{total:,.2f}")
 
             model_str = f"{sel_maker} {sel_katasiki}" if sel_maker and sel_katasiki else ""
 
@@ -358,13 +368,13 @@ def _equipment_selector(
             with c4:
                 if unit_label == "W":
                     total = unit_val * count / 1000.0
-                    st.metric("小計 (kW)", f"{total:.2f}")
+                    st.metric("小計 (kW)", f"{total:,.2f}")
                 elif unit_label == "kWh":
                     total = unit_val * count
-                    st.metric("小計 (kWh)", f"{total:.1f}")
+                    st.metric("小計 (kWh)", f"{total:,.1f}")
                 else:
                     total = unit_val * count
-                    st.metric("小計 (kW)", f"{total:.2f}")
+                    st.metric("小計 (kW)", f"{total:,.2f}")
 
         # Build data dict (compatible with existing structure)
         entry: dict = {
@@ -663,7 +673,7 @@ with tab2:
             output_multiplier=1000.0,  # SF stores kW, display as W
             type_count_key="panel_types",
         )
-        st.info(f"パネル合計: **{total_panel_count}枚** / **{total_panel_kw:.2f} kW**")
+        st.info(f"パネル合計: **{total_panel_count:,}枚** / **{total_panel_kw:,.2f} kW**")
 
     # ----- PCS -----
     with st.expander("⚡ パワコン（PCS）情報", expanded=True):
@@ -674,7 +684,7 @@ with tab2:
             output_multiplier=1.0,
             type_count_key="pcs_types",
         )
-        st.info(f"PCS合計: **{total_pcs_count}台** / **{total_pcs_kw:.2f} kW**")
+        st.info(f"PCS合計: **{total_pcs_count:,}台** / **{total_pcs_kw:,.2f} kW**")
 
     # ----- Battery -----
     with st.expander("🔋 蓄電池情報", expanded=True):
@@ -686,7 +696,7 @@ with tab2:
             type_count_key="battery_types",
         )
         if total_battery_count > 0:
-            st.info(f"蓄電池合計: **{total_battery_count}台** / **{total_battery_kwh:.1f} kWh**")
+            st.info(f"蓄電池合計: **{total_battery_count:,}台** / **{total_battery_kwh:,.1f} kWh**")
 
     # Auto-calc system capacity (= min of panel kW and PCS kW)
     if total_pcs_kw > 0:
@@ -1394,7 +1404,7 @@ with tab4:
     with sum_col2:
         st.metric("提案タイプ", "EPC（販売）" if _is_epc_tab4 else "PPA（第三者所有）")
     with sum_col3:
-        st.metric("システム容量", f"{customer_data.get('system_capacity_kw', 0):.1f} kW")
+        st.metric("システム容量", f"{customer_data.get('system_capacity_kw', 0):,.1f} kW")
     with sum_col4:
         if _is_epc_tab4:
             sp = customer_data.get("selling_price", 0)
@@ -1422,21 +1432,21 @@ with tab4:
             if p["count"] > 0:
                 st.write(
                     f"- パネル: {p.get('model') or '未指定'} "
-                    f"{p['watt_per_unit']:.0f}W × {p['count']}枚 = {p['total_kw']:.2f}kW"
+                    f"{p['watt_per_unit']:.0f}W × {p['count']:,}枚 = {p['total_kw']:,.2f}kW"
                 )
         pcs_list = customer_data.get("pcs_list", [])
         for q in pcs_list:
             if q["count"] > 0:
                 st.write(
                     f"- PCS: {q.get('model') or '未指定'} "
-                    f"{q['kw_per_unit']:.1f}kW × {q['count']}台 = {q['total_kw']:.2f}kW"
+                    f"{q['kw_per_unit']:.1f}kW × {q['count']:,}台 = {q['total_kw']:,.2f}kW"
                 )
         batteries = customer_data.get("batteries", [])
         for b in batteries:
             if b["count"] > 0:
                 st.write(
                     f"- 蓄電池: {b.get('model') or '未指定'} "
-                    f"{b['kwh_per_unit']:.1f}kWh × {b['count']}台 = {b['total_kwh']:.1f}kWh"
+                    f"{b['kwh_per_unit']:.1f}kWh × {b['count']:,}台 = {b['total_kwh']:,.1f}kWh"
                 )
 
         # Pricing summary
