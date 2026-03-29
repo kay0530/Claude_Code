@@ -212,12 +212,12 @@ def _apply_quote_to_session(q: dict) -> None:
     """
     import re as _re_mod
 
-    # Panel data → manual input mode
+    # Panel data → switch to manual input mode
     panels = q.get("panels", [])
     if panels:
         st.session_state["panel_types"] = len(panels)
+        st.session_state["panel_input_mode"] = "手動入力"  # radio key (no suffix)
         for i, p in enumerate(panels):
-            st.session_state[f"panel_input_mode_{i}"] = "手動入力"
             w_match = _re_mod.search(r"(\d+)", str(p.get("output", "")))
             watt = float(w_match.group(1)) if w_match else 0
             st.session_state[f"panel_model_{i}"] = f"{p['maker']} {p['model']}".strip()
@@ -228,8 +228,8 @@ def _apply_quote_to_session(q: dict) -> None:
     pcs_list = q.get("pcs_list", [])
     if pcs_list:
         st.session_state["pcs_types"] = len(pcs_list)
+        st.session_state["pcs_input_mode"] = "手動入力"
         for i, pc in enumerate(pcs_list):
-            st.session_state[f"pcs_input_mode_{i}"] = "手動入力"
             kw_match = _re_mod.search(r"(\d+)", str(pc.get("output", "")))
             kw = float(kw_match.group(1)) if kw_match else 0
             st.session_state[f"pcs_model_{i}"] = f"{pc['maker']} {pc['model']}".strip()
@@ -240,8 +240,8 @@ def _apply_quote_to_session(q: dict) -> None:
     bats = q.get("batteries", [])
     if bats:
         st.session_state["bat_types"] = len(bats)
+        st.session_state["bat_input_mode"] = "手動入力"
         for i, b in enumerate(bats):
-            st.session_state[f"bat_input_mode_{i}"] = "手動入力"
             st.session_state[f"bat_model_{i}"] = f"{b['maker']} {b['model']}".strip()
             st.session_state[f"bat_manual_output_{i}"] = b["kwh"]
             st.session_state[f"bat_manual_count_{i}"] = 1
