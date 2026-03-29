@@ -109,6 +109,98 @@ def _tokenize_keyword(kw: str) -> list[str]:
 
 
 @st.cache_data(ttl=None)
+def _parse_quote_excel(uploaded_file) -> dict:
+    """Parse a quote Excel file (当社標準テンプレート) and extract equipment + pricing.
+
+    Reads from:
+      - 入力② sheet: panels (row 11-12), PCS (row 13-16), battery (row 89)
+      - ①表紙 sheet: pricing (AQ26-AQ31, AR28-AR29)
+    """
+    import openpyxl
+    wb = openpyxl.load_workbook(uploaded_file, data_only=True)
+
+    result = {}
+
+    # ---- 入力② sheet ----
+    ws2 = None
+    for name in wb.sheetnames:
+        if "入力" in name and "②" in name:
+            ws2 = wb[name]
+            break
+    if ws2:
+        # System capacity
+        result["pv_kw"] = ws2["C1"].value or 0
+        result["pcs_kw"] = ws2["C2"].value or 0
+
+        # Panels (rows 11-12)
+        panels = []
+        for r in [11, 12]:
+            count = ws2.cell(r, 10).value  # J = count
+            if count and int(count) > 0:
+                panels.append({
+                    "text": ws2.cell(r, 3).value or "",  # C = full text
+                    "model": ws2.cell(r, 5).value or "",  # E = model
+                    "maker": (ws2.cell(r, 6).value or "").replace("_", " "),  # F = maker
+                    "output": ws2.cell(r, 7).value or "",  # G = output (e.g. "460W")
+                    "unit_cost": ws2.cell(r, 9).value or 0,  # I = cost per unit
+                    "count": int(count),
+                })
+        result["panels"] = panels
+        result["panel_count"] = sum(p["count"] for p in panels)
+
+        # PCS (rows 13-16)
+        pcs_list = []
+        for r in range(13, 17):
+            count = ws2.cell(r, 10).value  # J = count
+            if count and int(count) > 0:
+                pcs_list.append({
+                    "text": ws2.cell(r, 3).value or "",
+                    "model": ws2.cell(r, 5).value or "",
+                    "maker": (ws2.cell(r, 6).value or "").replace("_", " "),
+                    "output": ws2.cell(r, 7).value or "",
+                    "unit_cost": ws2.cell(r, 9).value or 0,
+                    "count": int(count),
+                })
+        result["pcs_list"] = pcs_list
+        result["pcs_count"] = sum(p["count"] for p in pcs_list)
+
+        # Battery (row 89 = industrial, row 86 = residential)
+        batteries = []
+        for r in [89, 86]:
+            cap = ws2.cell(r, 7).value  # G = capacity (kWh)
+            try:
+                cap_f = float(cap) if cap is not None else 0
+            except (ValueError, TypeError):
+                cap_f = 0
+            if cap_f > 0:
+                batteries.append({
+                    "text": ws2.cell(r, 3).value or "",
+                    "model": ws2.cell(r, 5).value or "",
+                    "maker": (ws2.cell(r, 6).value or "").replace("_", " "),
+                    "kwh": cap_f,
+                    "price": ws2.cell(r, 9).value or 0,  # I = price
+                })
+        result["batteries"] = batteries
+
+    # ---- ①表紙 sheet ----
+    ws1 = None
+    for name in wb.sheetnames:
+        if "表紙" in name and "①" in name:
+            ws1 = wb[name]
+            break
+    if ws1:
+        result["selling_price"] = ws1["AQ28"].value or 0
+        result["kw_selling_price"] = ws1["AR28"].value or 0
+        result["raw_cost"] = ws1["AQ29"].value or 0
+        result["kw_unit_cost"] = ws1["AR29"].value or 0
+        result["gross_profit"] = ws1["AQ30"].value or 0
+        result["gross_margin_pct"] = (ws1["AQ31"].value or 0) * 100  # to %
+        result["commission_rate"] = (ws1["AQ26"].value or 0) * 100
+
+    wb.close()
+    return result
+
+
 def load_electricity_master() -> list[dict]:
     """Load contract electricity rates from Excel 契約電力マスタ sheet.
 
@@ -803,15 +895,26 @@ with tab2:
 
     # ----- Pricing -----
     with st.expander("💰 価格情報", expanded=False):
-        with st.expander("📄 見積書から読み込み（準備中）", expanded=False):
-            st.file_uploader(
-                "見積書をアップロード（PDF / Excel）",
-                type=["pdf", "xlsx", "xls"],
+        with st.expander("📄 見積書から読み込み", expanded=False):
+            _quote_file = st.file_uploader(
+                "見積書Excelをアップロード（.xlsm / .xlsx）",
+                type=["xlsm", "xlsx", "xls"],
                 key="quote_file",
-                disabled=True,
-                help="見積書から自動的に原価・販売価格等を読み取る機能を追加予定",
+                help="当社標準テンプレートの見積書を読み込み、機器・価格情報を自動入力します",
             )
-            st.caption("🚧 見積書自動読み込み機能は開発中です。現在は手動入力をお使いください。")
+            if _quote_file is not None:
+                try:
+                    _q = _parse_quote_excel(_quote_file)
+                    if _q:
+                        st.session_state["quote_data"] = _q
+                        st.success(f"見積書を読み込みました: パネル{_q.get('panel_count', 0):,}枚 / PCS{_q.get('pcs_count', 0):,}台")
+                        if st.button("この内容を反映する", key="apply_quote"):
+                            st.session_state["quote_applied"] = True
+                            st.rerun()
+                        with st.expander("読み込み内容を確認", expanded=False):
+                            st.json(_q)
+                except Exception as e:
+                    st.error(f"見積書の読み込みエラー: {e}")
 
         price_col1, price_col2 = st.columns(2)
         with price_col1:
