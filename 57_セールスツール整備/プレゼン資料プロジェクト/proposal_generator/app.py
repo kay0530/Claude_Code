@@ -1399,6 +1399,39 @@ with tab2:
                     "peak_demand_after_kw": round(_peak_after, 1),
                     "demand_cut_kw": round(_demand_cut, 1),
                 }
+
+                # 20-year projection
+                with st.expander("20年間発電量推計", expanded=False):
+                    _degradation = 0.005  # 0.5% annual degradation
+                    _proj_rows = []
+                    _total_20yr_gen = 0.0
+                    _total_20yr_co2 = 0.0
+                    for _yr in range(1, 21):
+                        _decay = (1 - _degradation) ** (_yr - 1)
+                        _yr_gen = _total_gen * _decay
+                        _yr_co2 = _co2_t * _decay
+                        _total_20yr_gen += _yr_gen
+                        _total_20yr_co2 += _yr_co2
+                        _proj_rows.append({
+                            "年": _yr,
+                            "発電量 (kWh)": f"{_yr_gen:,.0f}",
+                            "自家消費 (kWh)": f"{_total_self_consume * _decay:,.0f}",
+                            "余剰 (kWh)": f"{_total_surplus * _decay:,.0f}",
+                            "CO2削減 (t)": f"{_yr_co2:.1f}",
+                            "劣化率": f"{(1 - _decay) * 100:.1f}%",
+                        })
+                    import pandas as _pd
+                    st.dataframe(_pd.DataFrame(_proj_rows), use_container_width=True, hide_index=True)
+
+                    _tc1, _tc2 = st.columns(2)
+                    with _tc1:
+                        st.metric("20年間累計発電量", f"{_total_20yr_gen:,.0f} kWh")
+                    with _tc2:
+                        st.metric("20年間累計CO2削減", f"{_total_20yr_co2:,.1f} t-CO2")
+
+                    # Store 20-year totals
+                    st.session_state["ipals_data"]["total_20yr_gen_kwh"] = round(_total_20yr_gen)
+                    st.session_state["ipals_data"]["total_20yr_co2_t"] = round(_total_20yr_co2, 1)
             else:
                 st.error("CSVのパースに失敗しました。iPals出力形式を確認してください。")
 
