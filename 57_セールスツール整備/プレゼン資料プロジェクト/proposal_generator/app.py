@@ -1532,6 +1532,21 @@ with tab2:
                     _md = _calc_res.get("min_dscr")
                     st.metric("最小DSCR（最終年）", f"{_md:.3f}" if _md else "—")
 
+                # IRR / NPV / Re-lease
+                _irr_val = _calc_res.get("irr_pct")
+                _npv_val = _calc_res.get("npv_yen")
+                _release = _calc_res.get("re_lease_annual", 0)
+                _fin_cols = st.columns(3)
+                with _fin_cols[0]:
+                    st.metric("IRR", f"{_irr_val:.2f}%" if _irr_val is not None else "—")
+                with _fin_cols[1]:
+                    st.metric("NPV", f"¥{_npv_val:,.0f}" if _npv_val is not None else "—")
+                with _fin_cols[2]:
+                    if _release > 0:
+                        st.metric("再リース年額", f"¥{_release:,.0f}")
+                    else:
+                        st.metric("再リース", "—")
+
                 # Bank loan additional cost breakdown
                 if _is_loan_result:
                     _lr1, _lr2, _lr3, _lr4 = st.columns(4)
@@ -1668,6 +1683,9 @@ with tab2:
         "min_dscr": st.session_state.get("ppa_calc_result", {}).get("min_dscr", None),
         "cashflow_table": st.session_state.get("ppa_calc_result", {}).get("cashflow_table", []),
         "ppa_principal": st.session_state.get("ppa_calc_result", {}).get("principal", 0),
+        "irr_pct": st.session_state.get("ppa_calc_result", {}).get("irr_pct"),
+        "npv_yen": st.session_state.get("ppa_calc_result", {}).get("npv_yen"),
+        "re_lease_annual": st.session_state.get("ppa_calc_result", {}).get("re_lease_annual", 0),
         # FF
         "ff_current_situation": ff_current,
         "ff_customer_needs": ff_needs,

@@ -51,6 +51,12 @@ DEFAULT_RATE_MAP: dict[str, float] = {
 # Keep backward compatibility alias
 LEASE_RATE_MAP = DEFAULT_RATE_MAP
 
+# Revenue share (シーエナジー: post-lease revenue split)
+CE_REVENUE_SHARE_RATE = 0.0  # Currently 0% per PPAリース U14 default
+
+# Re-lease (みずほリース: 1/10 of original lease for years after lease term)
+MIZUHO_RELEASE_RATIO = 0.1  # 再リース = original_lease * 10%
+
 DEGRADATION_RATE = 0.005  # 0.5% per year
 
 # Default O&M costs (from PPAリース sheet)
@@ -398,6 +404,7 @@ def calc_cashflow_table(
     loan_payment_schedule: list[dict] | None = None,
     fire_insurance_annual: int = 0,
     depreciation_tax_schedule: list[int] | None = None,
+    company: str = "",
 ) -> list[dict]:
     """Generate year-by-year cashflow table for the PPA period.
 
@@ -437,12 +444,23 @@ def calc_cashflow_table(
                 dt = 0
         else:
             # After finance term expires
-            lp = 0.0
             om = 0.0
             fi = 0
             dt = 0
+            # Re-lease for みずほリース
+            if finance_type == FINANCE_TYPE_LEASE and company == "みずほリース":
+                lp = annual_lease_payment * MIZUHO_RELEASE_RATIO
+            else:
+                lp = 0.0
 
         total_cost = lp + om + fi + dt
+
+        # Revenue share for シーエナジー (post-lease only)
+        revenue_share = 0.0
+        if year > lease_years and company == "シーエナジー" and CE_REVENUE_SHARE_RATE > 0:
+            revenue_share = (total_rev - om) * CE_REVENUE_SHARE_RATE
+            total_cost += revenue_share
+
         net_cf = total_rev - total_cost
         dscr = total_rev / total_cost if total_cost > 0 else float("inf")
 
@@ -582,10 +600,34 @@ def auto_calc_ppa(
             loan_payment_schedule=loan_schedule,
             fire_insurance_annual=fire_ins,
             depreciation_tax_schedule=dep_tax_schedule,
+            company=company,
         )
 
         dscr_values = [r["dscr"] for r in cashflow_table if r["dscr"] is not None]
         min_dscr = min(dscr_values) if dscr_values else None
+
+    # Calculate IRR and NPV from cashflow table
+    ppa_irr: float | None = None
+    ppa_npv: float | None = None
+    if cashflow_table and principal > 0:
+        # IRR: initial outflow = -principal, then annual net cashflows
+        cf_for_irr = [-principal] + [r["net_cashflow"] for r in cashflow_table]
+        try:
+            ppa_irr = round(irr(cf_for_irr) * 100, 2)  # as percentage
+        except (ZeroDivisionError, ValueError, OverflowError):
+            ppa_irr = None
+
+        # NPV at discount rate = effective financing rate
+        try:
+            annual_cfs = [r["net_cashflow"] for r in cashflow_table]
+            ppa_npv = round(npv(rate, annual_cfs) - principal)
+        except (ZeroDivisionError, ValueError, OverflowError):
+            ppa_npv = None
+
+    # Re-lease annual amount (みずほリース)
+    re_lease_annual = 0
+    if company == "みずほリース" and annual_payment > 0:
+        re_lease_annual = round(annual_payment * MIZUHO_RELEASE_RATIO)
 
     result = {
         "principal": round(principal),
@@ -598,6 +640,9 @@ def auto_calc_ppa(
         "min_dscr": min_dscr,
         "warnings": warnings_list,
         "finance_type": finance_type,
+        "irr_pct": ppa_irr,
+        "npv_yen": ppa_npv,
+        "re_lease_annual": re_lease_annual,
     }
 
     # Add bank loan specific fields
