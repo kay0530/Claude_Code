@@ -35,15 +35,41 @@ class BoxAPIError(Exception):
 
 
 def _load_config() -> dict:
-    if not CONFIG_PATH.exists():
-        return {}
-    with open(CONFIG_PATH, encoding="utf-8") as f:
-        return json.load(f)
+    """Load Box config from box_config.json or Streamlit secrets."""
+    # 1. Try session_state cache (refreshed tokens on Cloud)
+    try:
+        import streamlit as st
+        cached = st.session_state.get("_box_config_cache")
+        if cached:
+            return dict(cached)
+    except Exception:
+        pass
+    # 2. Try local file (local dev)
+    if CONFIG_PATH.exists():
+        with open(CONFIG_PATH, encoding="utf-8") as f:
+            return json.load(f)
+    # 3. Try Streamlit secrets (Cloud deployment, initial config)
+    try:
+        import streamlit as st
+        if "box" in st.secrets:
+            return dict(st.secrets["box"])
+    except Exception:
+        pass
+    return {}
 
 
 def _save_config(cfg: dict) -> None:
-    with open(CONFIG_PATH, "w", encoding="utf-8") as f:
-        json.dump(cfg, f, indent=2, ensure_ascii=False)
+    """Save config to file if possible, otherwise cache in session_state."""
+    try:
+        with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+            json.dump(cfg, f, indent=2, ensure_ascii=False)
+    except OSError:
+        # Streamlit Cloud: can't write to disk, cache in session_state
+        try:
+            import streamlit as st
+            st.session_state["_box_config_cache"] = cfg
+        except Exception:
+            logger.warning("Could not persist Box config")
 
 
 def _refresh_access_token() -> str:
