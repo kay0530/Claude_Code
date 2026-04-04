@@ -4,6 +4,7 @@
 
 # Config files with potential secrets
 claude_desktop_config.json
+box_config.json
 
 # Node.js debug/test scripts
 check_keytar.js
@@ -36,3 +37,4 @@ nul
 **/ai-news-bot/output.txt
 **/ai-news-bot/config.local.json
 **/ai-news-bot/run.log
+57_セールスツール整備/solar-proposal-generator/
